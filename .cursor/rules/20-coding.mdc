@@ -1,3 +1,9 @@
+---
+description: General coding standards and development philosophy
+globs: **/*.{php,js,ts,tsx,jsx,vue,svelte,css,scss},**/*.blade.php
+alwaysApply: false
+---
+
 # Coding Rules
 
 ## Philosophy

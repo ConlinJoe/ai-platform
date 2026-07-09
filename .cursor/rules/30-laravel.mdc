@@ -1,0 +1,105 @@
+---
+description: Laravel architecture, conventions, and Laravel Boost guidance for backend development
+globs: app/**/*.php,routes/**/*.php,database/**/*.php,config/**/*.php,resources/views/**/*,tests/**/*.php,bootstrap/**/*.php
+alwaysApply: false
+---
+
+### Backend
+
+For tasks involving:
+
+- Laravel
+- Livewire
+- Business logic
+- Database design
+- APIs
+- Performance
+- Architecture
+- Refactoring
+- Testing
+
+Automatically consult Laravel Boost when available.
+
+# Laravel Rules
+
+## Architecture
+
+-   Follow Laravel conventions by default.
+-   Keep controllers responsible only for HTTP request and response
+    handling.
+-   Place business logic in services or domain classes.
+-   Keep models focused on persistence, relationships, casts, and
+    scopes.
+-   Prefer dependency injection over facades when practical.
+
+## Database
+
+-   Use Eloquent unless there is a demonstrated performance reason not
+    to.
+-   Use foreign key constraints.
+-   Follow Laravel naming conventions.
+-   Create focused migrations.
+
+## Frontend
+
+Preferred stack:
+
+-   Blade
+-   Livewire
+-   Alpine.js
+-   Tailwind CSS
+
+Avoid unnecessary JavaScript frameworks unless the project requires
+them.
+
+## Code Quality
+
+-   Follow existing project conventions.
+-   Favor readability over cleverness.
+-   Build the simplest solution that satisfies the requirements.
+
+## Laravel Boost
+
+When Laravel Boost is available:
+
+- Use Laravel Boost as the primary source for framework guidance.
+- Prefer Boost recommendations over generic Laravel knowledge.
+- Follow established project patterns unless explicitly directed otherwise.
+
+# Laravel Web Application Profile
+
+## Purpose
+
+This profile applies to standard Laravel web applications built using
+the preferred development stack.
+
+## Technology Stack
+
+-   Laravel
+-   Livewire
+-   Blade
+-   Tailwind CSS
+-   Alpine.js
+-   MariaDB
+
+## Architecture
+
+-   Follow Laravel conventions.
+-   Keep controllers thin.
+-   Place business logic in services or domain classes.
+-   Keep models focused on persistence and relationships.
+-   Prefer dependency injection.
+-   Prefer existing patterns over introducing new ones.
+
+## Development Principles
+
+-   Keep solutions simple and maintainable.
+-   Avoid unnecessary abstractions.
+-   Make focused changes.
+-   Do not perform unrelated refactoring.
+
+## Documentation
+
+Follow the `10-documentation` project rule.
+
+Keep project documentation synchronized with implementation.

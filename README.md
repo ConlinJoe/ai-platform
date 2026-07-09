@@ -1,5 +1,7 @@
 # AI Platform
 
+Version 1.1
+
 This repository contains the shared AI platform used across all
 development projects.
 
@@ -14,18 +16,24 @@ keeping project-specific context inside each individual repository.
 -   Shared workflows
 -   Shared prompts
 -   Shared agent profiles
--   Reusable vendor skills
+-   Reusable project skills
 -   Automatic documentation maintenance
 
 ## Repository Structure
 
+-   `.cursor/rules/` - Shared Cursor project rules
+-   `.agents/` - Third-party skills (managed via `skills-lock.json`)
 -   `agents/` - Specialized AI agents
--   `core/` - Rules, profiles, standards, prompts, workflows, and custom
-    skills
+-   `core/` - Project profiles, prompts, and custom skills
+-   `core/project-profiles/` - Stack-specific project profiles
+-   `scripts/` - Automation scripts (`link-rules.sh`, `update-skills.sh`,
+    `doctor.sh`)
 -   `mcp/` - MCP-specific guidance
 -   `templates/` - Project templates
--   `vendor/` - Third-party skills and resources
--   `scripts/` - Automation scripts
+-   `docs/` - Platform documentation
+-   `experiments/` - Experimental work
+-   `skills-lock.json` - Locked skill versions
+-   `CHANGELOG.md` - Release history
 
 ## Project Philosophy
 
@@ -35,7 +43,7 @@ The AI Platform owns reusable knowledge.
 
 Each project should contain only its own:
 
--   `.cursorrules`
+-   `.cursor/rules/` (linked from AI platform)
 -   Documentation
 -   Business rules
 -   Architecture

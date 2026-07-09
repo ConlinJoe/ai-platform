@@ -32,6 +32,6 @@ the preferred development stack.
 
 ## Documentation
 
-Follow the global documentation maintenance rule.
+Follow the `10-documentation` project rule.
 
 Keep project documentation synchronized with implementation.

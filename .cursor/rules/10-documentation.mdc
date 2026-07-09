@@ -1,3 +1,18 @@
+---
+description: Project documentation maintenance, standards, and required docs when implementing features or updating docs
+alwaysApply: false
+---
+
+# Documentation
+
+Documentation is part of the implementation.
+
+Whenever implementation changes:
+
+-   Update affected project documentation.
+-   Never allow documentation to drift from the code.
+-   Treat documentation maintenance as a required development task.
+
 # Documentation Maintenance Rule
 
 ## Principle
@@ -73,3 +88,60 @@ If no documentation changes are required, explicitly state:
 > Documentation reviewed. No updates required.
 
 Never allow project documentation to drift from the implementation.
+
+# Project Documentation Standard
+
+Every project created from this AI platform must include the following
+documentation.
+
+## project.md
+
+Purpose:
+
+-   Project overview
+-   Business goals
+-   Core features
+-   Business rules
+-   External integrations
+
+## architecture.md
+
+Purpose:
+
+-   High-level architecture
+-   Major components
+-   Directory structure
+-   Data flow
+-   Key services
+-   External systems
+
+## decisions.md
+
+Purpose:
+
+Record significant architectural and technical decisions.
+
+Each entry should include:
+
+-   Decision
+-   Reason
+-   Date
+-   Impact
+
+## roadmap.md
+
+Purpose:
+
+-   Planned features
+-   Technical debt
+-   Future enhancements
+-   Deferred work
+
+## Maintenance
+
+Documentation is a living part of the project.
+
+Whenever implementation changes, review these documents and update them
+as required.
+
+Documentation must never drift from the implementation.

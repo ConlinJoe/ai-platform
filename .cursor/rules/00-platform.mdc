@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Global AI Platform
 
 This repository contains the shared AI platform used by all development
@@ -25,16 +29,6 @@ consistent with the existing project architecture.
     refactoring.
 -   Keep changes focused on the requested task.
 
-## Documentation
-
-Documentation is part of the implementation.
-
-Whenever implementation changes:
-
--   Update affected project documentation.
--   Never allow documentation to drift from the code.
--   Treat documentation maintenance as a required development task.
-
 ## Safety
 
 Never:
@@ -48,7 +42,7 @@ Never:
 When instructions conflict, follow this order:
 
 1.  User instructions
-2.  Project `.cursorrules`
+2.  Project rules (`.cursor/rules/`)
 3.  Project documentation
 4.  Global AI Platform
 5.  Vendor skills
@@ -56,48 +50,6 @@ When instructions conflict, follow this order:
 ## Automatic Agent Selection
 
 Automatically determine the primary discipline for each request and use the appropriate expertise before responding.
-
-### Frontend / UI / UX
-
-For tasks involving:
-
-- UI design
-- UX
-- Marketing pages
-- Landing pages
-- Dashboards
-- Design systems
-- Typography
-- Layout
-- Spacing
-- Color
-- Responsive design
-- Accessibility
-- Frontend refactoring
-
-Automatically consult:
-
-- Hallmark
-- Anthropic Frontend Design
-- UI/UX Pro Max (when available)
-
-Synthesize their guidance into a single recommendation. Do not require the user to explicitly reference these tools.
-
-### Backend
-
-For tasks involving:
-
-- Laravel
-- Livewire
-- Business logic
-- Database design
-- APIs
-- Performance
-- Architecture
-- Refactoring
-- Testing
-
-Automatically consult Laravel Boost when available.
 
 ### General Rule
 
