@@ -1,0 +1,106 @@
+# Global AI Platform
+
+This repository contains the shared AI platform used by all development
+projects.
+
+## Objective
+
+Produce production-ready solutions that are simple, maintainable, and
+consistent with the existing project architecture.
+
+## Decision Making
+
+-   Think through the complete solution before responding.
+-   Present one final recommendation.
+-   Do not present drafts, alternatives, or incremental improvements
+    unless explicitly requested.
+-   Treat architecture, directory structures, workflows, and long-term
+    design decisions as frozen once approved.
+
+## Development
+
+-   Follow the project's existing architecture and conventions.
+-   Prefer simple, maintainable solutions.
+-   Do not introduce unnecessary abstractions, dependencies, or
+    refactoring.
+-   Keep changes focused on the requested task.
+
+## Documentation
+
+Documentation is part of the implementation.
+
+Whenever implementation changes:
+
+-   Update affected project documentation.
+-   Never allow documentation to drift from the code.
+-   Treat documentation maintenance as a required development task.
+
+## Safety
+
+Never:
+
+-   Commit changes unless explicitly instructed.
+-   Perform destructive database operations without approval.
+-   Modify project dependencies or configuration without approval.
+
+## Instruction Priority
+
+When instructions conflict, follow this order:
+
+1.  User instructions
+2.  Project `.cursorrules`
+3.  Project documentation
+4.  Global AI Platform
+5.  Vendor skills
+
+## Automatic Agent Selection
+
+Automatically determine the primary discipline for each request and use the appropriate expertise before responding.
+
+### Frontend / UI / UX
+
+For tasks involving:
+
+- UI design
+- UX
+- Marketing pages
+- Landing pages
+- Dashboards
+- Design systems
+- Typography
+- Layout
+- Spacing
+- Color
+- Responsive design
+- Accessibility
+- Frontend refactoring
+
+Automatically consult:
+
+- Hallmark
+- Anthropic Frontend Design
+- UI/UX Pro Max (when available)
+
+Synthesize their guidance into a single recommendation. Do not require the user to explicitly reference these tools.
+
+### Backend
+
+For tasks involving:
+
+- Laravel
+- Livewire
+- Business logic
+- Database design
+- APIs
+- Performance
+- Architecture
+- Refactoring
+- Testing
+
+Automatically consult Laravel Boost when available.
+
+### General Rule
+
+Determine the correct expertise automatically.
+
+The user should not need to remember or specify which skills or tools to use.

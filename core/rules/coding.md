@@ -1,0 +1,31 @@
+# Coding Rules
+
+## Philosophy
+
+Write production-quality code that is simple, readable, maintainable,
+and consistent with the existing codebase.
+
+## General Rules
+
+-   Follow the project's established architecture.
+-   Prefer existing patterns over creating new ones.
+-   Keep implementations focused on the requested task.
+-   Do not introduce unnecessary abstractions.
+-   Do not perform unrelated refactoring.
+-   Optimize for readability over cleverness.
+
+## Safety
+
+Never:
+
+-   Commit code unless explicitly instructed.
+-   Modify dependencies without approval.
+-   Perform destructive database operations without approval.
+
+## Quality
+
+Before considering a task complete:
+
+-   Verify the implementation.
+-   Review documentation requirements.
+-   Ensure changes remain consistent with the project's architecture.

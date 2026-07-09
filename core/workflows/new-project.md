@@ -1,0 +1,27 @@
+# New Project Workflow
+
+## Objective
+
+Start every new project with a consistent structure, documentation, and
+AI context.
+
+## Checklist
+
+1.  Select the appropriate project profile.
+2.  Create the standard project documentation.
+3.  Configure the project `.cursorrules`.
+4.  Install required vendor skills.
+5.  Verify the development stack.
+6.  Begin implementation.
+
+## Standard Project Documentation
+
+Every project should contain:
+
+-   docs/project.md
+-   docs/architecture.md
+-   docs/decisions.md
+-   docs/roadmap.md
+
+These documents must be maintained throughout the life of the project in
+accordance with the global documentation rule.
