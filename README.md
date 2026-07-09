@@ -1,6 +1,6 @@
 # AI Platform
 
-Version 1.1
+Version 1.1.1
 
 This repository contains the shared AI platform used across all
 development projects.
@@ -26,7 +26,7 @@ keeping project-specific context inside each individual repository.
 -   `agents/` - Specialized AI agents
 -   `core/` - Project profiles, prompts, and custom skills
 -   `core/project-profiles/` - Stack-specific project profiles
--   `scripts/` - Automation scripts (`link-rules.sh`, `update-skills.sh`,
+-   `scripts/` - Automation scripts (`bootstrap-project.sh`, `update-skills.sh`,
     `doctor.sh`)
 -   `mcp/` - MCP-specific guidance
 -   `templates/` - Project templates

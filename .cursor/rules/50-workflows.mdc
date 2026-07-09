@@ -13,7 +13,7 @@ AI context.
 
 1.  Select the appropriate project profile from `core/project-profiles/`.
 2.  Create the standard project documentation.
-3.  Run `scripts/link-rules.sh` from the AI platform repository to link
+3.  Run `scripts/bootstrap-project.sh` from the AI platform repository to link
     project rules into `.cursor/rules/`.
 4.  Restore required project skills.
 5.  Verify the development stack.
