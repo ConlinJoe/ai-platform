@@ -34,4 +34,6 @@ the preferred development stack.
 
 Follow the `10-documentation` project rule.
 
-Keep project documentation synchronized with implementation.
+Use contract-based documentation with `docs/README.md` as the dependency
+graph. Maintain `docs/00-project-context.md` for ChatGPT context. Export
+project AI context via `scripts/export-chatgpt-context.sh`.

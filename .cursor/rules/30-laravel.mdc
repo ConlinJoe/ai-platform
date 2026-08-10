@@ -102,4 +102,7 @@ the preferred development stack.
 
 Follow the `10-documentation` project rule.
 
-Keep project documentation synchronized with implementation.
+Load relevant contracts from `docs/README.md` before backend work. Maintain
+`docs/00-project-context.md`. Update affected contracts or report conflicts.
+Re-export ChatGPT context when documentation, Cursor rules, agent skills, or
+AI metadata change.

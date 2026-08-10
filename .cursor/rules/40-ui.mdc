@@ -28,3 +28,7 @@ Automatically consult:
 - UI/UX Pro Max (when available)
 
 Synthesize their guidance into a single recommendation. Do not require the user to explicitly reference these tools.
+
+For UI work, load relevant feature contracts from `docs/README.md` (design
+system, page behavior, component contracts) before implementing. Update those
+contracts when user-visible behavior changes.

@@ -33,5 +33,8 @@ Never:
 Before considering a task complete:
 
 -   Verify the implementation.
--   Review documentation requirements.
+-   Load relevant documentation contracts via `docs/README.md` (not the full
+    documentation tree).
+-   Resolve the documentation outcome: update affected contracts, explicitly
+    state no updates are required, or report a documentation conflict.
 -   Ensure changes remain consistent with the project's architecture.

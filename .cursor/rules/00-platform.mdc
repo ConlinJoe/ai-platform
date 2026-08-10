@@ -43,9 +43,12 @@ When instructions conflict, follow this order:
 
 1.  User instructions
 2.  Project rules (`.cursor/rules/`)
-3.  Project documentation
+3.  Project documentation contracts (load selectively via `docs/README.md`)
 4.  Global AI Platform
 5.  Vendor skills
+
+If implementation conflicts with an active documentation contract, stop and
+report the conflict. Do not guess or silently override documentation.
 
 ## Automatic Agent Selection
 

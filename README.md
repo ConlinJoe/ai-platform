@@ -26,8 +26,8 @@ keeping project-specific context inside each individual repository.
 -   `agents/` - Specialized AI agents
 -   `core/` - Project profiles, prompts, and custom skills
 -   `core/project-profiles/` - Stack-specific project profiles
--   `scripts/` - Automation scripts (`bootstrap-project.sh`, `update-skills.sh`,
-    `doctor.sh`)
+-   `scripts/` - Automation scripts (`bootstrap-project.sh`, `export-chatgpt-context.sh`,
+    `update-skills.sh`, `doctor.sh`)
 -   `mcp/` - MCP-specific guidance
 -   `templates/` - Project templates
 -   `docs/` - Platform documentation
@@ -53,5 +53,16 @@ Everything reusable belongs in this repository.
 
 ## Documentation
 
-Documentation is considered part of the implementation and must remain
-synchronized with the codebase throughout the life of every project.
+Documentation is a collection of **contracts** — focused documents with
+single responsibilities, metadata, and declared dependencies.
+
+- `docs/README.md` — dependency graph and contract registry
+- `docs/00-project-context.md` — concise entry point for ChatGPT Projects
+- `scripts/export-chatgpt-context.sh` — exports project AI context to
+  `.build/chatgpt-context.zip`
+
+Agents load only contracts relevant to the current task. Every
+implementation must update affected contracts, explicitly state why no update
+is required, or stop and report a documentation conflict.
+
+See `docs/documentation-philosophy.md` and `docs/chatgpt-projects.md`.

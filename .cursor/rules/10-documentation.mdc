@@ -1,147 +1,186 @@
 ---
-description: Project documentation maintenance, standards, and required docs when implementing features or updating docs
+description: Contract-based documentation standards, selective loading, and maintenance requirements
 alwaysApply: false
 ---
 
 # Documentation
 
-Documentation is part of the implementation.
+Documentation is a collection of **contracts**, not a fixed set of generic
+markdown files. Each contract has a single responsibility. Documentation is
+part of the implementation.
 
-Whenever implementation changes:
+# Contract Model
 
--   Update affected project documentation.
--   Never allow documentation to drift from the code.
--   Treat documentation maintenance as a required development task.
+## Index
 
-# Documentation Maintenance Rule
+`docs/README.md` is the documentation index, **dependency graph**, and
+**contract registry**.
+
+Every project defines its own contract layout. The platform does not mandate
+specific filenames beyond the index, project context file, and metadata
+requirements.
+
+## Project Context
+
+`docs/00-project-context.md` is the concise entry point for ChatGPT Projects
+and high-level agent context. Keep it current when purpose, stack, or
+constraints change.
+
+## Contract Types
+
+| Type | Purpose |
+| --- | --- |
+| `foundational` | Vision, domain model, platform-wide architecture |
+| `engine` | Subsystem or bounded context |
+| `feature` | User-visible or API feature behavior |
+| `adr` | Single architecture decision (one decision per file) |
+| `planning` | Roadmaps, spikes, temporary plans (not implementation authority) |
+| `status` | Current implementation status, phase progress, validation, readiness (not architectural authority) |
+
+Small projects may have only a few contracts. Large platforms may have
+dozens. Scale the contract count to project complexity.
+
+Mark foundational contracts in `docs/README.md` with `Type: foundational` in
+the Contract Registry. Foundational contracts are stable, high-level context
+for selective agent loading.
+
+## Required Metadata
+
+Every contract begins with YAML frontmatter:
+
+```yaml
+---
+status: active | draft | deprecated | superseded
+last_reviewed: YYYY-MM-DD
+source_of_truth_for:
+  - What this document owns
+depends_on:
+  - path/to/other-contract.md
+referenced_by:
+  - path/to/dependent-contract.md
+type: foundational | engine | feature | adr | planning | status
+---
+```
+
+Keep `depends_on` and `referenced_by` accurate. Update `docs/README.md` when
+contracts are added, removed, or dependencies change.
+
+# Selective Loading
+
+Do not load all project documentation for every task.
+
+1. Read `docs/00-project-context.md` for high-level context when needed.
+2. Read `docs/README.md` first.
+3. Identify contracts whose `source_of_truth_for` matches the task scope.
+4. Load only those contracts and their `depends_on` chain.
+5. Skip unrelated, deprecated, and planning contracts unless the task
+   explicitly requires them.
+
+Planning documents (`type: planning`) are never authoritative for
+implementation unless the user explicitly directs otherwise.
+
+Status documents (`type: status`) — typically `docs/99-project-status.md` —
+summarize current implementation progress and readiness. They are not
+architectural authority; load engine, feature, and ADR contracts for design
+decisions.
+
+# ChatGPT Projects
+
+Export project AI context for ChatGPT Projects:
+
+```bash
+scripts/export-chatgpt-context.sh
+```
+
+The script exports `docs/`, `.cursor/rules/`, `.agents/` (if present),
+`skills-lock.json` (if present), and project-specific AI documentation.
+It writes `.build/chatgpt-context/` and produces `.build/chatgpt-context.zip`.
+It never exports source code, vendor, tests, or generated files.
+
+Re-export and re-upload to ChatGPT when documentation, Cursor rules, agent
+skills, or AI metadata change.
+
+See `docs/chatgpt-projects.md` in the AI Platform repository.
+
+# Maintenance Rule
 
 ## Principle
 
-Project documentation is part of the implementation, not a separate
-task.
+Every meaningful code change must be evaluated against relevant contracts.
 
-Every meaningful code change must be evaluated to determine whether
-project documentation also needs to change.
-
-## Required Review
+## Required Outcome
 
 At the completion of every feature, refactor, bug fix, or architectural
-change, determine whether any of the following require updates:
+change, exactly one of these outcomes is required:
 
--   `docs/project.md`
--   `docs/architecture.md`
--   `docs/decisions.md`
--   `docs/roadmap.md`
+1. **Update** affected contract(s) and set `last_reviewed` to today.
+2. **Explicitly state** why no documentation changes were required:
 
-## Document Responsibilities
+   > Documentation reviewed. No updates required.
 
-### project.md
+3. **Stop and report** a documentation conflict (see below).
 
-Maintain:
+There is no silent fourth option. Never allow contracts to drift from the
+implementation.
 
--   Purpose
--   Features
--   Business rules
--   Integrations
--   User-visible behavior
+When documentation, Cursor rules, agent skills, or AI metadata change, re-run
+the ChatGPT export.
 
-### architecture.md
+## Conflict Protocol
 
-Maintain:
+If implementation would contradict an active contract:
 
--   System architecture
--   Folder structure
--   Major components
--   Services
--   External integrations
--   Data flow
+1. Stop.
+2. Report the conflict with the contract path and the specific contradiction.
+3. Do not guess, reinterpret, or silently override the contract.
+4. Wait for user resolution: update the contract or change the implementation.
 
-### decisions.md
+Example:
 
-Record significant technical or architectural decisions including:
+```
+Documentation conflict detected.
 
--   Decision
--   Reason
--   Alternatives considered (if relevant)
--   Impact
+Contract: docs/contracts/engines/billing.md
+Conflict: Contract requires idempotent webhooks; implementation retries without idempotency key.
+Resolution needed: Update contract OR change implementation.
+```
 
-### roadmap.md
+## ADRs
 
-Maintain:
+Architecture Decision Records are first-class contracts with `type: adr`.
 
--   Planned features
--   Technical debt
--   Future improvements
--   Deferred work
+- One decision per file.
+- Recommended path: `docs/contracts/adrs/NNNN-short-title.md`
+- Include context, decision, consequences, and status.
+- Supersede old ADRs; do not delete them.
 
-## Completion Criteria
+# Legacy Compatibility
+
+Projects using the old four-file layout (`project.md`, `architecture.md`,
+`decisions.md`, `roadmap.md`) remain supported during migration. The export
+script includes all files under `docs/`. Migrate to Documentation Contracts
+when practical.
+
+# Phase and Milestone Status
+
+When a **phase or major milestone** is completed, update
+`docs/99-project-status.md` as part of the Definition of Done. Set
+`last_reviewed` to today and refresh: current phase, progress, validation
+status, completed milestones, and production readiness.
+
+# Completion Criteria
 
 A task is not complete until:
 
-1.  Code is complete.
-2.  Tests or validation are complete.
-3.  Documentation has been reviewed.
-4.  Any required documentation updates have been made.
+1. Code is complete.
+2. Tests or validation are complete.
+3. Relevant contracts have been loaded and followed.
+4. Documentation outcome is resolved (update, explicit no-update, or conflict
+   reported).
+5. If a phase or major milestone was completed, `docs/99-project-status.md` is
+   updated.
 
-If no documentation changes are required, explicitly state:
+# Reference
 
-> Documentation reviewed. No updates required.
-
-Never allow project documentation to drift from the implementation.
-
-# Project Documentation Standard
-
-Every project created from this AI platform must include the following
-documentation.
-
-## project.md
-
-Purpose:
-
--   Project overview
--   Business goals
--   Core features
--   Business rules
--   External integrations
-
-## architecture.md
-
-Purpose:
-
--   High-level architecture
--   Major components
--   Directory structure
--   Data flow
--   Key services
--   External systems
-
-## decisions.md
-
-Purpose:
-
-Record significant architectural and technical decisions.
-
-Each entry should include:
-
--   Decision
--   Reason
--   Date
--   Impact
-
-## roadmap.md
-
-Purpose:
-
--   Planned features
--   Technical debt
--   Future enhancements
--   Deferred work
-
-## Maintenance
-
-Documentation is a living part of the project.
-
-Whenever implementation changes, review these documents and update them
-as required.
-
-Documentation must never drift from the implementation.
+- `docs/documentation-philosophy.md` — full standard
+- `docs/chatgpt-projects.md` — ChatGPT export workflow

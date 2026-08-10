@@ -6,27 +6,59 @@ alwaysApply: false
 
 ## Objective
 
-Start every new project with a consistent structure, documentation, and
-AI context.
+Start every new project with a consistent AI context, documentation contracts,
+and ChatGPT export support.
 
 ## Checklist
 
 1.  Select the appropriate project profile from `core/project-profiles/`.
-2.  Create the standard project documentation.
-3.  Run `scripts/bootstrap-project.sh` from the AI platform repository to link
-    project rules into `.cursor/rules/`.
-4.  Restore required project skills.
+2.  Run `scripts/bootstrap-project.sh` from the AI Platform repository to link
+    rules, export script, and documentation templates into the target project.
+3.  Customize `docs/00-project-context.md` and foundational contracts.
+4.  Restore required project skills (handled by bootstrap).
 5.  Verify the development stack.
-6.  Begin implementation.
+6.  Export initial ChatGPT context and upload to your ChatGPT Project.
+7.  Begin implementation.
 
-## Standard Project Documentation
+## Bootstrap Provides
 
-Every project should contain:
+Running bootstrap on a target project:
 
--   docs/project.md
--   docs/architecture.md
--   docs/decisions.md
--   docs/roadmap.md
+-   Links shared Cursor rules into `.cursor/rules/`
+-   Links `scripts/export-chatgpt-context.sh`
+-   Copies documentation templates when `docs/README.md` does not exist
+-   Adds `.build/` to `.gitignore` when missing
+-   Restores required project skills
 
-These documents must be maintained throughout the life of the project in
-accordance with the `10-documentation` project rule.
+## Initial Documentation Contracts
+
+Every project must include:
+
+-   `docs/README.md` — dependency graph and contract registry
+-   `docs/00-project-context.md` — concise ChatGPT and agent entry point
+-   `docs/99-project-status.md` — current implementation status (update when
+    phases or major milestones complete)
+
+Minimum viable contracts:
+
+-   `docs/contracts/foundational/vision.md`
+-   `docs/contracts/foundational/architecture.md`
+
+Add engine and feature contracts as the project grows. Do not create the
+legacy four-file layout for new projects.
+
+## ChatGPT Export
+
+After customizing documentation:
+
+```bash
+scripts/export-chatgpt-context.sh
+```
+
+Upload `.build/chatgpt-context.zip` to the ChatGPT Project. Re-export when
+documentation, Cursor rules, agent skills, or AI metadata change.
+
+## Maintenance
+
+All contracts must be maintained in accordance with the `10-documentation`
+project rule.
