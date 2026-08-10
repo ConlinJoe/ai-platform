@@ -24,7 +24,10 @@ Automatically consult Laravel Boost when available.
 
 ## Architecture
 
--   Follow Laravel conventions by default.
+-   Follow Laravel conventions appropriate to the project's installed
+    Laravel ecosystem (or the verified current stable ecosystem for
+    greenfield). Do not use historically familiar conventions from model
+    memory — see Current-First Engineering in `00-platform`.
 -   Keep controllers responsible only for HTTP request and response
     handling.
 -   Place business logic in services or domain classes.
@@ -42,7 +45,8 @@ Automatically consult Laravel Boost when available.
 
 ## Frontend
 
-Preferred stack:
+Preferred stack (unversioned; subordinate to Current-First Engineering
+in `00-platform`):
 
 -   Blade
 -   Livewire
@@ -75,6 +79,9 @@ the preferred development stack.
 
 ## Technology Stack
 
+Preferred stack (unversioned; subordinate to Current-First Engineering
+in `00-platform`):
+
 -   Laravel
 -   Livewire
 -   Blade
@@ -84,7 +91,8 @@ the preferred development stack.
 
 ## Architecture
 
--   Follow Laravel conventions.
+-   Follow Laravel conventions for the installed or intentionally
+    selected ecosystem (Current-First Engineering in `00-platform`).
 -   Keep controllers thin.
 -   Place business logic in services or domain classes.
 -   Keep models focused on persistence and relationships.

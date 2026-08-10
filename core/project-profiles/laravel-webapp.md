@@ -7,6 +7,10 @@ the preferred development stack.
 
 ## Technology Stack
 
+Preferred stack (unversioned; subordinate to Current-First Engineering
+in `00-platform` — establish installed or current stable versions before
+implementation):
+
 -   Laravel
 -   Livewire
 -   Blade
@@ -16,7 +20,8 @@ the preferred development stack.
 
 ## Architecture
 
--   Follow Laravel conventions.
+-   Follow Laravel conventions for the installed or intentionally
+    selected ecosystem (Current-First Engineering in `00-platform`).
 -   Keep controllers thin.
 -   Place business logic in services or domain classes.
 -   Keep models focused on persistence and relationships.

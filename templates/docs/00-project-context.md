@@ -20,7 +20,12 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 
 ## Key Constraints
 
-<!-- Non-negotiable technical, business, or operational constraints. -->
+- Current-first engineering: establish installed or current stable
+  versions and official docs for those versions before relying on
+  historical model knowledge. Do not upgrade an existing stack merely
+  because newer versions exist (see `.cursor/rules/00-platform.mdc`).
+
+<!-- Additional non-negotiable technical, business, or operational constraints. -->
 
 ## Where to Look
 

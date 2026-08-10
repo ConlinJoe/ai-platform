@@ -14,7 +14,10 @@ and consistent with the existing codebase.
 ## General Rules
 
 -   Follow the project's established architecture.
--   Prefer existing patterns over creating new ones.
+-   Prefer patterns already present in the project over inventing new ones.
+-   For versions, libraries, frameworks, APIs, and implementation patterns,
+    follow Current-First Engineering in `00-platform` — do not default to
+    historically common patterns from model memory.
 -   Keep implementations focused on the requested task.
 -   Do not introduce unnecessary abstractions.
 -   Do not perform unrelated refactoring.

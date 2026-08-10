@@ -29,6 +29,95 @@ consistent with the existing project architecture.
     refactoring.
 -   Keep changes focused on the requested task.
 
+## Current-First Engineering
+
+Historical model knowledge must not be treated as the primary source of
+truth when the current environment or authoritative current documentation
+can resolve the question.
+
+### Source Priority (Technical Truth)
+
+When determining versions, APIs, configuration, and implementation
+patterns, prefer in this order:
+
+1.  Actual project source/environment
+2.  Lock files and installed versions
+3.  Official documentation for the installed or intentionally selected
+    version
+4.  Official release notes / migration guides
+5.  Existing project contracts and ADRs
+6.  Established project conventions
+7.  Historical model knowledge
+
+The actual environment establishes technical reality. Official
+documentation must correspond to the installed or intentionally
+selected version — not merely the newest published guidance.
+
+Contracts and ADRs govern intentional project decisions. Current
+official documentation does not silently override an intentional ADR
+merely because a newer approach exists. If an ADR or contract conflicts
+with the actual environment, compatibility, security, or technical
+reality, surface the conflict; do not silently override either side.
+
+Do not create or maintain a copied library of framework documentation.
+Establish current context dynamically. Once the environment and relevant
+version behavior are established, do not force unnecessary documentation
+lookups for trivial details. Apply judgment: the goal is correctness,
+not bureaucracy.
+
+### Existing Projects
+
+Current-First means establish current reality first — not make everything
+latest. Do not automatically upgrade an existing project.
+
+For an existing project, the installed environment is the starting point.
+Use current best practices appropriate to those installed versions. Do
+not upgrade frameworks, libraries, runtimes, configuration architecture,
+or dependencies merely because newer versions exist. Upgrades require
+explicit user direction or approval under platform Safety rules.
+
+1.  Inspect the actual project/environment.
+2.  Determine installed versions from manifests, lock files, installed
+    packages, runtime versions, and existing configuration.
+3.  Understand the architecture and conventions already in use.
+4.  Consult current official documentation for those installed versions
+    when implementation details, APIs, best practices, or compatibility
+    matter.
+5.  Identify deprecated, superseded, or incompatible historical patterns.
+6.  Implement according to the project's actual versions and current best
+    practices for those versions.
+7.  Use historical/common model knowledge only after the above context
+    has been established.
+
+### Greenfield Projects
+
+1.  Determine the current stable versions of the relevant ecosystem
+    before choosing architecture or implementation patterns.
+2.  Consult authoritative official documentation for current installation
+    guidance, recommended architecture, APIs, configuration,
+    compatibility, and breaking changes.
+3.  Select versions intentionally, including compatibility constraints
+    between dependencies.
+4.  Establish the project environment.
+5.  Implement using current best practices for the selected versions.
+6.  Do not default to historically common patterns simply because they
+    are familiar.
+
+### New Dependencies
+
+If a new library, framework, package, MCP server, tool, or dependency
+may be useful:
+
+1.  Do not rely solely on model memory.
+2.  Determine whether the project already provides the capability.
+3.  Verify the proposed dependency is current, maintained, compatible,
+    and appropriate.
+4.  Review its current official documentation before integrating it.
+5.  Prefer established platform/project dependencies when they solve
+    the problem adequately.
+6.  Do not add dependencies unnecessarily.
+7.  Do not modify dependency manifests or configuration without approval.
+
 ## Safety
 
 Never:

@@ -16,7 +16,9 @@ and ChatGPT export support.
     rules, export script, and documentation templates into the target project.
 3.  Customize `docs/00-project-context.md` and foundational contracts.
 4.  Restore required project skills (handled by bootstrap).
-5.  Verify the development stack.
+5.  Current-First checkpoint: establish the current stable ecosystem and
+    compatibility, then intentionally select the environment before
+    scaffolding or implementation.
 6.  Export initial ChatGPT context and upload to your ChatGPT Project.
 7.  Begin implementation.
 
