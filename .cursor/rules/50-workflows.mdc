@@ -11,16 +11,28 @@ and ChatGPT export support.
 
 ## Checklist
 
-1.  Select the appropriate project profile from `core/project-profiles/`.
-2.  Run `scripts/bootstrap-project.sh` from the AI Platform repository to link
-    rules, export script, and documentation templates into the target project.
-3.  Customize `docs/00-project-context.md` and foundational contracts.
-4.  Restore required project skills (handled by bootstrap).
-5.  Current-First checkpoint: establish the current stable ecosystem and
-    compatibility, then intentionally select the environment before
-    scaffolding or implementation.
-6.  Export initial ChatGPT context and upload to your ChatGPT Project.
-7.  Begin implementation.
+1.  Select the appropriate project profile from `core/project-profiles/` and
+    create/scaffold the project. Choose the stack intentionally; once
+    scaffolded, treat the installed environment as the starting point.
+2.  Bootstrap AI Platform infrastructure into the project:
+    - Preferred: from the project root, run `bootstrap-ai` (or
+      `scripts/bootstrap-project.sh` with the project path).
+    - Fallback: run `scripts/bootstrap-project.sh` from the AI Platform
+      repository and supply the target path when prompted.
+3.  Establish project-specific documentation contracts **before** substantive
+    feature development. Bootstrap installs templates and shared
+    infrastructure only; it does not populate project truth.
+4.  Export initial ChatGPT context and upload to your ChatGPT Project.
+5.  Begin implementation.
+
+## Bootstrap Target Resolution
+
+`scripts/bootstrap-project.sh` resolves the target project as follows:
+
+1. Explicit path argument, if supplied
+2. Current working directory (`$PWD`) when invoked from outside the AI
+   Platform repository
+3. Interactive prompt as the fallback
 
 ## Bootstrap Provides
 
@@ -31,6 +43,28 @@ Running bootstrap on a target project:
 -   Copies documentation templates when `docs/README.md` does not exist
 -   Adds `.build/` to `.gitignore` when missing
 -   Restores required project skills
+
+Bootstrap is safe to re-run on an already-bootstrapped project.
+
+## Post-Bootstrap: Establish Project Context
+
+After bootstrap, an agent (or human) must inspect the **actual** project and
+establish or update project-specific documentation contracts:
+
+1. Inspect the existing project structure, installed environment,
+   dependencies, architecture, and any available documentation.
+2. Fill or update `docs/00-project-context.md` and foundational contracts so
+   they describe this project — not generic platform assumptions or leftover
+   template placeholders.
+3. Follow Current-First Engineering in `00-platform`:
+   - Existing projects: installed environment is the starting point.
+   - Newly scaffolded projects: respect the selected/installed stack.
+   - Do not upgrade dependencies merely because newer versions exist;
+     upgrades require explicit direction or approval under platform Safety
+     rules.
+
+Do not begin substantive feature work while project contracts still contain
+only unfilled template placeholders.
 
 ## Initial Documentation Contracts
 

@@ -12,16 +12,28 @@ MISSING_SKILLS=()
 PRESENT_SKILLS=()
 
 if [[ ! -d "${RULES_DIR}" ]] || [[ ! -f "${RULES_DIR}/00-platform.mdc" ]]; then
-  echo "Error: This script must be run from the AI platform repository." >&2
+  echo "Error: AI Platform rules not found." >&2
   echo "Expected rules at: ${RULES_DIR}" >&2
+  echo "This script must live inside the AI Platform repository." >&2
   exit 1
 fi
 
-read -r -p "Enter target project path: " TARGET_INPUT
-
-if [[ -z "${TARGET_INPUT}" ]]; then
-  echo "Error: Target project path is required." >&2
-  exit 1
+# Target resolution priority:
+# 1. Explicit path argument
+# 2. Current working directory when invoked outside the AI Platform repo
+# 3. Interactive prompt (fallback)
+TARGET_INPUT=""
+if [[ $# -ge 1 && -n "${1:-}" ]]; then
+  TARGET_INPUT="$1"
+elif [[ "${PWD}" != "${AI_REPO}" ]]; then
+  TARGET_INPUT="${PWD}"
+  echo "No target path supplied; using current directory: ${TARGET_INPUT}"
+else
+  read -r -p "Enter target project path: " TARGET_INPUT
+  if [[ -z "${TARGET_INPUT}" ]]; then
+    echo "Error: Target project path is required." >&2
+    exit 1
+  fi
 fi
 
 if [[ ! -d "${TARGET_INPUT}" ]]; then
@@ -30,6 +42,14 @@ if [[ ! -d "${TARGET_INPUT}" ]]; then
 fi
 
 TARGET_PROJECT="$(cd "${TARGET_INPUT}" && pwd)"
+
+if [[ "${TARGET_PROJECT}" == "${AI_REPO}" ]]; then
+  echo "Error: Refusing to bootstrap the AI Platform repository itself." >&2
+  echo "Bootstrap installs platform infrastructure into other projects." >&2
+  echo "Run from a project root, or pass another project path." >&2
+  exit 1
+fi
+
 TARGET_RULES_DIR="${TARGET_PROJECT}/.cursor/rules"
 TARGET_SKILLS_DIR="${TARGET_PROJECT}/.agents/skills"
 TARGET_SKILLS_LOCK="${TARGET_PROJECT}/skills-lock.json"
@@ -162,6 +182,7 @@ bootstrap_docs_templates() {
   mkdir -p "${target_docs}"
   cp -R "${DOCS_TEMPLATES_DIR}/." "${target_docs}/"
   echo "Copied documentation templates to ${target_docs}/"
+  echo "Templates are placeholders — establish project-specific contracts next."
 }
 
 ensure_gitignore_build() {
@@ -307,11 +328,27 @@ restore_skills() {
     fi
   fi
 
+  # Skill install may rewrite skills-lock.json. Because the target lock is a
+  # symlink into the AI Platform, snapshot and restore the platform file so
+  # project bootstrap cannot mutate platform skill pins.
+  local lock_snapshot
+  lock_snapshot="$(mktemp)"
+  cp "${SKILLS_LOCK}" "${lock_snapshot}"
+
   echo "Running: npx skills experimental_install"
+  local install_status=0
   (
     cd "${TARGET_PROJECT}"
     npx skills experimental_install
-  )
+  ) || install_status=$?
+
+  if ! cmp -s "${SKILLS_LOCK}" "${lock_snapshot}"; then
+    echo "Warning: Skill install modified AI Platform skills-lock.json via symlink; restoring original." >&2
+    cp "${lock_snapshot}" "${SKILLS_LOCK}"
+  fi
+  rm -f "${lock_snapshot}"
+
+  return "${install_status}"
 }
 
 # ---------------------------------------------------------------------------
@@ -489,6 +526,10 @@ run_verification() {
 
   if [[ "${rule_failures}" -eq 0 && "${skill_failures}" -eq 0 && "${script_failures}" -eq 0 && "${ai_failures}" -eq 0 ]]; then
     echo "Bootstrap complete. Rules, skills, and export script are available in the target project."
+    echo ""
+    echo "Next: establish project-specific documentation contracts from the"
+    echo "installed project reality before substantive feature work."
+    echo "See .cursor/rules/50-workflows.mdc (New Project Workflow)."
     return 0
   fi
 
