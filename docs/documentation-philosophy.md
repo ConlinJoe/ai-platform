@@ -136,6 +136,7 @@ The user resolves the conflict before work continues.
 | `feature` | User-visible or API feature behavior | Regularly |
 | `adr` | Single architectural or technical decision | Immutable history; supersede instead of edit |
 | `planning` | Roadmaps, spikes, temporary plans | Temporary; not source of truth for implementation |
+| `status` | Current implementation progress and readiness | Snapshot; not architectural authority |
 
 **Planning documents** must never be treated as implementation authority.
 When a plan is executed, its durable truths move into foundational, engine,

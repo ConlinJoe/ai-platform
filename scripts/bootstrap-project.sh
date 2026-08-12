@@ -7,6 +7,9 @@ AI_REPO="$(cd "${SCRIPT_DIR}/.." && pwd)"
 RULES_DIR="${AI_REPO}/.cursor/rules"
 SKILLS_LOCK="${AI_REPO}/skills-lock.json"
 
+# shellcheck source=lib/project-capabilities.sh
+source "${SCRIPT_DIR}/lib/project-capabilities.sh"
+
 REQUIRED_SKILLS=()
 MISSING_SKILLS=()
 PRESENT_SKILLS=()
@@ -55,7 +58,11 @@ TARGET_SKILLS_DIR="${TARGET_PROJECT}/.agents/skills"
 TARGET_SKILLS_LOCK="${TARGET_PROJECT}/skills-lock.json"
 TARGET_SCRIPTS_DIR="${TARGET_PROJECT}/scripts"
 EXPORT_SCRIPT="${AI_REPO}/scripts/export-chatgpt-context.sh"
+DOCTOR_SCRIPT="${AI_REPO}/scripts/doctor.sh"
 DOCS_TEMPLATES_DIR="${AI_REPO}/templates/docs"
+BROWSER_QA_TEMPLATE="${AI_REPO}/templates/docs/contracts/features/browser-qa.md"
+RECONCILIATION_TEMPLATE="${AI_REPO}/templates/existing-project/platform-reconciliation.md"
+BOOTSTRAP_MODE=""
 
 echo ""
 echo "=== AI Platform Bootstrap ==="
@@ -128,16 +135,27 @@ link_export_script() {
     return 1
   fi
 
-  mkdir -p "${TARGET_SCRIPTS_DIR}"
+  link_platform_script "${EXPORT_SCRIPT}" "export-chatgpt-context.sh"
+}
 
-  local link_path="${TARGET_SCRIPTS_DIR}/export-chatgpt-context.sh"
+link_platform_script() {
+  local source_script="$1"
+  local name="$2"
+  local link_path="${TARGET_SCRIPTS_DIR}/${name}"
+
+  if [[ ! -f "${source_script}" ]]; then
+    echo "Error: Script not found at ${source_script}" >&2
+    return 1
+  fi
+
+  mkdir -p "${TARGET_SCRIPTS_DIR}"
 
   if [[ -L "${link_path}" ]]; then
     local current_target
     current_target="$(readlink "${link_path}")"
-    if [[ "${current_target}" != "${EXPORT_SCRIPT}" ]]; then
-      ln -sf "${EXPORT_SCRIPT}" "${link_path}"
-      echo "Updated link: ${link_path} -> ${EXPORT_SCRIPT}"
+    if [[ "${current_target}" != "${source_script}" ]]; then
+      ln -sf "${source_script}" "${link_path}"
+      echo "Updated link: ${link_path} -> ${source_script}"
     else
       echo "Already linked: ${link_path}"
     fi
@@ -145,17 +163,23 @@ link_export_script() {
     read -r -p "Real file exists at ${link_path}. Replace with symlink? [y/N] " confirm
     if [[ "${confirm}" =~ ^[Yy]$ ]]; then
       rm "${link_path}"
-      ln -s "${EXPORT_SCRIPT}" "${link_path}"
-      echo "Replaced with link: ${link_path} -> ${EXPORT_SCRIPT}"
+      ln -s "${source_script}" "${link_path}"
+      echo "Replaced with link: ${link_path} -> ${source_script}"
     else
       echo "Skipped: ${link_path}"
     fi
   else
-    ln -s "${EXPORT_SCRIPT}" "${link_path}"
-    echo "Linked: ${link_path} -> ${EXPORT_SCRIPT}"
+    ln -s "${source_script}" "${link_path}"
+    echo "Linked: ${link_path} -> ${source_script}"
   fi
 
-  chmod +x "${EXPORT_SCRIPT}"
+  chmod +x "${source_script}"
+}
+
+link_doctor_script() {
+  echo ""
+  echo "--- Linking Doctor Script ---"
+  link_platform_script "${DOCTOR_SCRIPT}" "doctor.sh"
 }
 
 # ---------------------------------------------------------------------------
@@ -172,17 +196,70 @@ bootstrap_docs_templates() {
   fi
 
   local target_docs="${TARGET_PROJECT}/docs"
+  BOOTSTRAP_MODE="$(project_bootstrap_mode "${TARGET_PROJECT}")"
 
-  if [[ -f "${target_docs}/README.md" ]]; then
-    echo "Documentation index already exists: ${target_docs}/README.md"
-    echo "Skipping template copy to avoid overwriting project docs."
+  if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
+    echo "Existing project: documentation index already present."
+    echo "Not overwriting project docs. Reconciling missing drafts only."
+    add_missing_profile_templates
     return 0
   fi
 
   mkdir -p "${target_docs}"
   cp -R "${DOCS_TEMPLATES_DIR}/." "${target_docs}/"
   echo "Copied documentation templates to ${target_docs}/"
+
+  if project_is_laravel_webapp "${TARGET_PROJECT}"; then
+    echo "Laravel web application: keeping draft browser-QA contract."
+    echo "Register docs/contracts/features/browser-qa.md in docs/README.md."
+  else
+    rm -f "${target_docs}/contracts/features/browser-qa.md"
+    echo "Non-browser-capable profile: omitted Playwright browser-QA template."
+  fi
+
   echo "Templates are placeholders — establish project-specific contracts next."
+}
+
+copy_if_missing() {
+  local source="$1"
+  local dest="$2"
+  local label="$3"
+
+  if [[ ! -f "${source}" ]]; then
+    echo "Warning: template missing: ${source}" >&2
+    return 0
+  fi
+
+  if [[ -e "${dest}" ]]; then
+    echo "Already present: ${dest}"
+    return 0
+  fi
+
+  mkdir -p "$(dirname "${dest}")"
+  cp "${source}" "${dest}"
+  echo "Added draft ${label}: ${dest}"
+  echo "Fill from this project's reality. Do not treat the draft as approval."
+}
+
+add_missing_profile_templates() {
+  local target_docs="${TARGET_PROJECT}/docs"
+
+  copy_if_missing \
+    "${AI_REPO}/templates/docs/99-project-status.md" \
+    "${target_docs}/99-project-status.md" \
+    "project status"
+
+  if project_is_laravel_webapp "${TARGET_PROJECT}"; then
+    copy_if_missing \
+      "${BROWSER_QA_TEMPLATE}" \
+      "${target_docs}/contracts/features/browser-qa.md" \
+      "browser QA contract"
+
+    copy_if_missing \
+      "${RECONCILIATION_TEMPLATE}" \
+      "${target_docs}/contracts/foundational/platform-reconciliation.md" \
+      "platform reconciliation"
+  fi
 }
 
 ensure_gitignore_build() {
@@ -201,6 +278,47 @@ ensure_gitignore_build() {
 
   printf '\n# ChatGPT context export output\n.build/\n' >> "${gitignore}"
   echo "Added .build/ to ${gitignore}"
+}
+
+ensure_playwright_gitignore() {
+  if ! project_is_laravel_webapp "${TARGET_PROJECT}"; then
+    return 0
+  fi
+
+  echo ""
+  echo "--- Playwright artifact gitignore (Laravel web app) ---"
+
+  local gitignore="${TARGET_PROJECT}/.gitignore"
+  if [[ ! -f "${gitignore}" ]]; then
+    touch "${gitignore}"
+  fi
+
+  local added=0
+  if ! grep -qE '(^|/)playwright-report/?$' "${gitignore}"; then
+    printf '\n# Playwright (Mode A browser QA)\n/playwright-report/\n' >> "${gitignore}"
+    added=1
+  fi
+  if ! grep -qE '(^|/)test-results/?$' "${gitignore}"; then
+    if [[ "${added}" -eq 0 ]]; then
+      printf '\n# Playwright (Mode A browser QA)\n' >> "${gitignore}"
+    fi
+    printf '/test-results/\n' >> "${gitignore}"
+    added=1
+  fi
+  if ! grep -qE '(^|/)blob-report/?$' "${gitignore}"; then
+    printf '/blob-report/\n' >> "${gitignore}"
+    added=1
+  fi
+  if ! grep -qE 'playwright/\.cache' "${gitignore}"; then
+    printf '/playwright/.cache/\n' >> "${gitignore}"
+    added=1
+  fi
+
+  if [[ "${added}" -eq 1 ]]; then
+    echo "Ensured Playwright artifact paths in ${gitignore}"
+  else
+    echo "Playwright artifact paths already listed in .gitignore"
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -302,6 +420,11 @@ restore_skills() {
   echo ""
   echo "--- Restoring Project Skills ---"
 
+  if [[ "${AI_BOOTSTRAP_SKIP_SKILLS:-}" == "1" ]]; then
+    echo "Skipping skill restore (AI_BOOTSTRAP_SKIP_SKILLS=1)."
+    return 0
+  fi
+
   link_skills_lock
 
   detect_skills
@@ -396,6 +519,11 @@ verify_skills() {
   local failures=0
   local skill
 
+  if [[ "${AI_BOOTSTRAP_SKIP_SKILLS:-}" == "1" ]]; then
+    echo "SKIP  Skill verification (AI_BOOTSTRAP_SKIP_SKILLS=1)"
+    return 0
+  fi
+
   if [[ ! -d "${TARGET_SKILLS_DIR}" ]]; then
     echo "FAIL  Target skills directory missing: ${TARGET_SKILLS_DIR}"
     return 1
@@ -428,30 +556,40 @@ verify_skills() {
 }
 
 verify_export_script() {
+  verify_linked_script "${EXPORT_SCRIPT}" "export-chatgpt-context.sh"
+}
+
+verify_doctor_script() {
+  verify_linked_script "${DOCTOR_SCRIPT}" "doctor.sh"
+}
+
+verify_linked_script() {
+  local source_script="$1"
+  local name="$2"
   local failures=0
-  local link_path="${TARGET_SCRIPTS_DIR}/export-chatgpt-context.sh"
+  local link_path="${TARGET_SCRIPTS_DIR}/${name}"
 
   if [[ ! -L "${link_path}" ]]; then
-    echo "FAIL  Export script not linked: ${link_path}"
+    echo "FAIL  Script not linked: ${link_path}"
     failures=$((failures + 1))
     return "${failures}"
   fi
 
   local current_target
   current_target="$(readlink "${link_path}")"
-  if [[ "${current_target}" != "${EXPORT_SCRIPT}" ]]; then
-    echo "FAIL  Export script link target mismatch: ${link_path} -> ${current_target}"
+  if [[ "${current_target}" != "${source_script}" ]]; then
+    echo "FAIL  Script link target mismatch: ${link_path} -> ${current_target}"
     failures=$((failures + 1))
     return "${failures}"
   fi
 
   if [[ ! -x "${link_path}" ]]; then
-    echo "FAIL  Export script is not executable: ${link_path}"
+    echo "FAIL  Script is not executable: ${link_path}"
     failures=$((failures + 1))
     return "${failures}"
   fi
 
-  echo "OK    Export script: export-chatgpt-context.sh"
+  echo "OK    Script: ${name}"
   return "${failures}"
 }
 
@@ -507,11 +645,9 @@ run_verification() {
   echo ""
   echo "Scripts (${TARGET_SCRIPTS_DIR}):"
 
-  if verify_export_script; then
-    script_failures=0
-  else
-    script_failures=$?
-  fi
+  script_failures=0
+  verify_export_script || script_failures=$((script_failures + $?))
+  verify_doctor_script || script_failures=$((script_failures + $?))
 
   echo ""
   echo "AI Platform (${AI_REPO}):"
@@ -525,11 +661,15 @@ run_verification() {
   echo ""
 
   if [[ "${rule_failures}" -eq 0 && "${skill_failures}" -eq 0 && "${script_failures}" -eq 0 && "${ai_failures}" -eq 0 ]]; then
-    echo "Bootstrap complete. Rules, skills, and export script are available in the target project."
+    echo "Bootstrap complete. Rules, skills, and platform scripts are available in the target project."
     echo ""
     echo "Next: establish project-specific documentation contracts from the"
     echo "installed project reality before substantive feature work."
-    echo "See .cursor/rules/50-workflows.mdc (New Project Workflow)."
+    if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
+      echo "Existing project: follow core/prompts/existing-project-bootstrap.md"
+    else
+      echo "See .cursor/rules/50-workflows.mdc (New Project Workflow)."
+    fi
     return 0
   fi
 
@@ -541,13 +681,62 @@ run_verification() {
   return 1
 }
 
+report_capabilities() {
+  echo ""
+  echo "--- Capability diagnosis ---"
+  echo ""
+
+  BOOTSTRAP_MODE="${BOOTSTRAP_MODE:-$(project_bootstrap_mode "${TARGET_PROJECT}")}"
+  echo "Bootstrap mode: ${BOOTSTRAP_MODE}"
+
+  if project_is_laravel "${TARGET_PROJECT}"; then
+    echo "Detected profile: laravel-webapp"
+    if project_uses_livewire "${TARGET_PROJECT}"; then
+      echo "Livewire: declared"
+    else
+      echo "Livewire: not declared (profile still treats this as a Laravel web app)"
+    fi
+
+    local diagnosis
+    diagnosis="$(boost_diagnosis "${TARGET_PROJECT}")"
+    echo "Laravel Boost: ${diagnosis}"
+    echo ""
+    boost_next_steps "${diagnosis}"
+    echo ""
+
+    if playwright_present "${TARGET_PROJECT}"; then
+      echo "Playwright Mode A: present"
+    else
+      echo "Playwright Mode A: expected for this profile, not present yet."
+      echo "Do not add @playwright/test without approval."
+      echo "Policy: AI Platform docs/contracts/features/browser-qa.md"
+    fi
+  else
+    echo "Detected profile: none (not Laravel)."
+    echo "Playwright Mode A is not required."
+    echo "Laravel Boost is not required."
+  fi
+
+  echo ""
+  if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
+    echo "Existing-project next steps: core/prompts/existing-project-bootstrap.md"
+    echo "Document intentional differences; surface open deviations."
+    echo "Do not migrate application code during bootstrap."
+  fi
+}
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
+BOOTSTRAP_MODE="$(project_bootstrap_mode "${TARGET_PROJECT}")"
+
 link_rules
 link_export_script
+link_doctor_script
 bootstrap_docs_templates
 ensure_gitignore_build
+ensure_playwright_gitignore
 restore_skills
+report_capabilities
 run_verification

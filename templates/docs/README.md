@@ -17,6 +17,7 @@ and declares its dependencies in frontmatter.
 | Contract | Type | Status | Source of Truth For |
 | --- | --- | --- | --- |
 | `00-project-context.md` | foundational | active | Project summary for ChatGPT and agents |
+| `99-project-status.md` | status | active | Phase progress and validation (not architectural authority) |
 | `contracts/foundational/vision.md` | foundational | active | Product purpose, goals, constraints |
 | `contracts/foundational/architecture.md` | foundational | active | System structure, major components |
 | `contracts/planning/roadmap.md` | planning | active | Planned work (not implementation authority) |
@@ -30,11 +31,13 @@ Remove or mark deprecated contracts when retired.
 ```mermaid
 flowchart TD
   context[00-project-context.md]
+  status[99-project-status.md]
   vision[contracts/foundational/vision.md]
   architecture[contracts/foundational/architecture.md]
   roadmap[contracts/planning/roadmap.md]
 
   context --> vision
+  status --> context
   architecture --> vision
   roadmap --> vision
 ```

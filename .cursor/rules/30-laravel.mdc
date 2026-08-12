@@ -18,7 +18,12 @@ For tasks involving:
 - Refactoring
 - Testing
 
-Automatically consult Laravel Boost when available.
+Automatically consult Laravel Boost when available. Laravel web
+applications are expected to have Boost; if it is missing, diagnose it
+and continue with Current-First official docs. Do not add Boost to
+user-global MCP. Install Boost only with Laravel's native installer
+(`composer require laravel/boost --dev` then `php artisan boost:install`)
+after approval.
 
 # Laravel Rules
 
@@ -64,11 +69,46 @@ them.
 
 ## Laravel Boost
 
+Laravel web applications are expected to install Boost with Laravel's
+native installer (`composer require laravel/boost --dev`,
+`php artisan boost:install`). Boost owns project `.cursor/mcp.json`.
+The AI Platform diagnoses the capability; it does not write Boost config.
+
 When Laravel Boost is available:
 
 - Use Laravel Boost as the primary source for framework guidance.
 - Prefer Boost recommendations over generic Laravel knowledge.
 - Follow established project patterns unless explicitly directed otherwise.
+
+When Boost is missing, report the gap and use Current-First official
+documentation. Do not invent a platform MCP entry for Boost.
+
+## Browser QA
+
+This profile is browser-capable. Follow the project's
+`docs/contracts/features/browser-qa.md` when present. Platform policy:
+two-layer Mode A (Playwright specs) + Mode B (agentic browser MCP).
+A meaningful Mode B defect should normally become Mode A coverage.
+
+Laravel / Livewire:
+
+- Account for Livewire synchronization; generic `fill()` often does not
+  update `wire:model`.
+- Choose one validation boundary. HTML5 validation can block Livewire-owned
+  validation.
+- Validation errors must behave correctly as users repair fields.
+- Browser-history resubmission is a real duplicate-creation path on create
+  workflows.
+- Test status transitions and lifecycle workflows, not only CRUD.
+- Name and clean up only test-owned records. Preserve seeded/demo data.
+- Do not drain shared development queues; process only test-owned work.
+- Dashboard/list assertions must identify test-owned records, not global
+  counts.
+- Prefer role/label selectors; sparse `data-testid`.
+- Fake or stub external integrations in browser tests.
+
+The AI Platform repository owns the reusable policy; this project's
+`docs/contracts/features/browser-qa.md` owns commands and coverage.
 
 # Laravel Web Application Profile
 

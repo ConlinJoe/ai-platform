@@ -1,0 +1,35 @@
+---
+description: Browser QA — Playwright Mode A/B, defect-to-regression, data isolation
+globs: e2e/**/*,**/playwright.config.*,**/playwright.config.js,**/playwright.config.ts
+alwaysApply: false
+---
+
+# Browser QA
+
+Follow the project's `docs/contracts/features/browser-qa.md` when present.
+
+Two-layer model: Mode A (deterministic Playwright specs) + Mode B (agentic
+browser MCP). A meaningful Mode B defect should normally become Mode A
+coverage.
+
+## Modes
+
+- **Mode A** — deterministic, project-owned Playwright specs. Workflows and
+  state transitions, not page-load smoke only.
+- **Mode B** — agentic exploration with available browser MCP. Do not merely
+  replay Mode A.
+
+A meaningful Mode B defect should normally become a Mode A regression test.
+
+## Isolation
+
+Test-owned records only. Preserve demo/seed data. Do not drain shared
+queues. Assert against test-owned identity, not global counts.
+
+## Selectors and artifacts
+
+Prefer role/label selectors; sparse `data-testid`. Retain
+trace/screenshot/video on failure. Gitignore generated artifacts and auth
+state.
+
+Do not add Playwright to projects that are not browser-capable.

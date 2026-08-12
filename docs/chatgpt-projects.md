@@ -69,7 +69,11 @@ change.
 New projects bootstrapped via `scripts/bootstrap-project.sh` receive:
 
 - Documentation contract templates under `docs/`
-- A symlink to `scripts/export-chatgpt-context.sh`
+- Symlinks to `scripts/export-chatgpt-context.sh` and `scripts/doctor.sh`
+
+Existing projects keep their docs. Bootstrap adds only missing drafts and
+prints a capability diagnosis (Laravel Boost, Playwright) without installing
+packages.
 
 ## .gitignore
 

@@ -1,4 +1,5 @@
 ---
+description: New and existing project bootstrap, documentation contracts, browser QA loop
 alwaysApply: false
 ---
 
@@ -39,12 +40,35 @@ and ChatGPT export support.
 Running bootstrap on a target project:
 
 -   Links shared Cursor rules into `.cursor/rules/`
--   Links `scripts/export-chatgpt-context.sh`
+-   Links `scripts/export-chatgpt-context.sh` and `scripts/doctor.sh`
 -   Copies documentation templates when `docs/README.md` does not exist
+-   For existing projects (docs index already present): does not overwrite
+    docs; may add missing draft templates (browser QA, reconciliation)
 -   Adds `.build/` to `.gitignore` when missing
+-   For Laravel web apps: ensures Playwright artifact gitignore entries;
+    diagnoses Laravel Boost and Playwright without installing packages
 -   Restores required project skills
 
 Bootstrap is safe to re-run on an already-bootstrapped project.
+It does not run Composer, `boost:install`, or add Playwright.
+
+## New vs existing projects
+
+**New** (no `docs/README.md`): copy documentation templates, including
+`99-project-status.md` and a draft browser-QA contract for Laravel web
+apps. Then establish contracts from the installed scaffold.
+
+**Existing** (docs index present): reconcile, do not clone the platform
+into the app. Follow `core/prompts/existing-project-bootstrap.md`.
+
+- Inspect the actual project first.
+- Keep existing contracts; fill gaps with draft templates only.
+- Reconcile ADRs with real architecture.
+- Document legitimate differences in
+  `docs/contracts/foundational/platform-reconciliation.md`.
+- Surface open deviations (missing Boost, missing Mode A, etc.) — do not
+  silently bless them.
+- Do not migrate or refactor application code during bootstrap.
 
 ## Post-Bootstrap: Establish Project Context
 
@@ -52,7 +76,7 @@ After bootstrap, an agent (or human) must inspect the **actual** project and
 establish or update project-specific documentation contracts:
 
 1. Inspect the existing project structure, installed environment,
-   dependencies, architecture, and any available documentation.
+   dependencies, architecture, MCP, tests, and any available documentation.
 2. Fill or update `docs/00-project-context.md` and foundational contracts so
    they describe this project — not generic platform assumptions or leftover
    template placeholders.
@@ -62,9 +86,22 @@ establish or update project-specific documentation contracts:
    - Do not upgrade dependencies merely because newer versions exist;
      upgrades require explicit direction or approval under platform Safety
      rules.
+4. For Laravel web apps: treat missing Boost as a capability gap (native
+   install, not a platform MCP patch). Treat Playwright Mode A as expected;
+   do not add `@playwright/test` without approval.
 
 Do not begin substantive feature work while project contracts still contain
 only unfilled template placeholders.
+
+## Browser QA loop (browser-capable profiles)
+
+Laravel web applications are browser-capable. After feature work:
+
+IMPLEMENT → application tests → Mode A → Mode B explore → fix → add
+Mode A coverage → re-run until green.
+
+See `core/prompts/browser-qa-loop.md` and
+`docs/contracts/features/browser-qa.md`.
 
 ## Initial Documentation Contracts
 
@@ -79,6 +116,9 @@ Minimum viable contracts:
 
 -   `docs/contracts/foundational/vision.md`
 -   `docs/contracts/foundational/architecture.md`
+
+Laravel web applications also get a draft
+`docs/contracts/features/browser-qa.md`. Other project types do not.
 
 Add engine and feature contracts as the project grows. Do not create the
 legacy four-file layout for new projects.

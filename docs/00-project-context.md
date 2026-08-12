@@ -32,6 +32,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 - Never commit unless explicitly instructed.
 - Do not modify dependencies without approval.
 - Documentation conflicts must surface — never guess or silently override.
+- Laravel Boost is project-native; the platform diagnoses it and does not
+  write Boost MCP config.
+- Playwright Mode A is required only for browser-capable profiles (Laravel
+  web applications), not every repository.
 
 ## Where to Look
 
@@ -40,4 +44,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Documentation standard | `documentation-philosophy.md` |
 | ChatGPT export workflow | `chatgpt-projects.md` |
 | Cursor rules | `.cursor/rules/` |
-| New project setup | `scripts/bootstrap-project.sh` |
+| New / existing project setup | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
+| Browser QA | `contracts/features/browser-qa.md` |
+| Laravel Boost | `contracts/features/laravel-boost.md` |
+| MCP ownership | `mcp/README.md` |

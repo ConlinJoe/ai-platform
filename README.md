@@ -25,10 +25,10 @@ keeping project-specific context inside each individual repository.
 -   `.agents/` - Third-party skills (managed via `skills-lock.json`)
 -   `agents/` - Specialized AI agents
 -   `core/` - Project profiles, prompts, and custom skills
--   `core/project-profiles/` - Stack-specific project profiles
 -   `scripts/` - Automation scripts (`bootstrap-project.sh`, `export-chatgpt-context.sh`,
-    `update-skills.sh`, `doctor.sh`)
--   `mcp/` - MCP-specific guidance
+    `update-skills.sh`, `doctor.sh`, `test-platform.sh`)
+-   `mcp/` - MCP ownership guidance (Boost is project-native; browser MCP is
+    typically user-global)
 -   `templates/` - Project templates
 -   `docs/` - Platform documentation
 -   `experiments/` - Experimental work
@@ -64,5 +64,9 @@ single responsibilities, metadata, and declared dependencies.
 Agents load only contracts relevant to the current task. Every
 implementation must update affected contracts, explicitly state why no update
 is required, or stop and report a documentation conflict.
+
+Browser-capable Laravel web apps follow two-layer browser QA
+(`docs/contracts/features/browser-qa.md`). Laravel Boost is required and
+project-native (`docs/contracts/features/laravel-boost.md`).
 
 See `docs/documentation-philosophy.md` and `docs/chatgpt-projects.md`.
