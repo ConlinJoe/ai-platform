@@ -1,5 +1,5 @@
 ---
-description: General coding standards and development philosophy
+description: General coding standards, development philosophy, and Tailwind composition
 globs: **/*.{php,js,ts,tsx,jsx,vue,svelte,css,scss},**/*.blade.php
 alwaysApply: false
 ---
@@ -22,6 +22,45 @@ and consistent with the existing codebase.
 -   Do not introduce unnecessary abstractions.
 -   Do not perform unrelated refactoring.
 -   Optimize for readability over cleverness.
+
+## Tailwind
+
+When the project uses Tailwind, treat it as a compositional system.
+Use native utilities and theme primitives. Do not reconstruct first-class
+Tailwind behavior by hand, and do not invent a parallel CSS abstraction
+layer on top of Tailwind.
+
+This standard takes precedence over vendor-skill Tailwind/CSS shortcuts
+(Instruction Priority in `00-platform`).
+
+Current-First Engineering in `00-platform` chooses the mechanism: inspect
+the installed Tailwind version, then use that version's current official
+configuration. On v4, that is CSS-first architecture (`@theme`, and other
+current v4 APIs). On v3, that is the v3 config/theme conventions. Do not
+upgrade Tailwind merely to satisfy this standard.
+
+- Start with the most appropriate native utility or primitive: `container`,
+  spacing scale, colors, typography, font families, radii, shadows,
+  transitions, breakpoints, and other first-class Tailwind APIs.
+- Compose utilities for local differences. Override only the property that
+  actually differs (`container max-w-5xl`).
+- Configure repeated site-wide design decisions once, using that Tailwind
+  version's theme/configuration — not by scattering reconstructed class
+  strings through templates.
+- Arbitrary values are valid for genuine design exceptions
+  (`container max-w-[1200px]`), not as a substitute for native utilities
+  or central theme configuration.
+- Do not add custom CSS or a semantic class merely because several
+  utilities appear together. Prefer `container max-w-5xl` over a one-off
+  `.narrow-wrap` class for that combination.
+- Avoid custom CSS when native composition already solves the problem.
+
+Default site content wrapper: prefer `container`, with the site's normal
+container behavior configured centrally, over reconstructing
+`mx-auto w-full max-w-[…] px-… lg:px-…` at every call site.
+
+Apply this to new and touched markup. Do not mass-refactor existing
+reconstructed utilities unless the task is to adopt the standard.
 
 ## Safety
 
