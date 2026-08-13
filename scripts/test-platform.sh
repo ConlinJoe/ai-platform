@@ -92,6 +92,19 @@ EOF
   fi
 }
 
+write_radicle_composer() {
+  local dir="$1"
+  cat > "${dir}/composer.json" <<'EOF'
+{
+  "require": {
+    "php": "^8.2",
+    "roots/acorn": "^5.0",
+    "roots/radicle": "*"
+  }
+}
+EOF
+}
+
 WORKDIR="${AI_REPO}/.build/platform-tests"
 LOGDIR="${WORKDIR}/logs"
 rm -rf "${WORKDIR}"
@@ -146,6 +159,8 @@ assert_grep "Playwright Mode A is not required" ${LOGDIR}/boot-generic.log \
   "bootstrap does not require Playwright for generic projects"
 assert_grep "Laravel Boost is not required" ${LOGDIR}/boot-generic.log \
   "bootstrap does not require Boost for generic projects"
+assert_grep "Detected profile: none" ${LOGDIR}/boot-generic.log \
+  "bootstrap does not assign laravel-webapp or roots-radicle to generic projects"
 
 if "${AI_REPO}/scripts/doctor.sh" "${GENERIC}" >${LOGDIR}/doctor-generic.log 2>&1; then
   pass "doctor on generic project exits 0"
@@ -159,6 +174,58 @@ assert_grep "Boost not applicable" ${LOGDIR}/doctor-generic.log \
   "doctor does not require Boost on generic projects"
 
 echo ""
+echo "--- New Roots/Radicle project ---"
+RADICLE_NEW="${WORKDIR}/radicle-new"
+mkdir -p "${RADICLE_NEW}"
+write_radicle_composer "${RADICLE_NEW}"
+
+"${AI_REPO}/scripts/bootstrap-project.sh" "${RADICLE_NEW}" >${LOGDIR}/boot-radicle-new.log 2>&1
+
+assert_file "${RADICLE_NEW}/docs/README.md" "Radicle project received docs templates"
+assert_missing "${RADICLE_NEW}/docs/contracts/features/browser-qa.md" \
+  "Radicle project did not receive browser-QA template"
+assert_not_grep 'playwright-report' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore has no Playwright artifacts"
+assert_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-radicle-new.log \
+  "bootstrap detects roots-radicle profile"
+assert_not_grep "Detected profile: laravel-webapp" ${LOGDIR}/boot-radicle-new.log \
+  "bootstrap does not treat Radicle as laravel-webapp"
+assert_grep "Playwright Mode A is not required" ${LOGDIR}/boot-radicle-new.log \
+  "bootstrap does not require Playwright for Radicle"
+assert_grep "Laravel Boost is not required" ${LOGDIR}/boot-radicle-new.log \
+  "bootstrap does not require Boost for Radicle"
+
+if "${AI_REPO}/scripts/doctor.sh" "${RADICLE_NEW}" >${LOGDIR}/doctor-radicle-new.log 2>&1; then
+  pass "doctor on Radicle project exits 0"
+else
+  fail "doctor on Radicle project exits 0"
+  cat ${LOGDIR}/doctor-radicle-new.log
+fi
+assert_grep "Playwright Mode A not required" ${LOGDIR}/doctor-radicle-new.log \
+  "doctor does not force Playwright on Radicle projects"
+assert_grep "Boost not applicable" ${LOGDIR}/doctor-radicle-new.log \
+  "doctor does not require Boost on Radicle projects"
+
+echo ""
+echo "--- Bedrock WordPress without Sage/Acorn ---"
+BEDROCK="${WORKDIR}/bedrock-only"
+mkdir -p "${BEDROCK}"
+cat > "${BEDROCK}/composer.json" <<'EOF'
+{
+  "require": {
+    "php": "^8.2",
+    "roots/wordpress": "^6.8"
+  }
+}
+EOF
+
+"${AI_REPO}/scripts/bootstrap-project.sh" "${BEDROCK}" >${LOGDIR}/boot-bedrock.log 2>&1
+assert_grep "Detected profile: none" ${LOGDIR}/boot-bedrock.log \
+  "Bedrock without Sage/Acorn is not roots-radicle"
+assert_not_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-bedrock.log \
+  "Navi/Radicle profile is not imposed on plain Roots WordPress"
+
+echo ""
 echo "--- New Laravel project without Boost ---"
 LARAVEL_NEW="${WORKDIR}/laravel-new"
 mkdir -p "${LARAVEL_NEW}"
@@ -170,6 +237,10 @@ assert_file "${LARAVEL_NEW}/docs/contracts/features/browser-qa.md" \
   "new Laravel project received browser-QA draft"
 assert_grep 'playwright-report' "${LARAVEL_NEW}/.gitignore" \
   "new Laravel gitignore includes Playwright artifacts"
+assert_grep "Detected profile: laravel-webapp" ${LOGDIR}/boot-laravel-new.log \
+  "bootstrap detects laravel-webapp profile"
+assert_not_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-laravel-new.log \
+  "bootstrap does not treat Laravel as roots-radicle"
 assert_grep "missing_package" ${LOGDIR}/boot-laravel-new.log \
   "bootstrap diagnoses missing Boost package"
 assert_grep "composer require laravel/boost --dev" ${LOGDIR}/boot-laravel-new.log \

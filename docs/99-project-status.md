@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-12
+last_reviewed: 2026-08-13
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -21,6 +21,13 @@ enforcement (bootstrap + doctor). Version 1.1.1.
 ## Progress
 
 - Shared Cursor rules, documentation contracts, and project bootstrap: in use
+- Current-First Engineering and Framework-Native First: platform-wide in
+  `00-platform.mdc`; Tailwind composition is the CSS specialization in
+  `20-coding.mdc`
+- Roots/Radicle/Sage profile: Navi is the preferred navigation integration
+  after Current-First verification. Page/menu provisioning is an explicit
+  idempotent project-native operation driven by each project's contracts,
+  not a universal sitemap.
 - Two-layer browser QA policy: documented and wired into Laravel profile
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented

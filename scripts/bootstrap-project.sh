@@ -711,8 +711,12 @@ report_capabilities() {
       echo "Do not add @playwright/test without approval."
       echo "Policy: AI Platform docs/contracts/features/browser-qa.md"
     fi
+  elif project_is_roots_radicle "${TARGET_PROJECT}"; then
+    echo "Detected profile: roots-radicle"
+    echo "Playwright Mode A is not required by this profile."
+    echo "Laravel Boost is not required."
   else
-    echo "Detected profile: none (not Laravel)."
+    echo "Detected profile: none (not Laravel or Roots/Radicle/Sage)."
     echo "Playwright Mode A is not required."
     echo "Laravel Boost is not required."
   fi

@@ -1,0 +1,152 @@
+---
+description: Roots/Radicle/Sage WordPress architecture, Log1x Navi navigation, and WordPress page/menu provisioning
+globs: functions.php,**/functions.php,app/setup.php,app/filters.php,**/wp-cli.yml,theme.json,config/theme.php,app/View/Composers/**/*.php,resources/views/sections/**/*.blade.php,resources/views/partials/**/*.blade.php
+alwaysApply: false
+---
+
+# Roots / Radicle / Sage
+
+Apply this rule **only** to Roots Radicle applications and Sage themes
+(typically with Acorn). Do **not** apply it to Laravel web applications,
+plain WordPress without this stack, React, Rails, or other non-WordPress
+projects.
+
+For tasks involving WordPress menus, navigation, Sage/Blade templates,
+Acorn, or initial page/menu architecture on this stack, follow this
+profile. The platform copy lives at
+`core/project-profiles/roots-radicle.md`.
+
+# Architecture
+
+- Follow Roots / WordPress / Sage conventions for the installed or
+  intentionally selected ecosystem (Current-First Engineering in
+  `00-platform`).
+- Follow Framework-Native First in `00-platform`.
+- WordPress remains the source of truth for content, pages, menus, menu
+  locations, menu items, hierarchy, labels, and URLs.
+- Navi adapts WordPress navigation into structured data for Sage/Blade.
+- Sage/Blade owns presentation.
+- A project-native provisioner may establish reproducible
+  project-defined WordPress structure. It is not a runtime CMS.
+- Acorn provides the Laravel-based application layer inside WordPress.
+
+# Navigation
+
+Log1x Navi (`https://github.com/Log1x/navi`) is the preferred navigation
+integration for this stack. That preference is subordinate to
+Current-First Engineering in `00-platform`.
+
+Before installing or implementing Navi, verify that it is current,
+maintained, compatible with the project's installed WordPress / Sage /
+Acorn / PHP environment, and still appropriate. Inspect the installed
+Navi version (when present) and consult that version's current official
+documentation for APIs, generators, and integration patterns. Do not
+hard-code historical Navi APIs from model memory.
+
+If the ecosystem changes materially and a better framework-native
+approach supersedes Navi, surface that rather than blindly enforcing
+this historical preference.
+
+## Ownership
+
+WordPress owns navigation state (menus, locations, items, hierarchy,
+labels, URLs). Navi adapts that state into structured data for
+Sage/Blade. Blade owns markup and presentation.
+
+Do not default to statically coded navigation arrays, duplicated
+desktop/mobile navigation sources, custom NavWalker implementations,
+custom menu abstractions, or hard-coded URLs for normal WordPress
+navigation when WordPress and Navi already provide the capability.
+
+## When Navi is appropriate
+
+1. Use the currently supported Navi API for the installed version.
+2. Use registered WordPress menu locations.
+3. Build navigation from the WordPress menu/location rather than static
+   configuration.
+4. Use Navi's native hierarchy and active-state capabilities rather than
+   recreating them.
+5. Use Navi's supported Sage/Acorn integration and generators where
+   appropriate.
+6. Drive desktop and mobile navigation from the same WordPress/Navi
+   source.
+7. Let Blade/Tailwind control markup and presentation.
+8. Use Alpine only where interaction genuinely requires it.
+9. Do not introduce another navigation package or custom Walker unless
+   Navi or native WordPress cannot meet a concrete requirement.
+
+## New projects
+
+If navigation functionality is required and Navi is not installed:
+verify current compatibility and maintenance, then recommend/use Navi.
+Do not modify Composer manifests without approval.
+
+## Existing projects
+
+Inspect the navigation architecture first. If Navi is already installed,
+use it correctly for the installed version. Do not replace a working
+intentional navigation architecture merely to standardize unless the
+task calls for it. Do not upgrade Navi automatically.
+
+# Page and menu provisioning
+
+This rule defines **how** project-defined WordPress structure is
+established. It does **not** define a universal sitemap. Individual
+project contracts own pages, slugs, hierarchy, menu locations, menu
+names, items, labels, and other initial structural content.
+
+When a project contract defines that architecture, prefer an explicit,
+idempotent, project-native provisioner. Determine the current
+framework-native implementation from the installed WordPress / Radicle /
+Acorn versions. Do not hard-code a historical command pattern.
+
+Prefer a deliberate developer CLI command or setup task. Do not turn the
+provisioner into a runtime CMS.
+
+Keep responsibilities separate: WordPress owns navigation/content; Navi
+adapts it for Sage/Blade; Blade presents; the provisioner establishes
+reproducible project-defined structure.
+
+## Required behavior
+
+1. Create only missing pages.
+2. Reuse existing pages (match by slug or a contract-defined stable id).
+3. Preserve existing IDs.
+4. Preserve manually edited content unless the contract marks it as
+   provisioner-owned.
+5. Establish intended parent/child relationships.
+6. Register menu locations in theme/application code; the provisioner
+   reuses them.
+7. Create or reuse WordPress menus.
+8. Use WordPress page menu items for internal pages, not custom URLs.
+9. Establish contract-defined menu hierarchy and labels.
+10. Assign menus to their intended locations.
+11. Be safe to re-run without duplicating pages or menu items.
+12. Report conflicts; do not destructively replace user-managed
+    structure.
+
+Do not create pages on normal web requests, write the database directly,
+depend on manual wp-admin for reproducible structure, maintain a
+duplicate static nav source when WordPress owns navigation, overwrite
+editorial content casually, or impose one project's sitemap on another.
+
+## New projects
+
+Establish this provisioning architecture. Do not invent pages until a
+project contract defines them. Once approved, use the provisioner rather
+than wp-admin. If the initial contract already defines the sitemap and
+the app environment is operational, the workflow may invoke the approved
+provisioner. Platform `bootstrap-project.sh` does not provision
+WordPress content.
+
+## Existing projects
+
+Inspect existing page/menu state first. Do not automatically
+re-provision or restructure production content. Adopt this convention
+only when the user asks to standardize or reproducibly manage that
+structure.
+
+# Documentation
+
+Follow the `10-documentation` project rule. Load relevant contracts from
+`docs/README.md` before implementation work.

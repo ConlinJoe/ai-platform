@@ -87,10 +87,12 @@ check_platform() {
 
   check_file "${RULES_DIR}/00-platform.mdc" "Rule 00-platform.mdc"
   check_file "${RULES_DIR}/30-laravel.mdc" "Rule 30-laravel.mdc"
+  check_file "${RULES_DIR}/35-roots.mdc" "Rule 35-roots.mdc"
   check_file "${RULES_DIR}/50-workflows.mdc" "Rule 50-workflows.mdc"
   check_file "${RULES_DIR}/60-browser-qa.mdc" "Rule 60-browser-qa.mdc"
   check_file "${SKILLS_LOCK}" "skills-lock.json"
   check_file "${AI_REPO}/core/project-profiles/laravel-webapp.md" "Laravel webapp profile"
+  check_file "${AI_REPO}/core/project-profiles/roots-radicle.md" "Roots/Radicle/Sage profile"
   check_file "${AI_REPO}/docs/contracts/features/browser-qa.md" "Browser QA contract"
   check_file "${AI_REPO}/docs/contracts/features/laravel-boost.md" "Laravel Boost contract"
   check_file "${AI_REPO}/mcp/README.md" "MCP guidance index"

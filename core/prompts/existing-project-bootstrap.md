@@ -37,3 +37,20 @@ Platform standards + developer preferences + actual project architecture
   without approval.
 - Leave Boost-owned files (`AGENTS.md`, `.cursor/mcp.json`, Boost skills)
   under Boost's installer.
+
+## Roots / Radicle / Sage extras
+
+- This profile is `roots-radicle`. Do not treat the project as
+  `laravel-webapp`.
+- Inspect the navigation architecture and existing page/menu state first.
+  If Log1x Navi is already installed, use it correctly for the installed
+  version.
+- Do not rewrite a working intentional navigation architecture merely to
+  standardize.
+- Do not install or upgrade Navi during bootstrap. Composer changes need
+  approval and Current-First compatibility verification.
+- Do not automatically re-provision or restructure production WordPress
+  content during bootstrap.
+- Adopt the Roots provisioning convention only when the user asks to
+  standardize or reproducibly manage that structure. Project contracts
+  own the sitemap; this profile owns the provisioning method.

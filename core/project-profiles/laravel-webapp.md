@@ -3,7 +3,8 @@
 ## Purpose
 
 This profile applies to standard Laravel web applications built using
-the preferred development stack.
+the preferred development stack. It does not apply to Roots/Radicle/Sage
+WordPress projects (`roots-radicle`).
 
 ## Technology Stack
 
@@ -22,6 +23,7 @@ implementation):
 
 -   Follow Laravel conventions for the installed or intentionally
     selected ecosystem (Current-First Engineering in `00-platform`).
+-   Follow Framework-Native First in `00-platform`.
 -   Keep controllers thin.
 -   Place business logic in services or domain classes.
 -   Keep models focused on persistence and relationships.
@@ -32,7 +34,8 @@ implementation):
 ## Development Principles
 
 -   Keep solutions simple and maintainable.
--   Avoid unnecessary abstractions.
+-   Avoid unnecessary abstractions. Follow Framework-Native First
+    before introducing wrappers or extra packages.
 -   Make focused changes.
 -   Do not perform unrelated refactoring.
 

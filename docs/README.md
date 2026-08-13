@@ -56,6 +56,7 @@ flowchart TD
 | Browser QA / Playwright | `contracts/features/browser-qa.md` |
 | Laravel Boost / MCP | `contracts/features/laravel-boost.md`, `mcp/README.md` |
 | Laravel web app profile | `core/project-profiles/laravel-webapp.md` |
+| Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
 
 ## ChatGPT Export
 

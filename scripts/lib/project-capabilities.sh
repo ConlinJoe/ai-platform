@@ -90,6 +90,15 @@ project_is_laravel_webapp() {
   project_is_laravel "$1"
 }
 
+# Roots Radicle applications and Sage themes (typically with Acorn).
+# Do not treat Bedrock/WordPress-only composer packages as this profile.
+project_is_roots_radicle() {
+  composer_has_package "$1" "roots/radicle" && return 0
+  composer_has_package "$1" "roots/sage" && return 0
+  composer_has_package "$1" "roots/acorn" && return 0
+  return 1
+}
+
 project_uses_livewire() {
   composer_has_package "$1" "livewire/livewire"
 }

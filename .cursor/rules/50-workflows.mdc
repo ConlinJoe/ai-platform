@@ -15,6 +15,9 @@ and ChatGPT export support.
 1.  Select the appropriate project profile from `core/project-profiles/` and
     create/scaffold the project. Choose the stack intentionally; once
     scaffolded, treat the installed environment as the starting point.
+    Current profiles: `laravel-webapp` for Laravel web applications;
+    `roots-radicle` for Roots Radicle/Sage WordPress projects. Do not apply
+    a profile to a project that is not that stack.
 2.  Bootstrap AI Platform infrastructure into the project:
     - Preferred: from the project root, run `bootstrap-ai` (or
       `scripts/bootstrap-project.sh` with the project path).
@@ -89,6 +92,14 @@ establish or update project-specific documentation contracts:
 4. For Laravel web apps: treat missing Boost as a capability gap (native
    install, not a platform MCP patch). Treat Playwright Mode A as expected;
    do not add `@playwright/test` without approval.
+5. For Roots/Radicle/Sage: establish the page/menu provisioning architecture
+   in `core/project-profiles/roots-radicle.md`. Do not invent project pages
+   until a project contract defines them. Once that architecture is approved,
+   use the project provisioner rather than wp-admin for reproducible
+   structure. If the initial contract already defines the sitemap and the
+   application environment is operational, this workflow may invoke the
+   approved provisioner. Platform `bootstrap-project.sh` does not provision
+   WordPress content.
 
 Do not begin substantive feature work while project contracts still contain
 only unfilled template placeholders.
@@ -119,6 +130,10 @@ Minimum viable contracts:
 
 Laravel web applications also get a draft
 `docs/contracts/features/browser-qa.md`. Other project types do not.
+
+Roots/Radicle/Sage projects record page/menu architecture in a project
+contract when they have one. The platform does not ship a sitemap
+template. Do not invent pages during bootstrap.
 
 Add engine and feature contracts as the project grows. Do not create the
 legacy four-file layout for new projects.

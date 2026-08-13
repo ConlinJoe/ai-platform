@@ -50,4 +50,5 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | New / existing project setup | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Browser QA | `contracts/features/browser-qa.md` |
 | Laravel Boost | `contracts/features/laravel-boost.md` |
+| Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
 | MCP ownership | `mcp/README.md` |

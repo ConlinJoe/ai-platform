@@ -47,7 +47,7 @@ patterns, prefer in this order:
     version
 4.  Official release notes / migration guides
 5.  Existing project contracts and ADRs
-6.  Established project conventions
+6.  Established project conventions that correctly use the installed stack
 7.  Historical model knowledge
 
 The actual environment establishes technical reality. Official
@@ -59,6 +59,8 @@ official documentation does not silently override an intentional ADR
 merely because a newer approach exists. If an ADR or contract conflicts
 with the actual environment, compatibility, security, or technical
 reality, surface the conflict; do not silently override either side.
+Scattered framework misuse is not a project convention to copy; see
+Framework-Native First.
 
 Do not create or maintain a copied library of framework documentation.
 Establish current context dynamically. Once the environment and relevant
@@ -118,7 +120,8 @@ may be useful:
 4.  Review its current official documentation before integrating it.
 5.  Prefer established platform/project dependencies when they solve
     the problem adequately.
-6.  Do not add dependencies unnecessarily.
+6.  Do not add dependencies unnecessarily. Do not add a package simply
+    because it makes generating the implementation easier.
 7.  Do not modify dependency manifests or configuration without approval.
 
 ## Framework-Native First
@@ -155,8 +158,9 @@ Reasoning order:
 1.  Inspect the actual environment and installed versions (Current-First).
 2.  Determine capabilities and recommended patterns for those versions.
 3.  Check project contracts and ADRs for intentional architecture.
-4.  Use the native solution when it is appropriate; extend it when needed.
-5.  Introduce custom infrastructure or another dependency only when
+4.  Determine whether the installed stack already solves the requirement.
+5.  Use the native solution when it is appropriate; extend it when needed.
+6.  Introduce custom infrastructure or another dependency only when
     justified.
 
 Do not assume APIs from newer versions exist in an older project. Do not
