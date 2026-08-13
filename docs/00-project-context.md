@@ -29,6 +29,9 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 - Current-first engineering: establish installed/current versions and
   official docs before relying on historical model knowledge (see
   `.cursor/rules/00-platform.mdc`).
+- Framework-Native First: use the installed stack's native capabilities
+  before custom implementations, parallel abstractions, or new
+  dependencies (see `.cursor/rules/00-platform.mdc`).
 - Never commit unless explicitly instructed.
 - Do not modify dependencies without approval.
 - Documentation conflicts must surface — never guess or silently override.

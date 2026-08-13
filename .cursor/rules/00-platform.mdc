@@ -23,7 +23,8 @@ consistent with the existing project architecture.
 
 ## Development
 
--   Follow the project's existing architecture and conventions.
+-   Follow the project's existing architecture and conventions when they
+    correctly use the installed stack (see Framework-Native First).
 -   Prefer simple, maintainable solutions.
 -   Do not introduce unnecessary abstractions, dependencies, or
     refactoring.
@@ -109,7 +110,9 @@ If a new library, framework, package, MCP server, tool, or dependency
 may be useful:
 
 1.  Do not rely solely on model memory.
-2.  Determine whether the project already provides the capability.
+2.  Apply Framework-Native First: native capability, then native
+    composition, then an already-installed dependency, before a new
+    package.
 3.  Verify the proposed dependency is current, maintained, compatible,
     and appropriate.
 4.  Review its current official documentation before integrating it.
@@ -117,6 +120,74 @@ may be useful:
     the problem adequately.
 6.  Do not add dependencies unnecessarily.
 7.  Do not modify dependency manifests or configuration without approval.
+
+## Framework-Native First
+
+Current-First determines **what is actually available**. Framework-Native
+First determines **how to use it**.
+
+This principle is technology-agnostic. It applies automatically to
+whatever framework, library, SDK, platform, runtime, ORM, UI system,
+CMS, test framework, or toolchain is installed — including technologies
+not named in this platform.
+
+**Use the installed technology's native capabilities first.** Before
+writing custom behavior, introducing an abstraction, adding a
+dependency, or recreating functionality by hand, establish whether the
+installed stack already provides a supported capability for the
+requirement. Do not merely consider this. Determine it.
+
+Prefer, in order where appropriate:
+
+1.  Native capabilities, configuration, APIs, primitives, and composition
+2.  Native conventions and extension points
+3.  Existing project abstractions built correctly on those capabilities
+
+Only then: custom implementations, parallel abstractions, workarounds,
+duplicated framework behavior, or another dependency.
+
+Lean into the stack that was chosen. Do not recreate functionality it
+already provides well. Do not bypass a native capability because custom
+code is more familiar to generate.
+
+Reasoning order:
+
+1.  Inspect the actual environment and installed versions (Current-First).
+2.  Determine capabilities and recommended patterns for those versions.
+3.  Check project contracts and ADRs for intentional architecture.
+4.  Use the native solution when it is appropriate; extend it when needed.
+5.  Introduce custom infrastructure or another dependency only when
+    justified.
+
+Do not assume APIs from newer versions exist in an older project. Do not
+upgrade a dependency merely because a newer version has a better native
+capability.
+
+A native solution may be rejected when it cannot meet the requirement,
+is deprecated, is architecturally inappropriate, creates meaningful
+performance or security problems, conflicts with an intentional
+ADR/contract, creates substantially worse maintainability, or the
+project has already standardized on another solution. When departing
+from an appropriate native capability, explain why.
+
+Compose native capabilities before creating wrappers, helpers, services,
+components, utilities, traits, hooks, adapters, or base classes. An
+abstraction must solve a real recurring problem or establish a
+meaningful architectural boundary. Do not hide simple native behavior
+behind an unnecessary custom layer. Do not prohibit good project
+abstractions.
+
+Follow the installed technology's conventions unless there is a
+project-specific reason not to. Avoid framework-shaped custom code that
+uses a framework while bypassing how it is designed to work.
+
+Contracts and ADRs still govern. Do not silently rewrite project
+architecture. If the current environment, official guidance, and an ADR
+conflict, surface it.
+
+Do not treat scattered misuse of the stack as a convention to copy.
+Apply this to new and touched code; do not mass-refactor unless that is
+the task.
 
 ## Safety
 

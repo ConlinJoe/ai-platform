@@ -78,7 +78,8 @@ When Laravel Boost is available:
 
 - Use Laravel Boost as the primary source for framework guidance.
 - Prefer Boost recommendations over generic Laravel knowledge.
-- Follow established project patterns unless explicitly directed otherwise.
+- Follow established project patterns when they correctly use the
+  installed stack (Framework-Native First in `00-platform`).
 
 When Boost is missing, report the gap and use Current-First official
 documentation. Do not invent a platform MCP entry for Boost.
@@ -137,7 +138,8 @@ in `00-platform`):
 -   Place business logic in services or domain classes.
 -   Keep models focused on persistence and relationships.
 -   Prefer dependency injection.
--   Prefer existing patterns over introducing new ones.
+-   Prefer existing patterns over introducing new ones when those
+    patterns correctly use the installed stack.
 
 ## Development Principles
 

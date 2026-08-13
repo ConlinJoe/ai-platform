@@ -26,7 +26,8 @@ implementation):
 -   Place business logic in services or domain classes.
 -   Keep models focused on persistence and relationships.
 -   Prefer dependency injection.
--   Prefer existing patterns over introducing new ones.
+-   Prefer existing patterns over introducing new ones when those
+    patterns correctly use the installed stack.
 
 ## Development Principles
 

@@ -24,6 +24,9 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   versions and official docs for those versions before relying on
   historical model knowledge. Do not upgrade an existing stack merely
   because newer versions exist (see `.cursor/rules/00-platform.mdc`).
+- Framework-Native First: use the installed stack's native capabilities
+  before custom implementations, parallel abstractions, or new
+  dependencies (see `.cursor/rules/00-platform.mdc`).
 
 <!-- Additional non-negotiable technical, business, or operational constraints. -->
 

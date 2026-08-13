@@ -14,7 +14,11 @@ and consistent with the existing codebase.
 ## General Rules
 
 -   Follow the project's established architecture.
--   Prefer patterns already present in the project over inventing new ones.
+-   Prefer patterns already present in the project when they correctly
+    use the installed stack. Do not copy scattered framework misuse.
+-   Follow Framework-Native First in `00-platform`: establish whether the
+    installed stack already provides the capability before custom code,
+    abstractions, or new dependencies.
 -   For versions, libraries, frameworks, APIs, and implementation patterns,
     follow Current-First Engineering in `00-platform` — do not default to
     historically common patterns from model memory.
@@ -24,6 +28,8 @@ and consistent with the existing codebase.
 -   Optimize for readability over cleverness.
 
 ## Tailwind
+
+A specialization of Framework-Native First in `00-platform`.
 
 When the project uses Tailwind, treat it as a compositional system.
 Use native utilities and theme primitives. Do not reconstruct first-class

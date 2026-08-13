@@ -30,8 +30,8 @@ Automatically consult:
 Synthesize their guidance into a single recommendation. Do not require the user to explicitly reference these tools.
 
 For Tailwind implementation (utilities, theme, containers, tokens), follow
-the Tailwind standard in `20-coding`. That standard takes precedence over
-vendor-skill CSS/Tailwind shortcuts.
+the Tailwind specialization of Framework-Native First in `20-coding`. That
+standard takes precedence over vendor-skill CSS/Tailwind shortcuts.
 
 For UI work, load relevant feature contracts from `docs/README.md` (design
 system, page behavior, component contracts) before implementing. Update those
