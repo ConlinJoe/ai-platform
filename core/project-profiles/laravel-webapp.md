@@ -56,7 +56,11 @@ Laravel web applications are expected to use Laravel Boost.
 
 ## Browser QA
 
-This profile is **browser-capable**. Follow platform policy in
+This profile is **browser-capable**. Capability is not authorization.
+Agents must not run Playwright or browser automation unless the current
+task explicitly authorizes it (`.cursor/rules/60-browser-qa.mdc`).
+
+When authorized, follow platform policy in
 `docs/contracts/features/browser-qa.md` and the loop in
 `core/prompts/browser-qa-loop.md`.
 

@@ -6,6 +6,10 @@ user-global Playwright MCP and/or browsermcp.
 
 Authoritative policy: `docs/contracts/features/browser-qa.md`
 
+Agent invocation is opt-in. Playwright MCP being configured does not
+authorize Mode B. Do not run Playwright or browser MCP unless the current
+task explicitly instructs it (`.cursor/rules/60-browser-qa.mdc`).
+
 Do not treat Playwright MCP as the regression suite. Do not add Playwright
 MCP to a project's `.cursor/mcp.json` in order to satisfy this platform —
 that file is owned by Laravel Boost on Laravel apps.

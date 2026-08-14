@@ -1,5 +1,5 @@
 ---
-description: New and existing project bootstrap, documentation contracts, browser QA loop
+description: New and existing project bootstrap, documentation contracts
 alwaysApply: false
 ---
 
@@ -104,14 +104,14 @@ establish or update project-specific documentation contracts:
 Do not begin substantive feature work while project contracts still contain
 only unfilled template placeholders.
 
-## Browser QA loop (browser-capable profiles)
+## Browser QA loop (opt-in)
 
-Laravel web applications are browser-capable. After feature work:
+Laravel web applications are browser-capable and may have Playwright
+Mode A plus Mode B exploration. Do **not** run that loop after feature
+work unless the current task explicitly authorizes browser QA
+(`60-browser-qa`).
 
-IMPLEMENT → application tests → Mode A → Mode B explore → fix → add
-Mode A coverage → re-run until green.
-
-See `core/prompts/browser-qa-loop.md` and
+When authorized, see `core/prompts/browser-qa-loop.md` and
 `docs/contracts/features/browser-qa.md`.
 
 ## Initial Documentation Contracts

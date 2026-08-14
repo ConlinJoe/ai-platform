@@ -173,7 +173,9 @@ status, completed milestones, and production readiness.
 A task is not complete until:
 
 1. Code is complete.
-2. Tests or validation are complete.
+2. Tests or validation appropriate to the task are complete. Do not treat
+   Playwright/browser QA as required unless the current task explicitly
+   authorizes it (`60-browser-qa`).
 3. Relevant contracts have been loaded and followed.
 4. Documentation outcome is resolved (update, explicit no-update, or conflict
    reported).

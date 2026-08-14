@@ -19,7 +19,7 @@ contract model and templates from `templates/docs/`.
 | `chatgpt-projects.md` | foundational | active | ChatGPT Projects export workflow |
 | `contracts/adrs/0001-two-layer-browser-qa.md` | adr | accepted | Decision to use Mode A/B browser QA |
 | `contracts/adrs/0002-laravel-boost-ownership.md` | adr | accepted | Decision that Boost is project-native |
-| `contracts/features/browser-qa.md` | feature | active | Browser QA policy, applicability, isolation |
+| `contracts/features/browser-qa.md` | feature | active | Browser QA policy, opt-in agent invocation, applicability, isolation |
 | `contracts/features/laravel-boost.md` | feature | active | Boost capability, detection, bootstrap/doctor |
 
 ## Dependency Graph

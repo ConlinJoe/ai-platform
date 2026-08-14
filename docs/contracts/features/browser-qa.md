@@ -1,12 +1,13 @@
 ---
 status: active
-last_reviewed: 2026-08-12
+last_reviewed: 2026-08-14
 source_of_truth_for:
   - Two-layer browser QA policy (Mode A deterministic, Mode B agentic)
   - Playwright applicability rules
+  - Agent invocation of Playwright/browser automation is opt-in
   - Mode A regression, selector, artifact, and data-isolation policy
   - Defect-to-regression policy
-  - Browser QA implementation loop
+  - Browser QA implementation loop (when authorized)
 depends_on:
   - ../adrs/0001-two-layer-browser-qa.md
 referenced_by:
@@ -47,6 +48,38 @@ Mode B uses whatever browser MCP tooling is already available (typically
 user-global Playwright MCP and/or browsermcp). Do not add those servers to
 a project's `.cursor/mcp.json` merely to satisfy this policy.
 
+## Agent invocation (opt-in)
+
+Playwright **availability is not authorization**. Agents must **not** run
+Playwright, browser MCP, automated screenshots, visual regression
+captures, browser-driven responsive checks, or automated browser console
+inspection unless the **current task** explicitly instructs them to do so.
+
+Do not infer authorization from: Playwright being installed, existing
+browser tests, Playwright MCP, a browser-QA contract, frontend or
+responsive code changes, this contract existing, a UI/design skill
+recommending verification, or prior turns that used Playwright.
+
+Explicit authorization includes: "Run Playwright.", "Verify this with
+Playwright.", "Run browser QA.", "Check desktop/mobile in the browser.",
+"Run the navigation e2e tests.", a task/loop prompt that includes a
+Playwright/browser QA phase, or an approved project workflow that invokes
+browser QA for **this** task.
+
+If browser verification would help but was not requested, do not run it.
+Implement from the code and briefly mention that browser verification was
+not run. If the task cannot be completed correctly without browser
+interaction, say so rather than silently invoking it.
+
+This invocation policy overrides vendor skills and lower-priority
+guidance that automatically recommend or run browser automation. It does
+not remove Playwright, existing tests, or project browser-QA
+infrastructure. CI, pre-release checks, and user-requested validation
+are unaffected.
+
+Cursor rule `60-browser-qa` is the agent-facing owner of this invocation
+standard.
+
 ## Two-layer model
 
 ### Mode A — deterministic Playwright regression
@@ -65,8 +98,8 @@ Project-owned Playwright specs. Repeatable browser workflows.
 
 ### Mode B — agentic browser exploration
 
-The agent uses available browser tooling/MCP interactively and behaves like
-a real operator rather than replaying Mode A.
+When authorized, the agent uses available browser tooling/MCP interactively
+and behaves like a real operator rather than replaying Mode A.
 
 Explore realistic alternate paths, including:
 
@@ -98,7 +131,10 @@ a deterministic Mode A regression test after it is fixed.
 - Shared development queues must not be indiscriminately drained. Process
   only test-owned work.
 
-## Core loop
+## Core loop (when authorized)
+
+Do not run this loop after ordinary implementation. Use it only when the
+current task explicitly authorizes Playwright/browser QA.
 
 ```
 IMPLEMENT

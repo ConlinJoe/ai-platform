@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-13
+last_reviewed: 2026-08-14
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -28,7 +28,9 @@ enforcement (bootstrap + doctor). Version 1.1.1.
   after Current-First verification. Page/menu provisioning is an explicit
   idempotent project-native operation driven by each project's contracts,
   not a universal sitemap.
-- Two-layer browser QA policy: documented and wired into Laravel profile
+- Two-layer browser QA policy: documented and wired into Laravel profile.
+  Agent invocation of Playwright/browser automation is opt-in
+  (`60-browser-qa`); availability is not authorization.
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented
 - Existing-project reconciliation: documented and drafted by bootstrap

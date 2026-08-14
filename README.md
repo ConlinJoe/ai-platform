@@ -66,7 +66,8 @@ implementation must update affected contracts, explicitly state why no update
 is required, or stop and report a documentation conflict.
 
 Browser-capable Laravel web apps follow two-layer browser QA
-(`docs/contracts/features/browser-qa.md`). Laravel Boost is required and
+(`docs/contracts/features/browser-qa.md`). Agent invocation of Playwright
+is opt-in. Laravel Boost is required and
 project-native (`docs/contracts/features/laravel-boost.md`).
 
 See `docs/documentation-philosophy.md` and `docs/chatgpt-projects.md`.

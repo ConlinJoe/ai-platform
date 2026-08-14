@@ -80,7 +80,12 @@ Never:
 
 Before considering a task complete:
 
--   Verify the implementation.
+-   Verify the implementation with proportional, lightweight checks
+    appropriate to the task (lint, types, targeted unit/feature tests,
+    build when genuinely necessary, framework-native validation). Do not
+    escalate visual or frontend changes into Playwright or browser
+    automation unless the current task explicitly authorizes it
+    (`60-browser-qa`).
 -   Load relevant documentation contracts via `docs/README.md` (not the full
     documentation tree).
 -   Resolve the documentation outcome: update affected contracts, explicitly

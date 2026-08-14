@@ -94,10 +94,14 @@ documentation. Do not invent a platform MCP entry for Boost.
 
 ## Browser QA
 
-This profile is browser-capable. Follow the project's
-`docs/contracts/features/browser-qa.md` when present. Platform policy:
-two-layer Mode A (Playwright specs) + Mode B (agentic browser MCP).
-A meaningful Mode B defect should normally become Mode A coverage.
+This profile is browser-capable. Capability is not authorization. Do not
+invoke Playwright or browser MCP unless the current task explicitly
+authorizes it (`60-browser-qa`).
+
+When authorized, follow the project's `docs/contracts/features/browser-qa.md`
+when present. Platform policy: two-layer Mode A (Playwright specs) + Mode B
+(agentic browser MCP). A meaningful Mode B defect should normally become
+Mode A coverage.
 
 Laravel / Livewire:
 

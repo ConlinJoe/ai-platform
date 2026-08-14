@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-08-12
+last_reviewed: 2026-08-14
 source_of_truth_for:
   - Decision to use a two-layer (Mode A / Mode B) browser QA model
   - Decision that Playwright is profile-applicable, not universal
@@ -40,6 +40,10 @@ regression test.
 Playwright Mode A is required only where a project profile says the project
 is browser-capable. The Laravel web application profile is browser-capable.
 The AI Platform repository itself is not.
+
+When agents invoke Mode A or Mode B is an invocation policy owned by the
+feature contract: opt-in unless the current task explicitly authorizes it.
+Capability, installation, and MCP availability are not authorization.
 
 Policy details live in `docs/contracts/features/browser-qa.md`.
 

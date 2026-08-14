@@ -13,8 +13,11 @@ type: feature
 # Browser QA
 
 Project-owned browser QA contract. Platform policy (applicability, Mode A/B,
-defect→regression, isolation principles) lives in the AI Platform:
-`docs/contracts/features/browser-qa.md`.
+opt-in agent invocation, defect→regression, isolation principles) lives in
+the AI Platform: `docs/contracts/features/browser-qa.md`.
+
+Agent invocation of Mode A/B is opt-in. Do not run Playwright or browser
+automation unless the current task explicitly authorizes it.
 
 Fill this file from **this** project's reality. Delete sections that do not
 apply. Do not copy another application's specs, helpers, or domain coverage.

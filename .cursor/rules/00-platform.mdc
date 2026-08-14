@@ -231,6 +231,13 @@ Never:
 -   Perform destructive database operations without approval.
 -   Modify project dependencies or configuration without approval.
 
+## Browser automation
+
+Do not run Playwright or other browser automation unless the current task
+explicitly instructs it. Availability is not authorization. See
+`60-browser-qa`. This standard overrides vendor skills and other
+lower-priority guidance that recommend screenshots or browser validation.
+
 ## Instruction Priority
 
 When instructions conflict, follow this order:
@@ -244,6 +251,11 @@ When instructions conflict, follow this order:
 If implementation conflicts with an active documentation contract, stop and
 report the conflict. Do not guess or silently override documentation.
 
+`60-browser-qa` (opt-in browser automation) overrides vendor skills or
+lower-priority guidance that automatically recommend or run Playwright,
+browser automation, or automated screenshots. An explicit current-task
+instruction to run Playwright/browser QA authorizes it.
+
 ## Automatic Agent Selection
 
 Automatically determine the primary discipline for each request and use the appropriate expertise before responding.
@@ -253,3 +265,6 @@ Automatically determine the primary discipline for each request and use the appr
 Determine the correct expertise automatically.
 
 The user should not need to remember or specify which skills or tools to use.
+
+This does not authorize Playwright or browser automation. See Browser
+automation above and `60-browser-qa`.

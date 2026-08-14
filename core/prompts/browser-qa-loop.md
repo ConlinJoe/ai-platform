@@ -1,7 +1,11 @@
 # Browser QA loop
 
-Use this prompt when implementing or verifying browser-capable features.
+Use this prompt **only** when the current task explicitly authorizes
+Playwright / browser QA. Do not run this loop merely because a feature
+was implemented, Playwright is installed, or a browser-QA contract exists.
+
 Policy: `docs/contracts/features/browser-qa.md`.
+Agent invocation: `.cursor/rules/60-browser-qa.mdc` (opt-in).
 Laravel/Livewire extras: `core/project-profiles/laravel-webapp.md`.
 
 ## Loop

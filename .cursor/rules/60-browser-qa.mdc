@@ -1,18 +1,79 @@
 ---
-description: Browser QA — Playwright Mode A/B, defect-to-regression, data isolation
-globs: e2e/**/*,**/playwright.config.*,**/playwright.config.js,**/playwright.config.ts
-alwaysApply: false
+description: Browser QA is opt-in — do not run Playwright or browser automation unless the current task explicitly instructs it
+alwaysApply: true
 ---
 
 # Browser QA
 
+## Invocation (opt-in)
+
+Do **not** run Playwright or other browser automation unless the **current
+task** explicitly instructs you to do so.
+
+This includes:
+
+- Playwright test suites
+- targeted Playwright tests
+- automated browser inspection
+- automated screenshots
+- visual regression captures
+- browser-driven responsive checks
+- browser console inspection through automation
+
+Playwright **availability is not authorization**. Do not infer that
+Playwright should run merely because:
+
+- Playwright is installed
+- the project has Playwright tests
+- Playwright MCP or other browser MCP is configured
+- screenshot tooling or a browser-QA contract exists
+- the task changes frontend code or responsive markup
+- this rule exists
+- a UI/design skill recommends browser verification or screenshots
+- previous tasks in the conversation used Playwright
+
+Browser automation requires **explicit task-level instruction**.
+
+Examples that authorize it: "Run Playwright.", "Verify this with
+Playwright.", "Run browser QA.", "Check desktop/mobile in the browser.",
+"Run the navigation e2e tests.", a task/loop prompt that includes a
+Playwright/browser QA phase, or an approved project workflow that invokes
+browser QA for **this** task.
+
+If browser automation is not requested, do not run it.
+
+Normal development may still use proportional lightweight checks (lint,
+types, targeted unit/feature tests, build when genuinely necessary,
+framework-native validation). Do not automatically escalate a visual or
+code change into browser automation. Do not run broad verification merely
+because tools exist.
+
+If browser verification would materially help but was not requested: do
+not run it; implement what can be confidently implemented from the code;
+briefly mention that browser verification was not run. If the task cannot
+be completed safely or correctly without browser interaction, explain that
+browser verification is needed rather than silently invoking it.
+
+This platform rule overrides vendor skills and lower-priority guidance
+that recommend or run browser automation automatically. An explicit
+current-task instruction to run Playwright/browser QA authorizes it.
+
+Do not remove Playwright, existing browser tests, or project browser-QA
+infrastructure. Do not weaken existing Playwright tests. This policy
+controls **when agents invoke** browser automation. Existing tests remain
+available for explicit verification, milestone QA, autonomous loops that
+request them, CI, pre-release checks, regression testing, and
+user-requested browser validation.
+
 Follow the project's `docs/contracts/features/browser-qa.md` when present.
+
+## When authorized
 
 Two-layer model: Mode A (deterministic Playwright specs) + Mode B (agentic
 browser MCP). A meaningful Mode B defect should normally become Mode A
 coverage.
 
-## Modes
+### Modes
 
 - **Mode A** — deterministic, project-owned Playwright specs. Workflows and
   state transitions, not page-load smoke only.
@@ -21,12 +82,12 @@ coverage.
 
 A meaningful Mode B defect should normally become a Mode A regression test.
 
-## Isolation
+### Isolation
 
 Test-owned records only. Preserve demo/seed data. Do not drain shared
 queues. Assert against test-owned identity, not global counts.
 
-## Selectors and artifacts
+### Selectors and artifacts
 
 Prefer role/label selectors; sparse `data-testid`. Retain
 trace/screenshot/video on failure. Gitignore generated artifacts and auth

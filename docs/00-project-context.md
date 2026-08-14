@@ -37,8 +37,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 - Documentation conflicts must surface — never guess or silently override.
 - Laravel Boost is project-native; the platform diagnoses it and does not
   write Boost MCP config.
-- Playwright Mode A is required only for browser-capable profiles (Laravel
-  web applications), not every repository.
+- Playwright Mode A is expected only for browser-capable profiles (Laravel
+  web applications), not every repository. Agent invocation of Playwright
+  / browser automation is opt-in: do not run it unless the current task
+  explicitly authorizes it.
 
 ## Where to Look
 

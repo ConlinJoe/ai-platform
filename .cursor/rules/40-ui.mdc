@@ -29,6 +29,10 @@ Automatically consult:
 
 Synthesize their guidance into a single recommendation. Do not require the user to explicitly reference these tools.
 
+Do not run Playwright, browser automation, or automated screenshots unless
+the current task explicitly authorizes them (`60-browser-qa`). Vendor
+UI/design skills do not authorize browser automation.
+
 For Tailwind implementation (utilities, theme, containers, tokens), follow
 the Tailwind specialization of Framework-Native First in `20-coding`. That
 standard takes precedence over vendor-skill CSS/Tailwind shortcuts.
