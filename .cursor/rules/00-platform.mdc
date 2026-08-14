@@ -193,6 +193,36 @@ Do not treat scattered misuse of the stack as a convention to copy.
 Apply this to new and touched code; do not mass-refactor unless that is
 the task.
 
+## Project Identity Boundary
+
+Treat the currently open repository as a hard execution boundary. Before
+modifying files, verify the request reasonably belongs to this project
+using repository name, documentation, architecture, source tree, package
+metadata, and project-specific rules.
+
+If a prompt explicitly names, clearly describes, or strongly implies a
+different project or repository, **STOP before making any changes**.
+Respond briefly that the request appears to belong to another project and
+identify it when possible. Do not search for, open, modify, or operate on
+the other repository. Do not reinterpret an obviously misplaced prompt so
+it can be applied here. Ask the user to switch to the intended project or
+explicitly confirm that the request should be applied to the current
+project.
+
+Example:
+
+> This request appears to be for **[other project]**, but the current
+> repository is **[current project]**. I haven't made any changes. Switch
+> to the intended project, or confirm that you want this applied here.
+
+If the request could reasonably apply here and there is no meaningful
+evidence of a mismatch, proceed. Generic development requests must not
+trigger unnecessary confirmation.
+
+Explicit user instructions to work across repositories override this
+boundary only for the repositories specifically authorized by the user.
+A likely project mismatch blocks file modifications until resolved.
+
 ## Safety
 
 Never:
