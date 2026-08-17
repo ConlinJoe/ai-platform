@@ -37,6 +37,29 @@ For Tailwind implementation (utilities, theme, containers, tokens), follow
 the Tailwind specialization of Framework-Native First in `20-coding`. That
 standard takes precedence over vendor-skill CSS/Tailwind shortcuts.
 
+### Decorative numbering
+
+Do not use decorative section numbering in UI unless the user explicitly
+requests numbering. This is a visual convention, not a ban on meaningful
+ordered content. It applies to any UI technology or framework.
+
+Do not use numbers merely as a design device on cards, sections,
+navigation tiles, process blocks, page modules, sidebars, or content
+chapters — including `01` / `02` / `03` labels or small numbers in card
+corners. Do not introduce numbers to make a layout feel editorial,
+technical, architectural, premium, or structured.
+
+Do use numbering when it has genuine semantic meaning: ordered
+instructions, ranked lists, numbered legal clauses, steps where sequence
+is materially important, data that is actually numbered, or when the user
+explicitly requests numbering.
+
+If the content does not require ordinal meaning, use typography, spacing,
+rules, imagery, surfaces, hierarchy, and composition instead.
+
+This convention takes precedence over vendor-skill numbered-section or
+decorative-ordinal patterns (Instruction Priority in `00-platform`).
+
 For UI work, load relevant feature contracts from `docs/README.md` (design
 system, page behavior, component contracts) before implementing. Update those
 contracts when user-visible behavior changes.
