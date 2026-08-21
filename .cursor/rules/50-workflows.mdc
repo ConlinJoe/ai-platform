@@ -1,5 +1,5 @@
 ---
-description: New and existing project bootstrap, documentation contracts
+description: New and existing project bootstrap, project adoption, documentation contracts
 alwaysApply: false
 ---
 
@@ -19,13 +19,21 @@ and ChatGPT export support.
     `roots-radicle` for Roots Radicle/Sage WordPress projects. Do not apply
     a profile to a project that is not that stack.
 2.  Bootstrap AI Platform infrastructure into the project:
-    - Preferred: from the project root, run `bootstrap-ai` (or
-      `scripts/bootstrap-project.sh` with the project path).
+    - Preferred: from the target project root, run
+      `/path/to/ai-platform/scripts/bootstrap-project.sh` with no
+      argument (uses `$PWD` when invoked from outside the AI Platform
+      repository).
+    - Alternative: from the AI Platform repository, run
+      `scripts/bootstrap-project.sh /path/to/project`.
     - Fallback: run `scripts/bootstrap-project.sh` from the AI Platform
-      repository and supply the target path when prompted.
+      repository with no argument and supply the target path when
+      prompted.
+    Onboarding for a first-time clone is in the repository `README.md`.
 3.  Establish project-specific documentation contracts **before** substantive
     feature development. Bootstrap installs templates and shared
     infrastructure only; it does not populate project truth.
+    Existing projects: after bootstrap, run Project Adoption
+    (`core/prompts/project-adoption.md`) in a fresh agent session.
 4.  Export initial ChatGPT context and upload to your ChatGPT Project.
 5.  Begin implementation.
 
@@ -43,6 +51,11 @@ and ChatGPT export support.
 Running bootstrap on a target project:
 
 -   Links shared Cursor rules into `.cursor/rules/`
+-   Links `AGENTS.md` to `core/agent-core.md` when missing; copies
+    `CLAUDE.md` when missing; links `.claude/skills/` and `.grok/skills/`
+    to `.agents/skills/`; does not create `.hermes.md` (Hermes uses
+    `AGENTS.md`); on Laravel apps, links `.ai/guidelines/ai-platform.md`
+    to `core/agent-core.md`
 -   Links `scripts/export-chatgpt-context.sh` and `scripts/doctor.sh`
 -   Copies documentation templates when `docs/README.md` does not exist
 -   For existing projects (docs index already present): does not overwrite
@@ -50,10 +63,21 @@ Running bootstrap on a target project:
 -   Adds `.build/` to `.gitignore` when missing
 -   For Laravel web apps: ensures Playwright artifact gitignore entries;
     diagnoses Laravel Boost and Playwright without installing packages
+-   For new Roots/Radicle/Sage projects: ensures `resources/images/`
+    exists; diagnoses the preferred greenfield stack (ACF Pro, Keen
+    Slider, WPForms Lite) without installing npm packages or WordPress
+    plugins
 -   Restores required project skills
 
 Bootstrap is safe to re-run on an already-bootstrapped project.
-It does not run Composer, `boost:install`, or add Playwright.
+It does not run Composer, `boost:install`, add Playwright, or install
+WordPress plugins or npm packages.
+It does not analyze the repository or adopt it into the platform.
+That work belongs to Project Adoption.
+
+Shared Cursor rules in the target project are **symlinks** into this
+repository. Project `docs/` and `.cursor/rules/90-*.mdc` are owned by
+the project.
 
 ## New vs existing projects
 
@@ -61,30 +85,69 @@ It does not run Composer, `boost:install`, or add Playwright.
 `99-project-status.md` and a draft browser-QA contract for Laravel web
 apps. Then establish contracts from the installed scaffold.
 
-**Existing** (docs index present): reconcile, do not clone the platform
-into the app. Follow `core/prompts/existing-project-bootstrap.md`.
+**Existing** (docs index present): do not clone the platform into the
+app. Bootstrap only provisions/links the platform and may add missing
+drafts (status, reconciliation, Laravel browser QA). Then run Project
+Adoption in a fresh agent session:
+`core/prompts/project-adoption.md`.
 
-- Inspect the actual project first.
-- Keep existing contracts; fill gaps with draft templates only.
-- Reconcile ADRs with real architecture.
-- Document legitimate differences in
-  `docs/contracts/foundational/platform-reconciliation.md`.
-- Surface open deviations (missing Boost, missing Mode A, etc.) — do not
-  silently bless them.
-- Do not migrate or refactor application code during bootstrap.
+Do not migrate or refactor application code during bootstrap.
 
-## Post-Bootstrap: Establish Project Context
+## Existing Project Adoption
 
-After bootstrap, an agent (or human) must inspect the **actual** project and
-establish or update project-specific documentation contracts:
+After bootstrap, start a fresh agent session **in the target project**
+and follow `core/prompts/project-adoption.md`.
 
-1. Inspect the existing project structure, installed environment,
-   dependencies, architecture, MCP, tests, and any available documentation.
-2. Fill or update `docs/00-project-context.md` and foundational contracts so
-   they describe this project — not generic platform assumptions or leftover
+Sequence: Understand → Document → Compare → Question → Recommend →
+Approve → Align.
+
+The agent may inspect the repository and create or update documentation
+that describes verified existing behavior. It must **not** make material
+implementation or architectural changes merely because the project
+differs from AI Platform standards.
+
+Classify findings:
+
+- **A.** Sound — document and preserve
+- **B.** Reasonable difference from platform preference — document; do
+  not change merely for conformity
+- **C.** Outdated, unsafe, structurally problematic, or contrary to
+  current best practices — recommend a change; do not implement yet
+- **D.** Cannot safely be inferred — ask the developer (grouped)
+
+For each material **C** item, present current state, problem,
+recommended state, reason, expected impact, and migration/risk, then
+wait for approval. Approved work is implemented; deferred work goes on
+the roadmap; rejected work is recorded as **B**.
+
+Ask only when the answer is a genuine product, business, architectural,
+security, or implementation decision. Do not ask what the repository
+already establishes.
+
+During adoption, load the full existing `docs/` set. That is an
+exception to selective loading in `10-documentation`. Presenting
+classified findings and grouped questions is required; it is not a
+violation of the single-recommendation rule. Each **C** item still has
+one recommended state.
+
+Adoption is complete only when purpose, architecture, significant
+decisions, applicable contracts, roadmap/status, and needed
+`90-*.mdc` rules are in place; important deviations have been reviewed;
+approved remediation is done or explicitly on the roadmap; and
+documentation matches the resulting implementation.
+
+## Post-Bootstrap: New Project Context
+
+After bootstrap of a **new** project, an agent (or human) must inspect
+the **actual** scaffold and establish project-specific documentation
+contracts:
+
+1. Inspect the project structure, installed environment, dependencies,
+   architecture, MCP, tests, and any available documentation.
+2. Fill `docs/00-project-context.md` and foundational contracts so they
+   describe this project — not generic platform assumptions or leftover
    template placeholders.
 3. Follow Current-First Engineering in `00-platform`:
-   - Existing projects: installed environment is the starting point.
    - Newly scaffolded projects: respect the selected/installed stack.
    - Do not upgrade dependencies merely because newer versions exist;
      upgrades require explicit direction or approval under platform Safety
@@ -92,17 +155,30 @@ establish or update project-specific documentation contracts:
 4. For Laravel web apps: treat missing Boost as a capability gap (native
    install, not a platform MCP patch). Treat Playwright Mode A as expected;
    do not add `@playwright/test` without approval.
-5. For Roots/Radicle/Sage: establish the page/menu provisioning architecture
-   in `core/project-profiles/roots-radicle.md`. Do not invent project pages
-   until a project contract defines them. Once that architecture is approved,
-   use the project provisioner rather than wp-admin for reproducible
-   structure. If the initial contract already defines the sitemap and the
-   application environment is operational, this workflow may invoke the
-   approved provisioner. Platform `bootstrap-project.sh` does not provision
-   WordPress content.
+5. For Roots/Radicle/Sage: follow `core/project-profiles/roots-radicle.md`.
+   After Current-First compatibility checks, complete the approved
+   greenfield baseline: ensure `resources/images/` exists; install
+   `keen-slider` via the project's npm/Vite workflow; once WordPress is
+   available, install/activate WPForms Lite via the current WP-CLI /
+   WordPress mechanism; install/activate ACF Pro when the project's
+   approved credential mechanism allows it, otherwise report the
+   credential blocker and continue. Do not commit secrets. Do not
+   silently substitute free ACF. Do not invent sliders, an ACF page
+   builder, or custom form infrastructure the project does not need.
+   Establish the page/menu provisioning architecture. Do not invent
+   project pages until a project contract defines them. Once that
+   architecture is approved, use the project provisioner rather than
+   wp-admin for reproducible structure. If the initial contract already
+   defines the sitemap and the application environment is operational,
+   this workflow may invoke the approved provisioner. Platform
+   `bootstrap-project.sh` does not provision WordPress content and does
+   not install npm packages or WordPress plugins.
 
 Do not begin substantive feature work while project contracts still contain
 only unfilled template placeholders.
+
+Existing projects use **Existing Project Adoption** above, not this
+greenfield fill-in path.
 
 ## Browser QA loop (opt-in)
 
@@ -128,26 +204,45 @@ Minimum viable contracts:
 -   `docs/contracts/foundational/vision.md`
 -   `docs/contracts/foundational/architecture.md`
 
+Existing projects also document classified differences in
+`docs/contracts/foundational/platform-reconciliation.md` during Project
+Adoption. Create `.cursor/rules/90-*.mdc` when project-specific agent
+guidance is warranted.
+
 Laravel web applications also get a draft
 `docs/contracts/features/browser-qa.md`. Other project types do not.
 
 Roots/Radicle/Sage projects record page/menu architecture in a project
 contract when they have one. The platform does not ship a sitemap
-template. Do not invent pages during bootstrap.
+template. Do not invent pages during bootstrap. New Roots contracts
+should also record: ACF owns structured editorial fields and is not a
+page builder; frontend layout remains code-owned; Keen is the preferred
+slider/gallery dependency; WPForms Lite is the default basic forms
+layer; upgrades/alternatives require actual project need; credentials
+are never committed.
 
 Add engine and feature contracts as the project grows. Do not create the
 legacy four-file layout for new projects.
 
 ## ChatGPT Export
 
-After customizing documentation:
+After customizing documentation, from the **project** root (the script is
+a bootstrap symlink into the AI Platform):
 
 ```bash
 scripts/export-chatgpt-context.sh
 ```
 
+If the symlink is not present, run the clone copy from that same project
+root: `/path/to/ai-platform/scripts/export-chatgpt-context.sh`.
+
 Upload `.build/chatgpt-context.zip` to the ChatGPT Project. Re-export when
 documentation, Cursor rules, agent skills, or AI metadata change.
+
+Re-check a bootstrapped project with
+`/path/to/ai-platform/scripts/doctor.sh /path/to/project`. After
+bootstrap, `scripts/doctor.sh` in the project is the same script via
+symlink.
 
 ## Maintenance
 

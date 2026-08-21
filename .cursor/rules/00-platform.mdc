@@ -243,7 +243,8 @@ lower-priority guidance that recommend screenshots or browser validation.
 When instructions conflict, follow this order:
 
 1.  User instructions
-2.  Project rules (`.cursor/rules/`)
+2.  Project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`,
+    project-owned `90-*.mdc`)
 3.  Project documentation contracts (load selectively via `docs/README.md`)
 4.  Global AI Platform
 5.  Vendor skills

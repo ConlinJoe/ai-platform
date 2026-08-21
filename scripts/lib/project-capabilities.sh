@@ -259,6 +259,7 @@ EOF
       ;;
     ok)
       echo "Laravel Boost is declared, installed, and MCP-configured. Enable it in Cursor MCP settings if it is toggled off."
+      echo "If AGENTS.md is Boost-generated, run php artisan boost:update so it includes .ai/guidelines/ai-platform.md."
       ;;
     *)
       echo "Laravel Boost is not applicable to this project."

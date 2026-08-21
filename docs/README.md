@@ -1,7 +1,7 @@
 # Documentation Index
 
-This file is the dependency graph and contract registry for the AI Platform
-documentation.
+This file is the dependency graph and contract registry for the
+AI Development Harness repository (`ai-platform`).
 
 ## Overview
 
@@ -13,7 +13,7 @@ contract model and templates from `templates/docs/`.
 
 | Contract | Type | Status | Source of Truth For |
 | --- | --- | --- | --- |
-| `00-project-context.md` | foundational | active | AI Platform summary for ChatGPT and agents |
+| `00-project-context.md` | foundational | active | Harness summary for ChatGPT and agents |
 | `99-project-status.md` | status | active | Implementation status and validation |
 | `documentation-philosophy.md` | foundational | active | Documentation contract standard |
 | `chatgpt-projects.md` | foundational | active | ChatGPT Projects export workflow |
@@ -52,7 +52,10 @@ flowchart TD
 | ChatGPT / platform overview | `00-project-context.md` |
 | Documentation standard | `documentation-philosophy.md` |
 | ChatGPT export setup | `chatgpt-projects.md` |
-| New or existing project bootstrap | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc`, `core/prompts/existing-project-bootstrap.md` |
+| First-time clone / onboarding | `../README.md`, `mcp/README.md` |
+| Multi-agent adapters | `core/adapters/README.md` |
+| New or existing project bootstrap | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
+| Existing project adoption | `core/prompts/project-adoption.md` |
 | Browser QA / Playwright | `contracts/features/browser-qa.md` |
 | Laravel Boost / MCP | `contracts/features/laravel-boost.md`, `mcp/README.md` |
 | Laravel web app profile | `core/project-profiles/laravel-webapp.md` |
@@ -65,4 +68,4 @@ scripts/export-chatgpt-context.sh
 ```
 
 Produces `.build/chatgpt-context.zip` with documentation, Cursor rules, agent
-skills, and project AI metadata.
+skills, `AGENTS.md` / `CLAUDE.md`, and project AI metadata.

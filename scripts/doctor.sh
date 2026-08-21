@@ -99,7 +99,20 @@ check_platform() {
   check_file "${AI_REPO}/mcp/laravel-boost/README.md" "Boost MCP guidance"
   check_file "${AI_REPO}/mcp/playwright/README.md" "Playwright MCP guidance"
   check_file "${AI_REPO}/core/prompts/browser-qa-loop.md" "Browser QA loop prompt"
-  check_file "${AI_REPO}/core/prompts/existing-project-bootstrap.md" "Existing-project bootstrap prompt"
+  check_file "${AI_REPO}/core/prompts/project-adoption.md" "Project adoption prompt"
+  check_file "${AI_REPO}/LICENSE" "MIT LICENSE"
+  check_file "${AI_REPO}/core/prompts/existing-project-bootstrap.md" "Existing-project bootstrap alias"
+  check_file "${AI_REPO}/core/agent-core.md" "Canonical agent-core"
+  check_file "${AI_REPO}/core/adapters/README.md" "Agent adapter index"
+  check_file "${AI_REPO}/core/adapters/hermes.md" "Hermes adapter"
+  check_file "${AI_REPO}/AGENTS.md" "AGENTS.md entrypoint"
+  check_file "${AI_REPO}/CLAUDE.md" "CLAUDE.md entrypoint"
+
+  if [[ -e "${AI_REPO}/.hermes.md" || -e "${AI_REPO}/HERMES.md" ]]; then
+    fail "Platform must not ship .hermes.md / HERMES.md (would override AGENTS.md in Hermes)"
+  else
+    ok "No .hermes.md (Hermes uses AGENTS.md)"
+  fi
   check_file "${AI_REPO}/templates/docs/99-project-status.md" "Status template"
   check_file "${AI_REPO}/templates/docs/contracts/features/browser-qa.md" "Browser QA project template"
   check_file "${AI_REPO}/templates/existing-project/platform-reconciliation.md" "Reconciliation template"
@@ -171,6 +184,18 @@ check_project_links() {
     ok "Doctor script linked"
   else
     warn "Doctor script not linked to AI Platform"
+  fi
+
+  if [[ -e "${target}/AGENTS.md" || -L "${target}/AGENTS.md" ]]; then
+    ok "AGENTS.md present"
+  else
+    warn "AGENTS.md missing"
+  fi
+
+  if [[ -e "${target}/CLAUDE.md" || -L "${target}/CLAUDE.md" ]]; then
+    ok "CLAUDE.md present"
+  else
+    warn "CLAUDE.md missing"
   fi
 
   echo ""
@@ -289,11 +314,11 @@ check_docs() {
     warn "docs/99-project-status.md missing"
   fi
 
-  if [[ "${mode}" == "existing" ]] && project_is_laravel "${target}"; then
+  if [[ "${mode}" == "existing" ]]; then
     if reconciliation_contract_present "${target}"; then
       ok "Platform reconciliation contract present"
     else
-      warn "Existing Laravel project has no platform-reconciliation contract"
+      warn "Existing project has no platform-reconciliation contract"
     fi
   fi
 

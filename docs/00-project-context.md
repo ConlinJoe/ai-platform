@@ -1,18 +1,22 @@
-# AI Platform Context
+# AI Development Harness
 
-Concise context for ChatGPT Projects and AI agents working on the shared AI
-Platform repository.
+Concise context for ChatGPT Projects and AI agents working on this
+repository (`ai-platform`).
 
 ## What This Project Is
 
-The AI Platform standardizes how AI assists with architecture, development,
-documentation, code review, design, and project setup across all development
-projects. It owns reusable rules, skills, scripts, and templates — not
-project business logic.
+**AI Development Harness** is an agent-agnostic engineering harness for
+AI-assisted software development. It standardizes architecture,
+development, documentation, review, design, and project setup across
+application repos. It owns reusable rules, skills, scripts, and
+templates — not project business logic.
+
+Internal scripts and clone paths still use `AI_PLATFORM` / `ai-platform`.
 
 ## Technology Stack
 
-- Cursor project rules (`.cursor/rules/`)
+- Cursor project rules (`.cursor/rules/`) — reference implementation
+- Agent-neutral core (`core/agent-core.md`, `AGENTS.md`, `CLAUDE.md`)
 - Agent skills (`.agents/skills/`)
 - Bash automation scripts (`scripts/`)
 - Markdown documentation contracts (`docs/`)
@@ -41,6 +45,8 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   web applications), not every repository. Agent invocation of Playwright
   / browser automation is opt-in: do not run it unless the current task
   explicitly authorizes it.
+- User-global Cursor MCP (Playwright MCP, BrowserMCP) is configured in
+  Cursor, not by bootstrap. See `mcp/README.md`.
 
 ## Where to Look
 
@@ -49,7 +55,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Documentation standard | `documentation-philosophy.md` |
 | ChatGPT export workflow | `chatgpt-projects.md` |
 | Cursor rules | `.cursor/rules/` |
+| First-time clone / onboarding | `../README.md`, `mcp/README.md` |
+| Multi-agent adapters | `core/adapters/README.md` |
 | New / existing project setup | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
+| Existing project adoption | `core/prompts/project-adoption.md` |
 | Browser QA | `contracts/features/browser-qa.md` |
 | Laravel Boost | `contracts/features/laravel-boost.md` |
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |

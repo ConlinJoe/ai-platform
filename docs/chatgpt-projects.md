@@ -39,10 +39,17 @@ Update it when stack, purpose, or constraints change materially.
 
 ### 3. Export context
 
-From the project root:
+From the **project** root (after bootstrap this is a symlink):
 
 ```bash
 scripts/export-chatgpt-context.sh
+```
+
+If that symlink is missing, run the clone copy **from the same project
+root**:
+
+```bash
+/path/to/ai-platform/scripts/export-chatgpt-context.sh
 ```
 
 The script copies project AI context into `.build/chatgpt-context/` and
@@ -72,8 +79,12 @@ New projects bootstrapped via `scripts/bootstrap-project.sh` receive:
 - Symlinks to `scripts/export-chatgpt-context.sh` and `scripts/doctor.sh`
 
 Existing projects keep their docs. Bootstrap adds only missing drafts and
-prints a capability diagnosis (Laravel Boost, Playwright) without installing
-packages.
+prints a capability diagnosis (Laravel Boost, Playwright, Roots stack)
+without installing packages. It does not analyze or adopt the project
+and does not install user-global MCP servers.
+After bootstrap, run Project Adoption in a fresh agent session:
+`core/prompts/project-adoption.md`. First-time clone steps are in the
+repository `README.md`.
 
 ## .gitignore
 

@@ -79,6 +79,10 @@ Do not load all project documentation for every task.
 Planning documents (`type: planning`) are never authoritative for
 implementation unless the user explicitly directs otherwise.
 
+Project adoption (`core/prompts/project-adoption.md`) is an exception:
+load the full existing `docs/` set for that task, then resume selective
+loading afterward.
+
 Status documents (`type: status`) — typically `docs/99-project-status.md` —
 summarize current implementation progress and readiness. They are not
 architectural authority; load engine, feature, and ADR contracts for design

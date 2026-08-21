@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-14
+last_reviewed: 2026-08-21
 source_of_truth_for:
   - Laravel Boost capability policy for the AI Platform
   - Boost detection levels used by bootstrap and doctor
@@ -30,6 +30,7 @@ Authoritative installer behavior: installed `laravel/boost` package and
 | Composer package `laravel/boost` | The Laravel project (`--dev`) |
 | MCP server registration | `php artisan boost:install` → `.cursor/mcp.json` |
 | Guidelines / skills (`AGENTS.md`, `.cursor/skills`) | Boost installer / `boost:update` |
+| AI Platform portable core in Boost output | `.ai/guidelines/ai-platform.md` (bootstrap symlink) |
 | Capability expectation and diagnosis | AI Platform (profile, bootstrap, doctor) |
 | User-global Cursor MCP | Browser tools only — never Boost |
 
@@ -69,10 +70,31 @@ After linking platform rules into a new Laravel app:
 3. Report Boost as missing with the native install steps.
 4. Continue bootstrap of rules, docs templates, and skills.
 
+## AI Platform composition with Boost `AGENTS.md`
+
+Boost owns generated `AGENTS.md` / `CLAUDE.md` and may regenerate them on
+`boost:install` / `boost:update`. The platform must not overwrite those
+files.
+
+Official Boost extension: add `.md` or `.blade.php` files under
+`.ai/guidelines/*`. Bootstrap links:
+
+`.ai/guidelines/ai-platform.md` → AI Platform `core/agent-core.md`
+
+That is project-owned composition, not a competing `AGENTS.md`. After
+`php artisan boost:install` or `boost:update`, Boost includes the
+guideline in generated agent files so Codex, Grok Build, and Hermes
+receive both Boost Laravel guidance and the portable identity/safety
+core.
+
+Until that Boost command runs, an existing Boost `AGENTS.md` may omit
+the core. Cursor still loads `.cursor/rules/00-platform.mdc`.
+
 ## Existing-project bootstrap
 
 Same detection. Do not silently install Boost. Do not overwrite Boost-owned
 files (`AGENTS.md`, `.cursor/mcp.json`, `.cursor/skills` published by Boost).
+Do provision `.ai/guidelines/ai-platform.md` when missing.
 
 Record the gap in the bootstrap report and, when creating
 `docs/contracts/foundational/platform-reconciliation.md`, list missing Boost

@@ -34,7 +34,9 @@ Examples:
 
 AI agents must not load the entire documentation tree for every task. They
 start with the documentation index, identify relevant contracts, then load
-only those contracts and their declared dependencies.
+only those contracts and their declared dependencies. Project adoption
+(`core/prompts/project-adoption.md`) is the exception: that task loads the
+full existing `docs/` set, then selective loading resumes.
 
 ### 4. Project-specific structure
 

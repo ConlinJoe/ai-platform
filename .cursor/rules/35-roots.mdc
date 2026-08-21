@@ -1,6 +1,6 @@
 ---
-description: Roots/Radicle/Sage WordPress architecture, Log1x Navi navigation, and WordPress page/menu provisioning
-globs: functions.php,**/functions.php,app/setup.php,app/filters.php,**/wp-cli.yml,theme.json,config/theme.php,app/View/Composers/**/*.php,resources/views/sections/**/*.blade.php,resources/views/partials/**/*.blade.php
+description: Roots/Radicle/Sage WordPress architecture, ACF Pro, Keen Slider, WPForms Lite, Log1x Navi, and WordPress page/menu provisioning
+globs: functions.php,**/functions.php,app/setup.php,app/filters.php,**/wp-cli.yml,theme.json,config/theme.php,app/View/Composers/**/*.php,app/Fields/**/*.php,resources/views/**/*.blade.php,resources/js/**/*.{js,ts}
 alwaysApply: false
 ---
 
@@ -11,10 +11,10 @@ Apply this rule **only** to Roots Radicle applications and Sage themes
 plain WordPress without this stack, React, Rails, or other non-WordPress
 projects.
 
-For tasks involving WordPress menus, navigation, Sage/Blade templates,
-Acorn, or initial page/menu architecture on this stack, follow this
-profile. The platform copy lives at
-`core/project-profiles/roots-radicle.md`.
+For tasks involving WordPress menus, navigation, forms, ACF fields,
+sliders/galleries, Sage/Blade templates, Acorn, or initial page/menu
+architecture on this stack, follow this profile. The platform copy lives
+at `core/project-profiles/roots-radicle.md`.
 
 # Architecture
 
@@ -25,10 +25,23 @@ profile. The platform copy lives at
 - WordPress remains the source of truth for content, pages, menus, menu
   locations, menu items, hierarchy, labels, and URLs.
 - Navi adapts WordPress navigation into structured data for Sage/Blade.
-- Sage/Blade owns presentation.
+- Sage/Blade owns presentation. Frontend layout remains code-owned.
+- ACF Pro is the preferred structured-content layer. WordPress owns
+  native content; ACF owns intentional structured metadata. ACF is not
+  a page builder.
+- Keen Slider is the preferred slider/carousel/gallery library.
+  Integrate it through Sage/Vite.
+- WPForms Lite is the default forms layer for ordinary form needs.
+  Gravity Forms remains a valid project-specific choice, not the
+  default.
 - A project-native provisioner may establish reproducible
   project-defined WordPress structure. It is not a runtime CMS.
 - Acorn provides the Laravel-based application layer inside WordPress.
+
+These stack preferences are subordinate to Current-First Engineering,
+Framework-Native First, compatibility checks, license/credential
+requirements, and explicit project ADRs/contracts. Do not force them
+onto existing projects that already have intentional alternatives.
 
 # Navigation
 
@@ -88,6 +101,106 @@ use it correctly for the installed version. Do not replace a working
 intentional navigation architecture merely to standardize unless the
 task calls for it. Do not upgrade Navi automatically.
 
+# Structured content
+
+ACF Pro (`https://www.advancedcustomfields.com/`) is the preferred
+structured-content layer. Verify current compatibility before install.
+Prefer ACF Composer / existing Roots-native field architecture when
+that is already part of the stack. Do not hard-code historical ACF APIs.
+
+Use ACF for page-specific structured fields, options/settings, product
+specifications, galleries, structured feature content, and repeatable
+content with a defined schema. WordPress owns native content. ACF owns
+intentional structured metadata. Do not use ACF as an unrestricted page
+builder, giant Flexible Content system, arbitrary layout builder, or
+"build anything" repeater. Do not duplicate data WordPress already owns.
+
+Never commit license keys, `auth.json` secrets, or credentials. Install
+ACF Pro automatically only when authenticated installation is possible.
+Otherwise establish the expected architecture and report the credential
+blocker. Do not silently substitute free ACF when Pro features are
+required.
+
+Existing projects: inspect first; use the installed ACF architecture if
+present; do not auto-migrate or auto-upgrade.
+
+# Sliders and galleries
+
+Keen Slider (`https://keen-slider.io/`, npm `keen-slider`) is the
+preferred slider/carousel/gallery library. Verify current compatibility.
+Integrate through Sage/Vite. Do not hard-code historical Keen APIs.
+
+Prefer Keen for product galleries, image sliders, carousels,
+thumbnail-driven galleries, and touch/drag interactions. Drive media
+from WordPress/ACF, not hard-coded image URLs. Do not add Swiper, Slick,
+Splide, or another carousel library when Keen satisfies the requirement.
+Do not invent a slider the UI does not need.
+
+Defaults where applicable: no autoplay unless required; touch/drag;
+accessible controls; thumbnails instead of dots when selecting images;
+minimal JS; no unnecessary wrapper abstraction.
+
+Greenfield: install current compatible `keen-slider` via npm even if no
+slider is designed yet. Existing: preserve an intentional working
+alternative (including Swiper) unless migration is requested.
+
+# Forms
+
+WPForms Lite (`https://wordpress.org/plugins/wpforms-lite/`) is the
+preferred **default** forms plugin for ordinary form needs (contact,
+lead/inquiry, basic validation, notifications, simple submissions).
+Verify current compatibility. Do not hard-code historical WPForms APIs.
+
+Decision hierarchy:
+
+1. Inspect existing project/form architecture.
+2. For greenfield or basic form needs, prefer WPForms Lite.
+3. Upgrade WPForms or choose another mature forms system only when
+   requirements justify it (advanced conditional logic, complex
+   integrations, payments, advanced workflows, sophisticated routing,
+   or capabilities Lite does not support cleanly). Do not automatically
+   upgrade.
+4. Gravity Forms remains a valid project-specific choice, but is **not**
+   the default.
+
+WordPress / WPForms owns fields, validation, submissions, notifications,
+spam protection, and form administration. Sage/Blade/Tailwind owns page
+composition, surrounding presentation, theme integration, and visual
+treatment.
+
+Do not hand-code POST handlers, email delivery, nonce/validation
+infrastructure, or custom form storage when WPForms already satisfies
+the requirement. Theme via supported hooks/classes/templates/APIs; do
+not edit plugin core. Prefer reproducible setup from the project
+contract using current supported APIs/CLI/import. Do not write form
+plugin tables directly or overwrite user-edited forms on normal
+provisioning runs.
+
+Greenfield: once WordPress is available, install/activate WPForms Lite
+via the current WP-CLI/WordPress mechanism. Prefer Lite before
+purchasing. Existing: preserve Gravity Forms or another intentional
+mature form system; do not auto-migrate.
+
+# Greenfield setup
+
+For a **new** Roots/Radicle/Sage project, this baseline is the approved
+stack setup after Current-First verification. Platform
+`bootstrap-project.sh` does not install npm packages or WordPress
+plugins; it does guarantee `resources/images/` on new Roots projects.
+Complete the rest in the Roots project workflow (`50-workflows`):
+
+1. Ensure `resources/images/` exists.
+2. Install current compatible `keen-slider` via npm.
+3. Once WordPress is available, install/activate WPForms Lite.
+4. Install/activate ACF Pro when credentials allow; otherwise report
+   the blocker and continue. Do not substitute free ACF. Do not commit
+   secrets.
+5. Do not invent sliders, ACF page builders, or custom form
+   infrastructure the project does not need.
+
+Do not apply this install path to non-WordPress projects or merely
+because the AI Platform repository itself was bootstrapped.
+
 # Page and menu provisioning
 
 This rule defines **how** project-defined WordPress structure is
@@ -104,8 +217,9 @@ Prefer a deliberate developer CLI command or setup task. Do not turn the
 provisioner into a runtime CMS.
 
 Keep responsibilities separate: WordPress owns navigation/content; Navi
-adapts it for Sage/Blade; Blade presents; the provisioner establishes
-reproducible project-defined structure.
+adapts it for Sage/Blade; ACF owns structured editorial fields (not a
+page builder); Blade presents; the provisioner establishes reproducible
+project-defined structure.
 
 ## Required behavior
 
@@ -150,3 +264,10 @@ structure.
 
 Follow the `10-documentation` project rule. Load relevant contracts from
 `docs/README.md` before implementation work.
+
+For new Roots/Radicle/Sage projects, architecture and project-context
+contracts should record: ACF owns structured editorial fields; frontend
+layout remains code-owned; no unrestricted ACF page builder; Keen is the
+preferred slider/gallery dependency; WPForms Lite is the default basic
+forms layer; upgrades/alternatives require actual project need;
+credentials/secrets are never committed.

@@ -62,6 +62,8 @@ DOCTOR_SCRIPT="${AI_REPO}/scripts/doctor.sh"
 DOCS_TEMPLATES_DIR="${AI_REPO}/templates/docs"
 BROWSER_QA_TEMPLATE="${AI_REPO}/templates/docs/contracts/features/browser-qa.md"
 RECONCILIATION_TEMPLATE="${AI_REPO}/templates/existing-project/platform-reconciliation.md"
+AGENT_CORE="${AI_REPO}/core/agent-core.md"
+CLAUDE_TEMPLATE="${AI_REPO}/templates/agents/CLAUDE.md"
 BOOTSTRAP_MODE=""
 
 echo ""
@@ -249,16 +251,16 @@ add_missing_profile_templates() {
     "${target_docs}/99-project-status.md" \
     "project status"
 
+  copy_if_missing \
+    "${RECONCILIATION_TEMPLATE}" \
+    "${target_docs}/contracts/foundational/platform-reconciliation.md" \
+    "platform reconciliation"
+
   if project_is_laravel_webapp "${TARGET_PROJECT}"; then
     copy_if_missing \
       "${BROWSER_QA_TEMPLATE}" \
       "${target_docs}/contracts/features/browser-qa.md" \
       "browser QA contract"
-
-    copy_if_missing \
-      "${RECONCILIATION_TEMPLATE}" \
-      "${target_docs}/contracts/foundational/platform-reconciliation.md" \
-      "platform reconciliation"
   fi
 }
 
@@ -278,6 +280,26 @@ ensure_gitignore_build() {
 
   printf '\n# ChatGPT context export output\n.build/\n' >> "${gitignore}"
   echo "Added .build/ to ${gitignore}"
+}
+
+ensure_roots_resources_images() {
+  if ! project_is_roots_radicle "${TARGET_PROJECT}"; then
+    return 0
+  fi
+
+  if [[ "${BOOTSTRAP_MODE}" != "new" ]]; then
+    return 0
+  fi
+
+  echo ""
+  echo "--- Roots/Radicle resources/images ---"
+
+  local images_dir="${TARGET_PROJECT}/resources/images"
+  mkdir -p "${images_dir}"
+  if [[ ! -e "${images_dir}/.gitkeep" ]]; then
+    touch "${images_dir}/.gitkeep"
+  fi
+  echo "Ensured ${images_dir} exists"
 }
 
 ensure_playwright_gitignore() {
@@ -475,6 +497,95 @@ restore_skills() {
 }
 
 # ---------------------------------------------------------------------------
+# Agent adapters (thin entrypoints; canonical rules stay in .cursor/rules)
+# ---------------------------------------------------------------------------
+
+link_if_missing_symlink() {
+  local source="$1"
+  local dest="$2"
+  local label="$3"
+
+  if [[ ! -e "${source}" && ! -L "${source}" ]]; then
+    echo "Warning: missing source for ${label}: ${source}" >&2
+    return 0
+  fi
+
+  if [[ -L "${dest}" ]]; then
+    local current_target
+    current_target="$(readlink "${dest}")"
+    if [[ "${current_target}" != "${source}" ]]; then
+      ln -sfn "${source}" "${dest}"
+      echo "Updated link: ${dest} -> ${source}"
+    else
+      echo "Already linked: ${dest}"
+    fi
+    return 0
+  fi
+
+  if [[ -e "${dest}" ]]; then
+    echo "Already present: ${dest} (left in place; not replaced with ${label})"
+    return 0
+  fi
+
+  mkdir -p "$(dirname "${dest}")"
+  ln -s "${source}" "${dest}"
+  echo "Linked: ${dest} -> ${source}"
+}
+
+provision_agent_adapters() {
+  echo ""
+  echo "--- Agent adapters (Cursor, Grok Build, Codex, Claude Code, Hermes) ---"
+
+  if [[ ! -f "${AGENT_CORE}" ]]; then
+    echo "Warning: canonical agent core missing: ${AGENT_CORE}" >&2
+  else
+    link_if_missing_symlink \
+      "${AGENT_CORE}" \
+      "${TARGET_PROJECT}/AGENTS.md" \
+      "AGENTS.md"
+  fi
+
+  copy_if_missing \
+    "${CLAUDE_TEMPLATE}" \
+    "${TARGET_PROJECT}/CLAUDE.md" \
+    "CLAUDE.md"
+
+  if [[ -e "${TARGET_PROJECT}/.hermes.md" || -e "${TARGET_PROJECT}/HERMES.md" ]]; then
+    echo "Warning: .hermes.md / HERMES.md is present and would override AGENTS.md in Hermes Agent."
+    echo "The AI Platform does not create these files. Prefer the shared AGENTS.md entrypoint."
+  else
+    echo "Hermes: no .hermes.md (intentional). Hermes consumes AGENTS.md."
+  fi
+
+  if project_is_laravel "${TARGET_PROJECT}" && [[ -f "${AGENT_CORE}" ]]; then
+    link_if_missing_symlink \
+      "${AGENT_CORE}" \
+      "${TARGET_PROJECT}/.ai/guidelines/ai-platform.md" \
+      "Boost AI Platform guideline"
+    echo "Laravel Boost: .ai/guidelines/ai-platform.md -> core/agent-core.md"
+    echo "Run php artisan boost:install or boost:update so generated AGENTS.md includes it."
+    echo "Do not overwrite Boost-owned AGENTS.md by hand."
+  fi
+
+  local skill
+  while IFS= read -r skill; do
+    [[ -n "${skill}" ]] || continue
+    local skill_src="${TARGET_SKILLS_DIR}/${skill}"
+    [[ -d "${skill_src}" ]] || continue
+
+    link_if_missing_symlink \
+      "../../.agents/skills/${skill}" \
+      "${TARGET_PROJECT}/.claude/skills/${skill}" \
+      "Claude skill ${skill}"
+
+    link_if_missing_symlink \
+      "../../.agents/skills/${skill}" \
+      "${TARGET_PROJECT}/.grok/skills/${skill}" \
+      "Grok skill ${skill}"
+  done < <(get_locked_skills)
+}
+
+# ---------------------------------------------------------------------------
 # Verification
 # ---------------------------------------------------------------------------
 
@@ -616,10 +727,60 @@ verify_ai_platform_unchanged() {
   return "${failures}"
 }
 
+verify_agent_adapters() {
+  local failures=0
+  local agents_md="${TARGET_PROJECT}/AGENTS.md"
+  local claude_md="${TARGET_PROJECT}/CLAUDE.md"
+
+  echo ""
+  echo "Agent adapters:"
+
+  if [[ ! -e "${agents_md}" && ! -L "${agents_md}" ]]; then
+    echo "FAIL  AGENTS.md missing"
+    failures=$((failures + 1))
+  elif [[ -L "${agents_md}" ]]; then
+    if [[ "$(readlink "${agents_md}")" == "${AGENT_CORE}" ]]; then
+      echo "OK    AGENTS.md linked to canonical agent-core"
+    else
+      echo "OK    AGENTS.md linked (project-owned target)"
+    fi
+  else
+    echo "OK    AGENTS.md present (existing file left in place)"
+  fi
+
+  if [[ -f "${claude_md}" || -L "${claude_md}" ]]; then
+    echo "OK    CLAUDE.md present"
+  else
+    echo "FAIL  CLAUDE.md missing"
+    failures=$((failures + 1))
+  fi
+
+  if [[ -e "${TARGET_PROJECT}/.hermes.md" || -e "${TARGET_PROJECT}/HERMES.md" ]]; then
+    echo "WARN  .hermes.md / HERMES.md present (overrides AGENTS.md in Hermes)"
+  else
+    echo "OK    no .hermes.md (Hermes uses AGENTS.md)"
+  fi
+
+  if project_is_laravel "${TARGET_PROJECT}"; then
+    local boost_guideline="${TARGET_PROJECT}/.ai/guidelines/ai-platform.md"
+    if [[ -L "${boost_guideline}" ]] && [[ "$(readlink "${boost_guideline}")" == "${AGENT_CORE}" ]]; then
+      echo "OK    Laravel Boost guideline linked to agent-core"
+    elif [[ -e "${boost_guideline}" ]]; then
+      echo "OK    Laravel Boost guideline present"
+    else
+      echo "FAIL  Laravel Boost guideline missing: ${boost_guideline}"
+      failures=$((failures + 1))
+    fi
+  fi
+
+  return "${failures}"
+}
+
 run_verification() {
   local rule_failures=0
   local skill_failures=0
   local script_failures=0
+  local adapter_failures=0
   local ai_failures=0
 
   echo ""
@@ -649,6 +810,12 @@ run_verification() {
   verify_export_script || script_failures=$((script_failures + $?))
   verify_doctor_script || script_failures=$((script_failures + $?))
 
+  if verify_agent_adapters; then
+    adapter_failures=0
+  else
+    adapter_failures=$?
+  fi
+
   echo ""
   echo "AI Platform (${AI_REPO}):"
 
@@ -660,14 +827,16 @@ run_verification() {
 
   echo ""
 
-  if [[ "${rule_failures}" -eq 0 && "${skill_failures}" -eq 0 && "${script_failures}" -eq 0 && "${ai_failures}" -eq 0 ]]; then
+  if [[ "${rule_failures}" -eq 0 && "${skill_failures}" -eq 0 && "${script_failures}" -eq 0 && "${adapter_failures}" -eq 0 && "${ai_failures}" -eq 0 ]]; then
     echo "Bootstrap complete. Rules, skills, and platform scripts are available in the target project."
     echo ""
-    echo "Next: establish project-specific documentation contracts from the"
-    echo "installed project reality before substantive feature work."
     if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
-      echo "Existing project: follow core/prompts/existing-project-bootstrap.md"
+      echo "Bootstrap provisioned the AI Platform. It did not adopt the project."
+      echo "Next: start a fresh agent session in this project and follow:"
+      echo "  ${AI_REPO}/core/prompts/project-adoption.md"
     else
+      echo "Next: establish project-specific documentation contracts from the"
+      echo "installed project reality before substantive feature work."
       echo "See .cursor/rules/50-workflows.mdc (New Project Workflow)."
     fi
     return 0
@@ -677,6 +846,7 @@ run_verification() {
   echo "  Rule failures: ${rule_failures}" >&2
   echo "  Skill failures: ${skill_failures}" >&2
   echo "  Script failures: ${script_failures}" >&2
+  echo "  Adapter failures: ${adapter_failures}" >&2
   echo "  AI Platform failures: ${ai_failures}" >&2
   return 1
 }
@@ -715,6 +885,31 @@ report_capabilities() {
     echo "Detected profile: roots-radicle"
     echo "Playwright Mode A is not required by this profile."
     echo "Laravel Boost is not required."
+    echo "Preferred greenfield stack: ACF Pro, Keen Slider, WPForms Lite."
+
+    if npm_has_package "${TARGET_PROJECT}" "keen-slider"; then
+      echo "keen-slider: declared"
+    else
+      echo "keen-slider: not declared"
+    fi
+
+    if [[ -d "${TARGET_PROJECT}/resources/images" ]]; then
+      echo "resources/images: present"
+    else
+      echo "resources/images: missing"
+    fi
+
+    echo "Platform bootstrap does not install npm packages or WordPress plugins."
+    if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
+      echo "Existing project: inspect ACF, slider, and form architecture first."
+      echo "Preserve intentional alternatives. Do not install or migrate during bootstrap."
+      echo "Report divergence from the preferred stack."
+    else
+      echo "Greenfield next steps: follow core/project-profiles/roots-radicle.md."
+      echo "Install keen-slider via npm. Install/activate WPForms Lite via WP-CLI once WordPress is available."
+      echo "Install ACF Pro when authenticated installation is available; otherwise report the credential blocker and continue."
+      echo "Do not commit license keys or secrets."
+    fi
   else
     echo "Detected profile: none (not Laravel or Roots/Radicle/Sage)."
     echo "Playwright Mode A is not required."
@@ -723,7 +918,7 @@ report_capabilities() {
 
   echo ""
   if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
-    echo "Existing-project next steps: core/prompts/existing-project-bootstrap.md"
+    echo "Existing-project next steps: ${AI_REPO}/core/prompts/project-adoption.md"
     echo "Document intentional differences; surface open deviations."
     echo "Do not migrate application code during bootstrap."
   fi
@@ -741,6 +936,8 @@ link_doctor_script
 bootstrap_docs_templates
 ensure_gitignore_build
 ensure_playwright_gitignore
+ensure_roots_resources_images
 restore_skills
+provision_agent_adapters
 report_capabilities
 run_verification
