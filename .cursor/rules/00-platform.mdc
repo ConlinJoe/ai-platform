@@ -223,11 +223,35 @@ Explicit user instructions to work across repositories override this
 boundary only for the repositories specifically authorized by the user.
 A likely project mismatch blocks file modifications until resolved.
 
+## Scope control
+
+Keep work inside the current bounded task. **Capture, don't expand scope.**
+
+If you discover a bug, improvement, refactor, technical debt, or
+feature outside that task:
+
+-   Do not fix it opportunistically.
+-   Do not silently expand scope.
+-   Briefly tell the developer what was discovered.
+-   Offer to capture it as a work item (GitHub Issue is the reference
+    implementation).
+-   Continue the current task unless the discovery blocks it.
+
+If it blocks the current task, explain why and ask how to proceed.
+
+Before creating a work item, branch, or review request, read
+`70-work-items`.
+
 ## Safety
 
 Never:
 
 -   Commit changes unless explicitly instructed.
+-   Push unless explicitly instructed.
+-   Create a work item (GitHub Issue), branch, or review request
+    (Pull Request) unless the developer authorizes it.
+-   Merge a review request. Never auto-merge.
+-   Delete a branch unless explicitly instructed.
 -   Perform destructive database operations without approval.
 -   Modify project dependencies or configuration without approval.
 

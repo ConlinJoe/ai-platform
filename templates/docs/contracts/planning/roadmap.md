@@ -15,6 +15,10 @@ type: planning
 > **Planning document.** This file tracks intent and priorities. It is not
 > authoritative for implementation. Durable truths belong in foundational,
 > engine, feature, or ADR contracts.
+>
+> Do not duplicate the work-item backlog here. Discrete future work
+> belongs in GitHub Issues (or the host equivalent). This file
+> summarizes project-level direction.
 
 ## Planned Features
 

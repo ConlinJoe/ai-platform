@@ -53,6 +53,7 @@ Update this graph when contract dependencies change.
 | Architecture change | `contracts/foundational/architecture.md` → affected engine contracts |
 | Bug fix | Feature or engine contract for affected area |
 | Planning | `contracts/planning/roadmap.md` only (not authoritative for implementation) |
+| Later follow-up | Capture as a work item (GitHub Issue); do not expand the current task |
 
 ## ChatGPT Export
 

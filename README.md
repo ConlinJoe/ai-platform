@@ -84,6 +84,8 @@ Optional / not installed by this repository:
 - Superdesign CLI (invoked on demand via `npx`; requires login)
 - Laravel Boost (project-native on Laravel apps; not harness-owned)
 - `@playwright/test` (project-owned Mode A; Laravel profile expects it)
+- GitHub CLI (`gh`) for Issues and Pull Requests (optional; not installed
+  or authenticated by this harness)
 
 Hermes Agent installation is optional. Codex, Claude Code, and Grok
 Build are optional if you use another supported client.
@@ -236,7 +238,7 @@ From the **harness** clone:
 
 | Item | Behavior |
 | --- | --- |
-| Shared Cursor rules (`00`–`60` `*.mdc`) | Symlink into `.cursor/rules/` |
+| Shared Cursor rules (`00`–`70` `*.mdc`) | Symlink into `.cursor/rules/` |
 | `AGENTS.md` | Symlink to `core/agent-core.md` if missing (not overwritten) |
 | `CLAUDE.md` | Copied if missing (`@AGENTS.md`) |
 | `.hermes.md` | **Not** created. Hermes uses `AGENTS.md` |
@@ -246,6 +248,7 @@ From the **harness** clone:
 | `skills-lock.json` | Symlink to this clone |
 | Locked skills | Copied into `.agents/skills/` (`npx skills experimental_install`) |
 | `docs/` | Copied from templates if `docs/README.md` is missing; existing docs are not overwritten |
+| `.github/` Issue/PR templates | Not copied; existing GitHub files are not overwritten |
 | Existing projects | May add missing drafts: `99-project-status.md`, `platform-reconciliation.md`, Laravel `browser-qa.md` |
 | `.cursor/rules/90-*.mdc` | Not created; project-owned if you add them later |
 | Application code, Composer, npm, WordPress plugins | Not modified / not installed |
@@ -321,11 +324,14 @@ for the same prompt.
 
 Work inside the **target** repository, not this clone.
 
-- Linked `00`–`60` rules apply in Cursor; `AGENTS.md` / `CLAUDE.md` apply
+- Linked `00`–`70` rules apply in Cursor; `AGENTS.md` / `CLAUDE.md` apply
   in Codex, Claude Code, Grok Build, and Hermes.
 - Project `docs/` and `.cursor/rules/90-*.mdc` are local context.
 - Use a fresh agent thread for bounded tasks when the work needs a
   clean adoption/implementation boundary.
+- Work discovered outside the current task should normally be captured
+  as a GitHub Issue (or host equivalent), not fixed in the same session.
+  See **10. Issues and pull requests**.
 - Do not run Playwright or browser MCP unless the current task
   authorizes it.
 - Keep contracts current as implementation changes
@@ -340,7 +346,31 @@ That script is a bootstrap symlink. Run it from the project root.
 Upload `.build/chatgpt-context.zip` to the ChatGPT Project
 (`docs/chatgpt-projects.md`).
 
-## 10. Maintenance
+## 10. Issues and pull requests
+
+**Capture, don't expand scope.** Work discovered outside the current
+bounded task should normally be recorded, not fixed in the same session.
+
+| Artifact | Role |
+| --- | --- |
+| **Issue** (work item) | Backlog for work that has not started |
+| **Branch** | Active implementation |
+| **Pull Request** | Reviewable implementation — not empty backlog |
+| **Merge** | Developer approval only. Never auto-merge. |
+
+GitHub Issues, Pull Requests, and `gh` are the current reference
+implementation. The lifecycle itself is provider-neutral. `gh` is
+optional: use it when available and authorized; do not install or
+authenticate it during bootstrap. Existing project Issue/PR/branch
+conventions are respected.
+
+The agent must not create Issues, branches, PRs, commits, pushes, or
+merges unless you authorize that action.
+
+Details: `docs/contracts/features/work-item-lifecycle.md` and
+`.cursor/rules/70-work-items.mdc`.
+
+## 11. Maintenance
 
 In this clone only:
 
@@ -373,6 +403,7 @@ Edit shared rules in `$AI_PLATFORM`, not through project symlinks.
 - `mcp/` — MCP **ownership** (not an installer)
 - `templates/` — docs copied into new projects
 - `docs/` — this harness's contracts
+- `.github/PULL_REQUEST_TEMPLATE.md` — concise PR template for this repo
 - `skills-lock.json` — pinned skill versions
 - `LICENSE` — MIT
 

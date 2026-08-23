@@ -199,6 +199,78 @@ assert_grep 'You do not choose an agent during bootstrap' "${AI_REPO}/README.md"
   "README states bootstrap does not require choosing an agent"
 
 echo ""
+echo "--- Work-item lifecycle ---"
+assert_file "${AI_REPO}/.cursor/rules/70-work-items.mdc" \
+  "70-work-items rule exists"
+assert_file "${AI_REPO}/docs/contracts/features/work-item-lifecycle.md" \
+  "work-item lifecycle contract exists"
+assert_file "${AI_REPO}/docs/contracts/adrs/0003-work-item-lifecycle.md" \
+  "work-item lifecycle ADR exists"
+assert_file "${AI_REPO}/.github/PULL_REQUEST_TEMPLATE.md" \
+  "repository PR template exists"
+assert_file "${AI_REPO}/templates/github/PULL_REQUEST_TEMPLATE.md" \
+  "optional project PR template exists"
+assert_missing "${AI_REPO}/.github/ISSUE_TEMPLATE.md" \
+  "no repository Issue template file"
+assert_missing "${AI_REPO}/.github/ISSUE_TEMPLATE" \
+  "no repository Issue template directory"
+assert_grep 'Capture, don.t expand scope' "${AI_REPO}/core/agent-core.md" \
+  "agent-core includes capture-don't-expand"
+assert_grep 'Capture, don.t expand scope' "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform includes capture-don't-expand"
+assert_grep 'Never auto-merge' "${AI_REPO}/core/agent-core.md" \
+  "agent-core forbids auto-merge"
+assert_grep 'Never auto-merge' "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform forbids auto-merge"
+assert_grep 'Never push unless' "${AI_REPO}/core/agent-core.md" \
+  "agent-core requires push authorization"
+assert_grep 'Push unless explicitly instructed' "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform requires push authorization"
+assert_grep '70-work-items' "${AI_REPO}/core/agent-core.md" \
+  "agent-core selective rules include 70-work-items"
+assert_grep 'Do not create empty PRs' \
+  "${AI_REPO}/docs/contracts/features/work-item-lifecycle.md" \
+  "contract forbids empty PRs as backlog"
+assert_grep 'Do not expand scope in the PR' \
+  "${AI_REPO}/.cursor/rules/70-work-items.mdc" \
+  "work-items rule forbids PR scope expansion"
+assert_grep 'gh. is \*\*optional\*\*' \
+  "${AI_REPO}/docs/contracts/features/work-item-lifecycle.md" \
+  "contract marks gh as optional"
+assert_grep 'not a bootstrap dependency' \
+  "${AI_REPO}/.cursor/rules/70-work-items.mdc" \
+  "work-items rule does not make gh a bootstrap dependency"
+assert_grep 'a replacement for canonical project documentation' \
+  "${AI_REPO}/docs/contracts/features/work-item-lifecycle.md" \
+  "contract distinguishes Issues from project docs"
+assert_grep 'Discrete future work' \
+  "${AI_REPO}/docs/contracts/features/work-item-lifecycle.md" \
+  "contract assigns Issues to discrete future work"
+assert_grep '## 10. Issues and pull requests' "${AI_REPO}/README.md" \
+  "README has an Issues and pull requests section"
+assert_grep 'gh. is' "${AI_REPO}/README.md" \
+  "README states gh is optional"
+assert_grep 'Existing project Issue/PR/branch' "${AI_REPO}/README.md" \
+  "README states existing project conventions are respected"
+assert_grep 'GitHub / contribution conventions' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption inspects existing GitHub conventions"
+assert_not_grep '^\- \[ \]' "${AI_REPO}/.github/PULL_REQUEST_TEMPLATE.md" \
+  "PR template is not checkbox-heavy"
+pr_template_lines="$(wc -l < "${AI_REPO}/.github/PULL_REQUEST_TEMPLATE.md" | tr -d ' ')"
+if [[ "${pr_template_lines}" -le 30 ]]; then
+  pass "PR template is concise (${pr_template_lines} lines)"
+else
+  fail "PR template is concise (${pr_template_lines} lines)"
+fi
+assert_not_grep 'GitHub CLI is required' "${AI_REPO}/core/adapters/README.md" \
+  "adapter index does not require GitHub CLI"
+assert_not_grep 'gh issue' "${AI_REPO}/core/adapters/cursor.md" \
+  "Cursor adapter is unchanged regarding gh Issues"
+assert_not_grep 'gh pr' "${AI_REPO}/core/adapters/hermes.md" \
+  "Hermes adapter is unchanged regarding gh PRs"
+
+echo ""
 echo "--- Doctor (AI Platform repo) ---"
 if "${AI_REPO}/scripts/doctor.sh" "${AI_REPO}" >"${LOGDIR}/doctor-platform.log" 2>&1; then
   pass "doctor on AI Platform exits 0"
@@ -208,6 +280,8 @@ else
 fi
 assert_grep "Playwright and Laravel Boost are not required" "${LOGDIR}/doctor-platform.log" \
   "doctor does not require Playwright/Boost of the platform repo"
+assert_grep "GitHub CLI is not required" "${LOGDIR}/doctor-platform.log" \
+  "doctor does not require GitHub CLI of the platform repo"
 
 echo ""
 echo "--- Generic new project ---"
@@ -247,6 +321,19 @@ assert_grep "Laravel Boost is not required" ${LOGDIR}/boot-generic.log \
   "bootstrap does not require Boost for generic projects"
 assert_grep "Detected profile: none" ${LOGDIR}/boot-generic.log \
   "bootstrap does not assign laravel-webapp or roots-radicle to generic projects"
+assert_grep "GitHub CLI \\(gh\\) is optional" ${LOGDIR}/boot-generic.log \
+  "bootstrap states GitHub CLI is optional"
+assert_grep "does not copy or overwrite .github/" ${LOGDIR}/boot-generic.log \
+  "bootstrap does not copy GitHub templates"
+assert_missing "${GENERIC}/.github/PULL_REQUEST_TEMPLATE.md" \
+  "generic did not receive a GitHub PR template"
+assert_missing "${GENERIC}/.github" \
+  "generic did not receive a .github directory"
+if [[ -L "${GENERIC}/.cursor/rules/70-work-items.mdc" ]] && [[ "$(readlink "${GENERIC}/.cursor/rules/70-work-items.mdc")" == "${AI_REPO}/.cursor/rules/70-work-items.mdc" ]]; then
+  pass "generic received 70-work-items rule link"
+else
+  fail "generic received 70-work-items rule link"
+fi
 
 if "${AI_REPO}/scripts/doctor.sh" "${GENERIC}" >${LOGDIR}/doctor-generic.log 2>&1; then
   pass "doctor on generic project exits 0"
@@ -464,6 +551,28 @@ assert_grep "core/prompts/project-adoption.md" ${LOGDIR}/boot-existing.log \
   "bootstrap points at project adoption prompt"
 assert_grep "did not adopt the project" ${LOGDIR}/boot-existing.log \
   "bootstrap states it did not adopt the project"
+
+echo ""
+echo "--- Existing project GitHub conventions ---"
+EXISTING_GH="${WORKDIR}/existing-github"
+mkdir -p "${EXISTING_GH}/docs" "${EXISTING_GH}/.github/ISSUE_TEMPLATE"
+write_laravel_composer "${EXISTING_GH}" 0
+cat > "${EXISTING_GH}/docs/README.md" <<'EOF'
+# Existing docs
+EOF
+printf 'UNIQUE_PR_TEMPLATE_MARKER\n' > "${EXISTING_GH}/.github/PULL_REQUEST_TEMPLATE.md"
+printf 'UNIQUE_ISSUE_TEMPLATE_MARKER\n' > "${EXISTING_GH}/.github/ISSUE_TEMPLATE/bug.md"
+
+"${AI_REPO}/scripts/bootstrap-project.sh" "${EXISTING_GH}" >${LOGDIR}/boot-existing-github.log 2>&1
+
+assert_grep "UNIQUE_PR_TEMPLATE_MARKER" "${EXISTING_GH}/.github/PULL_REQUEST_TEMPLATE.md" \
+  "existing PR template was not overwritten"
+assert_grep "UNIQUE_ISSUE_TEMPLATE_MARKER" "${EXISTING_GH}/.github/ISSUE_TEMPLATE/bug.md" \
+  "existing Issue template was not overwritten"
+assert_grep "does not copy or overwrite .github/" ${LOGDIR}/boot-existing-github.log \
+  "existing-project bootstrap states it does not overwrite GitHub templates"
+assert_not_grep 'gh auth' ${LOGDIR}/boot-existing-github.log \
+  "bootstrap does not authenticate GitHub CLI"
 
 echo ""
 echo "--- Idempotent re-run (generic) ---"

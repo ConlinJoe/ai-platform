@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-21
+last_reviewed: 2026-08-23
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -47,6 +47,11 @@ enforcement (bootstrap + doctor). Version 1.1.1.
   Hermes (Nous Research) consumes `AGENTS.md` and does not get
   `.hermes.md`. Capability matrix: `core/adapters/README.md`.
   Laravel Boost composition: `.ai/guidelines/ai-platform.md`.
+- Work-item lifecycle: GitHub Issues, Pull Requests, and `gh` are the
+  reference implementation of a provider-neutral capture-don't-expand
+  workflow (`70-work-items`). `gh` is optional. Merge remains a
+  developer approval boundary. Bootstrap does not install GitHub
+  infrastructure or credentials.
 
 ## Validation
 

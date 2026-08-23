@@ -25,6 +25,8 @@ and consistent with the existing codebase.
 -   Keep implementations focused on the requested task.
 -   Do not introduce unnecessary abstractions.
 -   Do not perform unrelated refactoring.
+-   Do not opportunistically expand the current task. Capture unrelated
+    bugs, refactors, and features as work items (`70-work-items`).
 -   Optimize for readability over cleverness.
 
 ## Tailwind

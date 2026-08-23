@@ -917,6 +917,10 @@ report_capabilities() {
   fi
 
   echo ""
+  echo "GitHub CLI (gh) is optional. Bootstrap does not install or authenticate it."
+  echo "Bootstrap does not copy or overwrite .github/ Issue or PR templates."
+
+  echo ""
   if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
     echo "Existing-project next steps: ${AI_REPO}/core/prompts/project-adoption.md"
     echo "Document intentional differences; surface open deviations."

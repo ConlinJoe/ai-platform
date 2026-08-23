@@ -108,6 +108,9 @@ Inspect, as applicable:
 - Tests and how they are run
 - MCP, editor, and agent config
 - Deployment/infrastructure evidence that exists in-repo
+- GitHub / contribution conventions when present: Issue conventions,
+  PR templates, branch naming, `CONTRIBUTING` (or equivalent), and
+  GitHub Actions tied to PRs
 
 Follow Current-First Engineering and Framework-Native First in
 `00-platform`. The installed environment is the starting point. Do not
@@ -188,6 +191,13 @@ Do not duplicate unnecessarily:
 - ADRs own individual decisions
 - Reconciliation owns classified differences, not the architecture itself
 - Roadmap and status are not implementation authority
+- GitHub Issues (or host work items) track discrete future work; they
+  do not replace contracts, ADRs, or status/roadmap. Preserve
+  reasonable existing Issue/PR/branch conventions. Do not create
+  GitHub infrastructure merely because the project was adopted. If
+  existing conventions conflict with harness approval boundaries
+  (no automatic Issue/PR/commit/push/merge; never auto-merge), record
+  that in reconciliation.
 
 Keep `depends_on` / `referenced_by` and `docs/README.md` accurate. Set
 `last_reviewed` to today on touched contracts.

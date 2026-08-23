@@ -38,6 +38,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   dependencies (see `.cursor/rules/00-platform.mdc`).
 - Never commit unless explicitly instructed.
 - Do not modify dependencies without approval.
+- Discovered work outside the current task is captured, not used to
+  expand scope. GitHub Issues are the backlog; PRs represent
+  implementation; merge requires developer approval. See
+  `contracts/features/work-item-lifecycle.md`.
 - Documentation conflicts must surface — never guess or silently override.
 - Laravel Boost is project-native; the platform diagnoses it and does not
   write Boost MCP config.
@@ -59,6 +63,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Multi-agent adapters | `core/adapters/README.md` |
 | New / existing project setup | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Existing project adoption | `core/prompts/project-adoption.md` |
+| Issues / PRs / discovered work | `contracts/features/work-item-lifecycle.md` |
 | Browser QA | `contracts/features/browser-qa.md` |
 | Laravel Boost | `contracts/features/laravel-boost.md` |
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |

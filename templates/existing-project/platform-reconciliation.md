@@ -58,6 +58,23 @@ For each material item, record:
 | --- | --- | --- | --- |
 | | | | |
 
+## Contribution / GitHub conventions
+
+Inspect existing Issue conventions, PR templates, branch naming,
+contribution guidelines, and GitHub Actions tied to PRs. Preserve
+reasonable existing conventions. Do not create GitHub files merely to
+match the harness. If conventions conflict with harness approval
+boundaries (no automatic Issue/PR/commit/push/merge; never auto-merge),
+record that here.
+
+| Artifact | Present | Preserve / recommend |
+| --- | --- | --- |
+| Issue conventions | | |
+| PR template | | |
+| Branch naming | | |
+| CONTRIBUTING | | |
+| PR-related GitHub Actions | | |
+
 ## D. Questions for the developer
 
 Decisions that cannot safely be inferred from the repository. Grouped;

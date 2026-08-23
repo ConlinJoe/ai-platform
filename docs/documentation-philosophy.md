@@ -261,3 +261,18 @@ falling back to `project.md`, `architecture.md`, and `decisions.md`.
   guess
 - **New projects**: Start with the minimum viable contract set (see
   `templates/docs/`)
+
+## Work items are not contracts
+
+GitHub Issues (or the host's work-item equivalent) track discrete future
+work. They do not replace contracts, ADRs, or status/roadmap documents.
+
+| Artifact | Owns |
+| --- | --- |
+| Contracts / ADRs | Architecture, decisions, behavior, constraints, current truth |
+| Issues / work items | Discrete future work that has not started |
+| Pull Requests | A specific implementation / change set |
+| Status / roadmap | Project-level progress and direction |
+
+Do not maintain the same detailed backlog in documentation and in Issues.
+See `docs/contracts/features/work-item-lifecycle.md`.

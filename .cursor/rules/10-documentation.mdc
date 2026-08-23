@@ -88,6 +88,11 @@ summarize current implementation progress and readiness. They are not
 architectural authority; load engine, feature, and ADR contracts for design
 decisions.
 
+Work items (GitHub Issues in the reference implementation) track discrete
+future work. They are not documentation contracts and do not replace
+ADRs, feature/engine contracts, or status/roadmap summaries. Pull
+Requests describe a specific implementation. See `70-work-items`.
+
 # ChatGPT Projects
 
 Export project AI context for ChatGPT Projects:

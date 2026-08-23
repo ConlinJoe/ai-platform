@@ -19,8 +19,10 @@ contract model and templates from `templates/docs/`.
 | `chatgpt-projects.md` | foundational | active | ChatGPT Projects export workflow |
 | `contracts/adrs/0001-two-layer-browser-qa.md` | adr | accepted | Decision to use Mode A/B browser QA |
 | `contracts/adrs/0002-laravel-boost-ownership.md` | adr | accepted | Decision that Boost is project-native |
+| `contracts/adrs/0003-work-item-lifecycle.md` | adr | accepted | Decision to use a provider-neutral work-item lifecycle with GitHub as reference |
 | `contracts/features/browser-qa.md` | feature | active | Browser QA policy, opt-in agent invocation, applicability, isolation |
 | `contracts/features/laravel-boost.md` | feature | active | Boost capability, detection, bootstrap/doctor |
+| `contracts/features/work-item-lifecycle.md` | feature | active | Capture-don't-expand, Issues/PRs, approval boundaries, optional gh |
 
 ## Dependency Graph
 
@@ -32,8 +34,10 @@ flowchart TD
   chatgpt[chatgpt-projects.md]
   browserAdr[contracts/adrs/0001-two-layer-browser-qa.md]
   boostAdr[contracts/adrs/0002-laravel-boost-ownership.md]
+  workAdr[contracts/adrs/0003-work-item-lifecycle.md]
   browserQa[contracts/features/browser-qa.md]
   boost[contracts/features/laravel-boost.md]
+  workItems[contracts/features/work-item-lifecycle.md]
 
   chatgpt --> philosophy
   chatgpt --> context
@@ -41,8 +45,10 @@ flowchart TD
   status --> context
   browserAdr --> browserQa
   boostAdr --> boost
+  workAdr --> workItems
   browserQa --> browserAdr
   boost --> boostAdr
+  workItems --> workAdr
 ```
 
 ## Loading Guide
@@ -58,6 +64,7 @@ flowchart TD
 | Existing project adoption | `core/prompts/project-adoption.md` |
 | Browser QA / Playwright | `contracts/features/browser-qa.md` |
 | Laravel Boost / MCP | `contracts/features/laravel-boost.md`, `mcp/README.md` |
+| Issues, PRs, discovered work | `contracts/features/work-item-lifecycle.md` |
 | Laravel web app profile | `core/project-profiles/laravel-webapp.md` |
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
 

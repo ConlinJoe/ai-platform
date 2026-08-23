@@ -72,6 +72,9 @@ Running bootstrap on a target project:
 Bootstrap is safe to re-run on an already-bootstrapped project.
 It does not run Composer, `boost:install`, add Playwright, or install
 WordPress plugins or npm packages.
+It does not install or authenticate GitHub CLI (`gh`).
+It does not copy `.github/` templates or overwrite existing GitHub
+Issue/PR/Actions files.
 It does not analyze the repository or adopt it into the platform.
 That work belongs to Project Adoption.
 
@@ -123,6 +126,14 @@ the roadmap; rejected work is recorded as **B**.
 Ask only when the answer is a genuine product, business, architectural,
 security, or implementation decision. Do not ask what the repository
 already establishes.
+
+Inspect existing Issue conventions, PR templates, branch naming,
+contribution guidelines, and GitHub Actions tied to PRs. Preserve
+reasonable existing conventions. If they materially conflict with
+harness approval boundaries (no automatic Issue/PR/commit/push/merge;
+never auto-merge), surface the difference during reconciliation. Do not
+create GitHub infrastructure merely because the project was adopted.
+See `70-work-items`.
 
 During adoption, load the full existing `docs/` set. That is an
 exception to selective loading in `10-documentation`. Presenting

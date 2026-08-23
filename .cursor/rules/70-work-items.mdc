@@ -1,0 +1,133 @@
+---
+description: Capture discovered work as Issues; PRs represent implementation — do not expand the current task
+alwaysApply: false
+---
+
+# Work-item lifecycle
+
+**Capture, don't expand scope.**
+
+Provider-neutral lifecycle:
+
+**Work item → branch → implementation → review request → approval → merge**
+
+GitHub Issues, Pull Requests, and `gh` are the current reference
+implementation. The full policy lives in the AI Platform clone:
+`docs/contracts/features/work-item-lifecycle.md`.
+
+Load this rule when capturing discovered work, creating or implementing
+an Issue, naming a branch, or opening a Pull Request.
+
+## During an active coding session
+
+If you discover a bug, improvement, refactor, technical debt, or feature
+outside the current bounded task:
+
+- Do not fix it opportunistically.
+- Do not silently expand scope.
+- Determine whether it should be captured for later.
+- Briefly tell the developer what was discovered.
+- Offer to create a GitHub Issue (or the host's work-item equivalent).
+- Continue the current task unless the discovery blocks it.
+
+If it blocks the current task, explain why and ask how to proceed.
+
+Do not create the Issue unless the developer authorizes it.
+
+## Issues
+
+Issues are the backlog for work that has **not begun**.
+
+Examples: bugs found during unrelated work, deferred features, technical
+debt, architectural follow-ups, non-blocking security or UX improvements,
+test-coverage gaps worth a separate task.
+
+Keep Issues concise. Include enough context for a fresh coding agent.
+Canonical project docs remain authoritative.
+
+Recommended structure; omit empty sections; do not over-document trivia:
+
+```markdown
+### Problem
+
+### Expected outcome
+
+### Relevant context
+
+### Acceptance criteria
+```
+
+Do not add Issue templates merely to enforce this shape.
+
+## Pull Requests
+
+A PR represents **implementation**, not future intent. Do not create
+empty PRs as backlog items.
+
+Issue → branch → implementation → verification → documentation updates
+where required → PR.
+
+Reference the Issue when one exists. Describe what changed, why,
+verification performed, documentation/ADR/contract updates, and known
+limitations or follow-up work.
+
+Do not expand scope in the PR. Capture follow-up as a new Issue.
+
+Use the repository PR template when present.
+
+## Branches
+
+Use the repository's existing convention when one exists. Do not rename
+existing branches merely to conform.
+
+Default:
+
+- `fix/<short-description>`
+- `feature/<short-description>`
+- `refactor/<short-description>`
+- `docs/<short-description>`
+
+Create or switch to a branch only when the developer has authorized
+implementation work that needs one.
+
+## Implementing from an Issue
+
+Fresh threads remain preferred for bounded implementation tasks.
+
+1. Read applicable harness rules.
+2. Read current project status/context.
+3. Read the Issue.
+4. Read relevant ADRs/contracts/architecture.
+5. Establish the bounded implementation scope.
+6. Create or use the appropriate branch when implementation is authorized.
+7. Implement.
+8. Test/verify proportionately (`60-browser-qa` remains opt-in).
+9. Update project documentation when required.
+10. Create the PR only when explicitly requested or when the developer
+    invokes the PR workflow.
+
+## Approval boundaries
+
+Do **not** automatically create an Issue, create a branch, create a PR,
+merge, delete a branch, commit, or push unless the developer authorizes
+that action.
+
+**Never auto-merge.** Merge is a developer approval boundary.
+
+These are separate authorizations. Implementing an Issue does not by
+itself authorize a PR, commit, or push.
+
+## GitHub CLI
+
+`gh` is optional. Use it when available and authorized. Do not install
+or authenticate it. If `gh` is missing, continue without it: provide the
+Issue or PR body for the GitHub UI, or use another authorized mechanism.
+
+Absence of `gh` must not block development. It is not a bootstrap dependency.
+
+## Existing projects
+
+Preserve reasonable existing Issue, PR, branch, CONTRIBUTING, and
+GitHub Actions conventions. Surface conflicts with these approval
+boundaries during Project Adoption. Do not create GitHub infrastructure
+merely because a project was adopted.

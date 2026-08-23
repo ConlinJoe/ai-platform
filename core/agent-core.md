@@ -25,9 +25,27 @@ it can be applied here. Ask the user to switch to the intended project or
 explicitly confirm that the request should be applied to the current
 project.
 
+## Scope control
+
+Keep work inside the current bounded task. **Capture, don't expand scope.**
+
+If you discover a bug, improvement, refactor, technical debt, or
+feature outside that task: do not fix it opportunistically; do not
+silently expand scope; briefly tell the developer; offer to capture it
+as a work item (GitHub Issue is the reference implementation); continue
+the current task unless it blocks the work. If it blocks, explain why
+and ask how to proceed.
+
+Before creating a work item, branch, or review request, read
+`.cursor/rules/70-work-items.mdc`.
+
 ## Safety
 
-Never commit unless explicitly instructed. Never perform
+Never commit unless explicitly instructed. Never push unless
+explicitly instructed. Never create a work item (GitHub Issue),
+branch, or review request (Pull Request) unless the developer
+authorizes it. Never merge a review request. Never auto-merge. Never
+delete a branch unless explicitly instructed. Never perform
 destructive database operations without approval. Never modify
 project dependencies or configuration without approval.
 
@@ -61,6 +79,7 @@ up front):
 | UI/UX | `.cursor/rules/40-ui.mdc` |
 | Bootstrap / adoption | `.cursor/rules/50-workflows.mdc` |
 | Browser QA | `.cursor/rules/60-browser-qa.mdc` |
+| Issues, PRs, discovered work | `.cursor/rules/70-work-items.mdc` |
 | Project-specific | `.cursor/rules/90-*.mdc` if present |
 
 Do not apply a framework profile to a project that is not that stack.
