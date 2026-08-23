@@ -75,6 +75,8 @@ OPTIONAL_FILES=(
   "AGENTS.md"
   "CLAUDE.md"
   ".cursorrules"
+  "README.md"
+  "CHANGELOG.md"
 )
 
 for rel in "${OPTIONAL_FILES[@]}"; do

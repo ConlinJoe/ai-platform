@@ -148,6 +148,15 @@ assert_file "${AI_REPO}/core/prompts/project-adoption.md" \
 assert_file "${AI_REPO}/README.md" "README exists"
 assert_grep '^# AI Development Harness' "${AI_REPO}/README.md" \
   "README uses the public product title"
+assert_grep '^Version 1\.2\.0$' "${AI_REPO}/README.md" \
+  "README reports harness version 1.2.0"
+assert_file "${AI_REPO}/CHANGELOG.md" "CHANGELOG exists"
+assert_grep '^## 1\.2\.0' "${AI_REPO}/CHANGELOG.md" \
+  "CHANGELOG has a 1.2.0 entry"
+assert_grep 'Version 1\.2\.0' "${AI_REPO}/docs/99-project-status.md" \
+  "status document reports version 1.2.0"
+assert_grep '^Version 1\.2\.0$' "${AI_REPO}/docs/00-project-context.md" \
+  "project context reports version 1.2.0"
 assert_file "${AI_REPO}/LICENSE" "LICENSE exists"
 assert_grep 'MIT License' "${AI_REPO}/LICENSE" \
   "LICENSE is MIT"
@@ -271,6 +280,83 @@ assert_not_grep 'gh pr' "${AI_REPO}/core/adapters/hermes.md" \
   "Hermes adapter is unchanged regarding gh PRs"
 
 echo ""
+echo "--- Design stack ---"
+assert_file "${AI_REPO}/.cursor/rules/40-ui.mdc" "40-ui rule exists"
+assert_file "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" \
+  "design-stack ADR exists"
+assert_dir "${AI_REPO}/.agents/skills/hallmark" "Hallmark skill is present"
+assert_file "${AI_REPO}/.claude/skills/hallmark/SKILL.md" \
+  "Claude adapter exposes Hallmark"
+assert_file "${AI_REPO}/.grok/skills/hallmark/SKILL.md" \
+  "Grok adapter exposes Hallmark"
+assert_missing "${AI_REPO}/.agents/skills/frontend-design" \
+  "frontend-design is not in the managed skill stack"
+assert_missing "${AI_REPO}/.agents/skills/ui-ux-pro-max" \
+  "ui-ux-pro-max is not in the managed skill stack"
+assert_missing "${AI_REPO}/.agents/skills/superdesign" \
+  "superdesign is not in the managed skill stack"
+assert_missing "${AI_REPO}/.claude/skills/frontend-design" \
+  "Claude adapter does not expose frontend-design"
+assert_missing "${AI_REPO}/.claude/skills/ui-ux-pro-max" \
+  "Claude adapter does not expose ui-ux-pro-max"
+assert_missing "${AI_REPO}/.claude/skills/superdesign" \
+  "Claude adapter does not expose superdesign"
+assert_missing "${AI_REPO}/.grok/skills/frontend-design" \
+  "Grok adapter does not expose frontend-design"
+assert_missing "${AI_REPO}/.grok/skills/ui-ux-pro-max" \
+  "Grok adapter does not expose ui-ux-pro-max"
+assert_missing "${AI_REPO}/.grok/skills/superdesign" \
+  "Grok adapter does not expose superdesign"
+assert_grep '"hallmark"' "${AI_REPO}/skills-lock.json" \
+  "skills-lock.json pins Hallmark"
+assert_not_grep 'frontend-design' "${AI_REPO}/skills-lock.json" \
+  "skills-lock.json does not pin frontend-design"
+assert_not_grep 'ui-ux-pro-max' "${AI_REPO}/skills-lock.json" \
+  "skills-lock.json does not pin ui-ux-pro-max"
+assert_not_grep 'superdesign' "${AI_REPO}/skills-lock.json" \
+  "skills-lock.json does not pin Superdesign"
+assert_not_grep 'Automatically consult' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not auto-load multiple taste skills"
+assert_not_grep 'frontend-design' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not reference frontend-design"
+assert_not_grep 'ui-ux-pro-max' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not reference ui-ux-pro-max"
+assert_not_grep 'Superdesign' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not reference Superdesign"
+assert_grep 'Scope router' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui classifies UI scope"
+assert_grep 'Do \*\*not\*\* load Hallmark' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "small UI does not automatically load Hallmark"
+assert_grep 'Do \*\*not\*\* run Playwright' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "small UI does not automatically run Playwright"
+assert_grep 'authoritative' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "project design system remains authoritative"
+assert_grep 'It is \*\*not\*\* authorization for a Mode A suite' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "significant UI Mode B does not imply Mode A"
+assert_grep 'bounded Mode B visual pass' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "significant UI authorizes bounded visual verification"
+assert_grep 'creating or expanding a Playwright Mode A suite' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "Mode B UI authorization does not imply Mode A"
+assert_grep 'availability is not general authorization' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "tool availability is not general authorization"
+assert_not_grep 'Superdesign' "${AI_REPO}/README.md" \
+  "README does not document Superdesign as current tooling"
+assert_not_grep '@superdesign/cli' "${AI_REPO}/README.md" \
+  "README has no Superdesign CLI login/setup"
+assert_not_grep 'Superdesign' "${AI_REPO}/mcp/README.md" \
+  "MCP index does not present Superdesign as supported tooling"
+assert_grep 'Design system, tokens, component conventions' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption inspects existing design conventions"
+assert_grep 'Do not impose a new' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption does not impose a new design system"
+
+echo ""
 echo "--- Doctor (AI Platform repo) ---"
 if "${AI_REPO}/scripts/doctor.sh" "${AI_REPO}" >"${LOGDIR}/doctor-platform.log" 2>&1; then
   pass "doctor on AI Platform exits 0"
@@ -329,6 +415,38 @@ assert_missing "${GENERIC}/.github/PULL_REQUEST_TEMPLATE.md" \
   "generic did not receive a GitHub PR template"
 assert_missing "${GENERIC}/.github" \
   "generic did not receive a .github directory"
+assert_grep '^\.hallmark/' "${GENERIC}/.gitignore" \
+  "generic gitignore ignores Hallmark operational artifacts"
+assert_not_grep '^design\.md' "${GENERIC}/.gitignore" \
+  "generic gitignore does not ignore design.md"
+
+mkdir -p \
+  "${GENERIC}/.agents/skills/frontend-design" \
+  "${GENERIC}/.agents/skills/ui-ux-pro-max" \
+  "${GENERIC}/.agents/skills/superdesign" \
+  "${GENERIC}/.claude/skills" \
+  "${GENERIC}/.grok/skills"
+printf 'retired\n' > "${GENERIC}/.agents/skills/frontend-design/SKILL.md"
+printf 'retired\n' > "${GENERIC}/.agents/skills/ui-ux-pro-max/SKILL.md"
+printf 'retired\n' > "${GENERIC}/.agents/skills/superdesign/SKILL.md"
+ln -sfn "../../.agents/skills/frontend-design" "${GENERIC}/.claude/skills/frontend-design"
+ln -sfn "../../.agents/skills/superdesign" "${GENERIC}/.grok/skills/superdesign"
+
+"${AI_REPO}/scripts/bootstrap-project.sh" "${GENERIC}" >${LOGDIR}/boot-generic-prune.log 2>&1
+
+assert_missing "${GENERIC}/.agents/skills/frontend-design" \
+  "bootstrap prunes frontend-design even when skill restore is skipped"
+assert_missing "${GENERIC}/.agents/skills/ui-ux-pro-max" \
+  "bootstrap prunes ui-ux-pro-max even when skill restore is skipped"
+assert_missing "${GENERIC}/.agents/skills/superdesign" \
+  "bootstrap prunes superdesign even when skill restore is skipped"
+assert_missing "${GENERIC}/.claude/skills/frontend-design" \
+  "bootstrap prunes retired Claude skill links"
+assert_missing "${GENERIC}/.grok/skills/superdesign" \
+  "bootstrap prunes retired Grok skill links"
+assert_grep 'Removed retired skill' ${LOGDIR}/boot-generic-prune.log \
+  "bootstrap reports retired skill pruning"
+
 if [[ -L "${GENERIC}/.cursor/rules/70-work-items.mdc" ]] && [[ "$(readlink "${GENERIC}/.cursor/rules/70-work-items.mdc")" == "${AI_REPO}/.cursor/rules/70-work-items.mdc" ]]; then
   pass "generic received 70-work-items rule link"
 else
@@ -583,6 +701,45 @@ if [[ "${build_count}" -eq 1 ]]; then
 else
   fail "re-run does not duplicate .build/ gitignore (count=${build_count})"
 fi
+
+echo ""
+echo "--- ChatGPT context export ---"
+if "${AI_REPO}/scripts/export-chatgpt-context.sh" >"${LOGDIR}/export-chatgpt.log" 2>&1; then
+  pass "export-chatgpt-context.sh exits 0"
+else
+  fail "export-chatgpt-context.sh exits 0"
+  cat "${LOGDIR}/export-chatgpt.log"
+fi
+assert_file "${AI_REPO}/.build/chatgpt-context.zip" \
+  "ChatGPT export zip exists"
+assert_dir "${AI_REPO}/.build/chatgpt-context" \
+  "ChatGPT export directory exists"
+assert_file "${AI_REPO}/.build/chatgpt-context/docs/00-project-context.md" \
+  "export includes project context"
+assert_file "${AI_REPO}/.build/chatgpt-context/.cursor/rules/40-ui.mdc" \
+  "export includes 40-ui"
+assert_file "${AI_REPO}/.build/chatgpt-context/.cursor/rules/60-browser-qa.mdc" \
+  "export includes 60-browser-qa"
+assert_dir "${AI_REPO}/.build/chatgpt-context/.agents/skills/hallmark" \
+  "export includes Hallmark"
+assert_grep '^Version 1\.2\.0$' \
+  "${AI_REPO}/.build/chatgpt-context/docs/00-project-context.md" \
+  "export project context is v1.2.0"
+assert_file "${AI_REPO}/.build/chatgpt-context/CHANGELOG.md" \
+  "export includes changelog"
+assert_file "${AI_REPO}/.build/chatgpt-context/README.md" \
+  "export includes README"
+assert_grep '^Version 1\.2\.0$' \
+  "${AI_REPO}/.build/chatgpt-context/README.md" \
+  "export README is v1.2.0"
+assert_missing "${AI_REPO}/.build/chatgpt-context/.agents/skills/frontend-design" \
+  "export does not bundle frontend-design"
+assert_missing "${AI_REPO}/.build/chatgpt-context/.agents/skills/ui-ux-pro-max" \
+  "export does not bundle ui-ux-pro-max"
+assert_missing "${AI_REPO}/.build/chatgpt-context/.agents/skills/superdesign" \
+  "export does not bundle Superdesign"
+assert_not_grep '@superdesign/cli' "${AI_REPO}/.build/chatgpt-context/README.md" \
+  "export README has no Superdesign CLI setup"
 
 echo ""
 echo "--- Summary ---"

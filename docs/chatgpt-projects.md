@@ -69,7 +69,8 @@ change.
 | `.cursor/rules/` | `bootstrap/`, `config/`, `database/` |
 | `.agents/` (if present) | `public/`, `resources/`, `routes/` |
 | `skills-lock.json` (if present) | `tests/`, `vendor/`, `node_modules/` |
-| Project AI docs (`AGENTS.md`, etc.) | `storage/`, `.git/`, build artifacts |
+| `README.md`, `CHANGELOG.md` (if present) | `storage/`, `.git/`, build artifacts |
+| Project AI docs (`AGENTS.md`, etc.) | |
 
 ## Bootstrap
 

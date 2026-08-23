@@ -86,8 +86,8 @@ Before considering a task complete:
     appropriate to the task (lint, types, targeted unit/feature tests,
     build when genuinely necessary, framework-native validation). Do not
     escalate visual or frontend changes into Playwright or browser
-    automation unless the current task explicitly authorizes it
-    (`60-browser-qa`).
+    automation unless `60-browser-qa` authorizes it (explicit request, or
+    the bounded significant-UI Mode B visual pass in `40-ui`).
 -   Load relevant documentation contracts via `docs/README.md` (not the full
     documentation tree).
 -   Resolve the documentation outcome: update affected contracts, explicitly

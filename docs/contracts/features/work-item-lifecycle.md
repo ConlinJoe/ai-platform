@@ -167,7 +167,9 @@ Fresh agent threads remain preferred for bounded implementation tasks.
    authorized implementation**.
 7. Implement.
 8. Test/verify proportionately. Do not run Playwright or browser
-   automation unless the current task authorizes it.
+   automation unless `60-browser-qa` authorizes it (explicit request, or
+   the bounded significant-UI Mode B visual pass). Significant UI visual
+   verification is not a Mode A suite.
 9. Update project documentation when required
    (`.cursor/rules/10-documentation.mdc`).
 10. Create the PR when explicitly requested or when the developer

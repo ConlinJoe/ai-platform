@@ -102,7 +102,8 @@ scripts/export-chatgpt-context.sh
 ```
 
 The script exports `docs/`, `.cursor/rules/`, `.agents/` (if present),
-`skills-lock.json` (if present), and project-specific AI documentation.
+`skills-lock.json` (if present), `README.md` and `CHANGELOG.md` (if
+present), and project-specific AI documentation.
 It writes `.build/chatgpt-context/` and produces `.build/chatgpt-context.zip`.
 It never exports source code, vendor, tests, or generated files.
 
@@ -183,8 +184,9 @@ A task is not complete until:
 
 1. Code is complete.
 2. Tests or validation appropriate to the task are complete. Do not treat
-   Playwright/browser QA as required unless the current task explicitly
-   authorizes it (`60-browser-qa`).
+   Playwright/browser QA as required unless `60-browser-qa` authorizes it
+   (explicit request, or the bounded significant-UI Mode B visual pass in
+   `40-ui`). Significant UI visual verification is not a Mode A suite.
 3. Relevant contracts have been loaded and followed.
 4. Documentation outcome is resolved (update, explicit no-update, or conflict
    reported).

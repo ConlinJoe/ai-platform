@@ -57,8 +57,11 @@ Laravel web applications are expected to use Laravel Boost.
 ## Browser QA
 
 This profile is **browser-capable**. Capability is not authorization.
-Agents must not run Playwright or browser automation unless the current
-task explicitly authorizes it (`.cursor/rules/60-browser-qa.mdc`).
+Agent invocation of Mode A/B is not generally authorized by tool
+availability. Significant UI authorizes a bounded Mode B visual pass of
+that UI only (`40-ui`, `60-browser-qa`). Do not run Playwright or
+browser automation otherwise unless the current task explicitly
+authorizes it.
 
 When authorized, follow platform policy in
 `docs/contracts/features/browser-qa.md` and the loop in

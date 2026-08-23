@@ -36,11 +36,10 @@ satisfy this platform — that file is owned by Laravel Boost.
 
 ## Invocation
 
-Agent invocation is opt-in. Playwright MCP being configured does not
-authorize Mode B. Do not run Playwright or browser MCP unless the current
-task explicitly instructs it (`.cursor/rules/60-browser-qa.mdc`).
-
-Do not treat Playwright MCP as the regression suite.
+Agent invocation follows `.cursor/rules/60-browser-qa.mdc`. Playwright MCP
+being configured does not generally authorize Mode B. Significant UI
+authorizes a bounded Mode B visual pass of that UI only (`40-ui`). Do not
+treat Playwright MCP as the regression suite.
 
 The `mcp/browser/` directory is reserved for additional browser-tool notes;
 policy lives in the browser-QA contract, not here.

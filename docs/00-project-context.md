@@ -1,5 +1,7 @@
 # AI Development Harness
 
+Version 1.2.0
+
 Concise context for ChatGPT Projects and AI agents working on this
 repository (`ai-platform`).
 
@@ -47,8 +49,9 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   write Boost MCP config.
 - Playwright Mode A is expected only for browser-capable profiles (Laravel
   web applications), not every repository. Agent invocation of Playwright
-  / browser automation is opt-in: do not run it unless the current task
-  explicitly authorizes it.
+  / browser automation is not generally authorized by tool availability.
+  Significant UI authorizes a bounded Mode B visual pass of that UI only
+  (`40-ui`, `60-browser-qa`).
 - User-global Cursor MCP (Playwright MCP, BrowserMCP) is configured in
   Cursor, not by bootstrap. See `mcp/README.md`.
 

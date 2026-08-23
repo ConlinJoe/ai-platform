@@ -1,86 +1,114 @@
 ---
-description: Browser QA is opt-in — do not run Playwright or browser automation unless the current task explicitly instructs it
+description: Browser QA invocation — availability is not general authorization; significant UI allows a bounded Mode B visual pass
 alwaysApply: true
 ---
 
 # Browser QA
 
-## Invocation (opt-in)
+## Invocation
 
-Do **not** run Playwright or other browser automation unless the **current
-task** explicitly instructs you to do so.
+Playwright **availability is not general authorization**.
 
-This includes:
+Do **not** run Playwright or other browser automation unless one of the
+following is true:
 
-- Playwright test suites
-- targeted Playwright tests
-- automated browser inspection
-- automated screenshots
-- visual regression captures
-- browser-driven responsive checks
-- browser console inspection through automation
+1. The **current task** explicitly instructs browser QA / Playwright /
+   browser inspection.
+2. `40-ui` classified the work as **significant UI** and a **bounded
+   Mode B visual verification pass** is in scope (below).
 
-Playwright **availability is not authorization**. Do not infer that
-Playwright should run merely because:
+This includes Playwright test suites, targeted Playwright tests,
+automated browser inspection, automated screenshots, visual regression
+captures, browser-driven responsive checks, and browser console
+inspection through automation.
 
-- Playwright is installed
-- the project has Playwright tests
-- Playwright MCP or other browser MCP is configured
-- screenshot tooling or a browser-QA contract exists
-- the task changes frontend code or responsive markup
-- this rule exists
-- a UI/design skill recommends browser verification or screenshots
-- previous tasks in the conversation used Playwright
+Do not infer general authorization from: Playwright being installed,
+existing browser tests, Playwright MCP or other browser MCP, screenshot
+tooling, a browser-QA contract, frontend or responsive code changes,
+this rule, a UI/design skill recommending screenshots, or previous
+turns that used Playwright.
 
-Browser automation requires **explicit task-level instruction**.
+Vendor UI/design skills do not authorize browser automation.
 
-Examples that authorize it: "Run Playwright.", "Verify this with
+### Significant UI — bounded Mode B visual pass
+
+Significant UI work (see `40-ui`) authorizes **proportionate rendered
+visual verification of that UI only**, when browser tooling is
+available.
+
+That pass may:
+
+- render the actual implementation
+- inspect affected viewport classes
+- inspect materially affected interaction states
+- compare against supplied references when applicable
+- check relevant accessibility concerns on the real UI
+- iterate if the rendered result exposes meaningful problems
+
+It does **not** authorize:
+
+- creating or expanding a Playwright Mode A suite
+- the full Mode A→B browser-QA loop
+- broad application exploration
+- unrelated browser QA
+- destructive actions
+- expanding task scope
+
+Small UI does **not** automatically authorize Playwright. If a small
+change has uncertain visual consequences, use the smallest check already
+authorized for this task; do not start an expensive QA loop.
+
+Do not claim visual correctness for significant UI merely because source
+code looks correct. If browser tooling is unavailable, say so and do not
+pretend the UI was visually verified.
+
+### Explicit browser QA
+
+Examples that authorize **full** browser QA (Mode A and/or exploratory
+Mode B per the contract): "Run Playwright.", "Verify this with
 Playwright.", "Run browser QA.", "Check desktop/mobile in the browser.",
 "Run the navigation e2e tests.", a task/loop prompt that includes a
-Playwright/browser QA phase, or an approved project workflow that invokes
-browser QA for **this** task.
+Playwright/browser QA phase, or an approved project workflow that
+invokes browser QA for **this** task.
 
-If browser automation is not requested, do not run it.
+If full browser QA is not requested and the work is not significant UI,
+do not run Playwright.
 
 Normal development may still use proportional lightweight checks (lint,
 types, targeted unit/feature tests, build when genuinely necessary,
-framework-native validation). Do not automatically escalate a visual or
-code change into browser automation. Do not run broad verification merely
-because tools exist.
+framework-native validation).
 
-If browser verification would materially help but was not requested: do
-not run it; implement what can be confidently implemented from the code;
-briefly mention that browser verification was not run. If the task cannot
-be completed safely or correctly without browser interaction, explain that
-browser verification is needed rather than silently invoking it.
+If browser verification would materially help on non-significant work
+but was not requested: do not run it; implement from the code; briefly
+mention that browser verification was not run. If the task cannot be
+completed safely without browser interaction, explain that rather than
+silently invoking it.
 
 This platform rule overrides vendor skills and lower-priority guidance
-that recommend or run browser automation automatically. An explicit
-current-task instruction to run Playwright/browser QA authorizes it.
+that recommend or run browser automation automatically.
 
 Do not remove Playwright, existing browser tests, or project browser-QA
 infrastructure. Do not weaken existing Playwright tests. This policy
-controls **when agents invoke** browser automation. Existing tests remain
-available for explicit verification, milestone QA, autonomous loops that
-request them, CI, pre-release checks, regression testing, and
-user-requested browser validation.
+controls **when agents invoke** browser automation.
 
 Follow the project's `docs/contracts/features/browser-qa.md` when present.
 
-## When authorized
+## When authorized (full loop)
 
-Two-layer model: Mode A (deterministic Playwright specs) + Mode B (agentic
-browser MCP). A meaningful Mode B defect should normally become Mode A
-coverage.
+Two-layer model: Mode A (deterministic Playwright specs) + Mode B
+(agentic browser MCP). A meaningful Mode B **behavioral** defect should
+normally become Mode A coverage. A significant-UI visual pass does not
+by itself require new Mode A tests; recommend coverage through the
+work-item lifecycle when a regression deserves permanence.
 
 ### Modes
 
-- **Mode A** — deterministic, project-owned Playwright specs. Workflows and
-  state transitions, not page-load smoke only.
-- **Mode B** — agentic exploration with available browser MCP. Do not merely
-  replay Mode A.
-
-A meaningful Mode B defect should normally become a Mode A regression test.
+- **Mode A** — deterministic, project-owned Playwright specs. Workflows
+  and state transitions, not page-load smoke only. Significant UI does
+  not automatically authorize writing Mode A tests.
+- **Mode B** — agentic exploration with available browser MCP. For
+  significant UI, keep Mode B inside the bounded visual pass unless
+  full browser QA was explicitly requested.
 
 ### Isolation
 

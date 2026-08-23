@@ -1,6 +1,6 @@
 # AI Development Harness
 
-Version 1.1.1
+Version 1.2.0
 
 An agent-agnostic engineering harness for AI-assisted software development.
 
@@ -71,8 +71,8 @@ Required:
 | --- | --- |
 | Git | Clone this repository |
 | Bash | All harness scripts (`#!/usr/bin/env bash`) |
-| Python 3 | Bootstrap/doctor JSON parsing; UI/UX Pro Max skill scripts |
-| Node.js with npm/`npx` | Skill restore/update; Playwright MCP; Superdesign CLI |
+| Python 3 | Bootstrap/doctor JSON parsing |
+| Node.js with npm/`npx` | Skill restore/update; Playwright MCP |
 | A supported coding agent | Cursor (reference), Grok Build, Codex, Claude Code, and/or Hermes Agent |
 
 Playwright MCP's own docs require Node.js 18+. Install these with your
@@ -81,7 +81,6 @@ OS package manager or the vendor installer. Homebrew is not required.
 Optional / not installed by this repository:
 
 - Playwright MCP, BrowserMCP, and other **user-global** MCP servers
-- Superdesign CLI (invoked on demand via `npx`; requires login)
 - Laravel Boost (project-native on Laravel apps; not harness-owned)
 - `@playwright/test` (project-owned Mode A; Laravel profile expects it)
 - GitHub CLI (`gh`) for Issues and Pull Requests (optional; not installed
@@ -122,9 +121,9 @@ ls .agents/skills
 
 Doctor should pass. Locked skills should already be present from git:
 
-`frontend-design`, `hallmark`, `superdesign`, `ui-ux-pro-max`
+`hallmark`
 
-If those directories are missing, restore from `skills-lock.json`
+If that directory is missing, restore from `skills-lock.json`
 (this is **not** the skill-update command):
 
 ```bash
@@ -174,7 +173,7 @@ agent instructions and includes the portable core.
 
 | Kind | Scope | Who installs it |
 | --- | --- | --- |
-| Shared agent skills (Hallmark, frontend-design, ui-ux-pro-max, Superdesign) | Harness lockfile; copied into `.agents/skills/`; adapter dirs are symlinks | This repository / bootstrap |
+| Shared agent skills (Hallmark) | Harness lockfile; copied into `.agents/skills/`; adapter dirs are symlinks | This repository / bootstrap |
 | Playwright MCP, BrowserMCP | **Agent/client** config (often user-global) | You; not bootstrap. See `mcp/README.md` |
 | GitKraken or other SCM MCPs | User-global where the client supports it | You; **not** owned or required by this harness |
 | Laravel Boost MCP | Laravel **project** `.cursor/mcp.json` | `php artisan boost:install`, not bootstrap |
@@ -199,23 +198,15 @@ Add to `~/.cursor/mcp.json` (not a Laravel app's `.cursor/mcp.json`):
 
 Or Cursor Settings → MCP → Add new MCP Server, command
 `npx -y @playwright/mcp@latest`. Enable the server in Cursor MCP
-settings. Availability is not authorization to run browser automation
-(`.cursor/rules/60-browser-qa.mdc`).
+settings. Availability is not general authorization to run browser
+automation (`.cursor/rules/60-browser-qa.mdc`). Significant UI work
+authorizes a bounded Mode B visual pass of that UI only (`40-ui`).
 
 ### BrowserMCP (user-global)
 
 Typical Mode B companion. Configure in Cursor Settings → MCP as a
 user-global server. This harness does not install it and does not
 write its config.
-
-### Superdesign (skill + CLI, not MCP)
-
-- **Skill:** `.agents/skills/superdesign` (locked; copied into projects)
-- **CLI:** `npx --yes @superdesign/cli@latest` (on demand; no global install)
-- **Login:** if preflight reports `not authenticated`, run
-  `npx --yes @superdesign/cli@latest login`
-
-Do not conflate the skill, the CLI, and MCP servers.
 
 ## 5. Bootstrap a project
 
@@ -273,6 +264,24 @@ to the same doctor script. Prefer the `$AI_PLATFORM/...` form above if
 you are not sure the symlink exists.
 
 Linked rules should resolve into `$AI_PLATFORM/.cursor/rules/`.
+
+## Upgrading an existing bootstrapped project
+
+Shared Cursor rules (`00`–`70`) are **symlinks** into this clone. After
+the harness is updated, those projects receive the new rules immediately.
+You do not edit each project's copies of the shared rules.
+
+Re-run bootstrap in the project to reconcile managed files:
+
+- prune retired managed skills that are no longer in the lockfile
+- refresh Claude/Grok skill adapter links
+- apply current bootstrap-managed project configuration
+- add current ignore entries such as `.hallmark/`
+
+Re-bootstrap is not Project Adoption. It does not rewrite application
+code. Skill copies that are already installed are not refreshed unless
+they are missing or you restore from the linked lockfile (see
+**11. Maintenance**).
 
 ## 7. Existing vs greenfield
 
@@ -333,7 +342,8 @@ Work inside the **target** repository, not this clone.
   as a GitHub Issue (or host equivalent), not fixed in the same session.
   See **10. Issues and pull requests**.
 - Do not run Playwright or browser MCP unless the current task
-  authorizes it.
+  authorizes it (`60-browser-qa`). Significant UI authorizes a bounded
+  Mode B visual pass of that UI only (`40-ui`).
 - Keep contracts current as implementation changes
   (`.cursor/rules/10-documentation.mdc`).
 - After documentation/rule/skill changes in a project:
@@ -403,6 +413,7 @@ Edit shared rules in `$AI_PLATFORM`, not through project symlinks.
 - `mcp/` — MCP **ownership** (not an installer)
 - `templates/` — docs copied into new projects
 - `docs/` — this harness's contracts
+- `CHANGELOG.md` — harness version history
 - `.github/PULL_REQUEST_TEMPLATE.md` — concise PR template for this repo
 - `skills-lock.json` — pinned skill versions
 - `LICENSE` — MIT
@@ -410,11 +421,11 @@ Edit shared rules in `$AI_PLATFORM`, not through project symlinks.
 ## Documentation
 
 Contract model: `docs/documentation-philosophy.md`. Index:
-`docs/README.md`. Workflows: `.cursor/rules/50-workflows.mdc`.
+`docs/README.md`. Changelog: `CHANGELOG.md`. Workflows:
+`.cursor/rules/50-workflows.mdc`.
 
-Laravel browser QA is opt-in
-(`docs/contracts/features/browser-qa.md`). Laravel Boost is
-project-native (`docs/contracts/features/laravel-boost.md`).
+Laravel browser QA follows `docs/contracts/features/browser-qa.md`.
+Laravel Boost is project-native (`docs/contracts/features/laravel-boost.md`).
 
 ## License
 

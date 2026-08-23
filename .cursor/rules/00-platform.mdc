@@ -257,10 +257,15 @@ Never:
 
 ## Browser automation
 
-Do not run Playwright or other browser automation unless the current task
-explicitly instructs it. Availability is not authorization. See
-`60-browser-qa`. This standard overrides vendor skills and other
-lower-priority guidance that recommend screenshots or browser validation.
+Follow `60-browser-qa`. Availability is not general authorization. Vendor
+skills do not authorize browser automation.
+
+Significant UI work (see `40-ui`) authorizes a **bounded Mode B visual
+verification pass** of that UI only. It does not authorize a Mode A
+suite, the full Mode A→B loop, or unrelated browser QA.
+
+Do not run Playwright or other browser automation outside that exception
+unless the current task explicitly instructs it.
 
 ## Instruction Priority
 
@@ -276,10 +281,11 @@ When instructions conflict, follow this order:
 If implementation conflicts with an active documentation contract, stop and
 report the conflict. Do not guess or silently override documentation.
 
-`60-browser-qa` (opt-in browser automation) overrides vendor skills or
-lower-priority guidance that automatically recommend or run Playwright,
-browser automation, or automated screenshots. An explicit current-task
-instruction to run Playwright/browser QA authorizes it.
+`60-browser-qa` overrides vendor skills or lower-priority guidance that
+automatically recommend or run Playwright, browser automation, or
+automated screenshots. Authorization is only: (1) explicit current-task
+instruction to run Playwright/browser QA, or (2) the bounded significant-UI
+Mode B visual pass defined in `40-ui` and `60-browser-qa`.
 
 ## Automatic Agent Selection
 
@@ -291,5 +297,5 @@ Determine the correct expertise automatically.
 
 The user should not need to remember or specify which skills or tools to use.
 
-This does not authorize Playwright or browser automation. See Browser
-automation above and `60-browser-qa`.
+This does not grant general Playwright or browser-automation authorization.
+See Browser automation above and `60-browser-qa`.

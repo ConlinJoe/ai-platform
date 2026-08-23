@@ -20,7 +20,8 @@ contract model and templates from `templates/docs/`.
 | `contracts/adrs/0001-two-layer-browser-qa.md` | adr | accepted | Decision to use Mode A/B browser QA |
 | `contracts/adrs/0002-laravel-boost-ownership.md` | adr | accepted | Decision that Boost is project-native |
 | `contracts/adrs/0003-work-item-lifecycle.md` | adr | accepted | Decision to use a provider-neutral work-item lifecycle with GitHub as reference |
-| `contracts/features/browser-qa.md` | feature | active | Browser QA policy, opt-in agent invocation, applicability, isolation |
+| `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` | adr | accepted | Decision that Hallmark is the only managed design skill and significant UI authorizes bounded Mode B visual verification |
+| `contracts/features/browser-qa.md` | feature | active | Browser QA policy, invocation, significant-UI visual pass, applicability, isolation |
 | `contracts/features/laravel-boost.md` | feature | active | Boost capability, detection, bootstrap/doctor |
 | `contracts/features/work-item-lifecycle.md` | feature | active | Capture-don't-expand, Issues/PRs, approval boundaries, optional gh |
 
@@ -35,6 +36,7 @@ flowchart TD
   browserAdr[contracts/adrs/0001-two-layer-browser-qa.md]
   boostAdr[contracts/adrs/0002-laravel-boost-ownership.md]
   workAdr[contracts/adrs/0003-work-item-lifecycle.md]
+  designAdr[contracts/adrs/0004-design-stack-and-ui-visual-verification.md]
   browserQa[contracts/features/browser-qa.md]
   boost[contracts/features/laravel-boost.md]
   workItems[contracts/features/work-item-lifecycle.md]
@@ -46,6 +48,7 @@ flowchart TD
   browserAdr --> browserQa
   boostAdr --> boost
   workAdr --> workItems
+  designAdr --> browserQa
   browserQa --> browserAdr
   boost --> boostAdr
   workItems --> workAdr

@@ -343,6 +343,54 @@ ensure_playwright_gitignore() {
   fi
 }
 
+ensure_hallmark_gitignore() {
+  local gitignore="${TARGET_PROJECT}/.gitignore"
+
+  echo "--- Hallmark artifact gitignore ---"
+
+  if [[ ! -f "${gitignore}" ]]; then
+    touch "${gitignore}"
+  fi
+
+  if grep -qE '(^|/)\.hallmark/?$' "${gitignore}"; then
+    echo ".hallmark/ already listed in .gitignore"
+    return 0
+  fi
+
+  printf '\n# Hallmark operational artifacts (keep design.md tracked)\n.hallmark/\n' >> "${gitignore}"
+  echo "Added .hallmark/ to ${gitignore}"
+}
+
+RETIRED_DESIGN_SKILLS=(
+  frontend-design
+  ui-ux-pro-max
+  superdesign
+)
+
+prune_retired_design_skills() {
+  echo ""
+  echo "--- Pruning retired design skills ---"
+
+  local name dest removed=0
+  for name in "${RETIRED_DESIGN_SKILLS[@]}"; do
+    for dest in \
+      "${TARGET_SKILLS_DIR}/${name}" \
+      "${TARGET_PROJECT}/.claude/skills/${name}" \
+      "${TARGET_PROJECT}/.grok/skills/${name}"
+    do
+      if [[ -e "${dest}" || -L "${dest}" ]]; then
+        rm -rf "${dest}"
+        echo "Removed retired skill: ${dest}"
+        removed=1
+      fi
+    done
+  done
+
+  if [[ "${removed}" -eq 0 ]]; then
+    echo "No retired design skills to prune"
+  fi
+}
+
 # ---------------------------------------------------------------------------
 # Project skills (installed into the target project)
 # ---------------------------------------------------------------------------
@@ -441,6 +489,8 @@ detect_skills() {
 restore_skills() {
   echo ""
   echo "--- Restoring Project Skills ---"
+
+  prune_retired_design_skills
 
   if [[ "${AI_BOOTSTRAP_SKIP_SKILLS:-}" == "1" ]]; then
     echo "Skipping skill restore (AI_BOOTSTRAP_SKIP_SKILLS=1)."
@@ -940,6 +990,7 @@ link_doctor_script
 bootstrap_docs_templates
 ensure_gitignore_build
 ensure_playwright_gitignore
+ensure_hallmark_gitignore
 ensure_roots_resources_images
 restore_skills
 provision_agent_adapters

@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-08-14
+last_reviewed: 2026-08-23
 source_of_truth_for:
   - Decision to use a two-layer (Mode A / Mode B) browser QA model
   - Decision that Playwright is profile-applicable, not universal
@@ -8,6 +8,7 @@ depends_on:
   - ../features/browser-qa.md
 referenced_by:
   - ../features/browser-qa.md
+  - 0004-design-stack-and-ui-visual-verification.md
   - ../../../core/project-profiles/laravel-webapp.md
 type: adr
 ---
@@ -42,10 +43,15 @@ is browser-capable. The Laravel web application profile is browser-capable.
 The AI Platform repository itself is not.
 
 When agents invoke Mode A or Mode B is an invocation policy owned by the
-feature contract: opt-in unless the current task explicitly authorizes it.
-Capability, installation, and MCP availability are not authorization.
+feature contract. Availability is not general authorization. Agents run
+browser automation only when:
 
-Policy details live in `docs/contracts/features/browser-qa.md`.
+1. The current task explicitly authorizes Playwright/browser QA, or
+2. `40-ui` classified the work as significant UI and a bounded Mode B
+   visual pass of that UI is in scope (`0004-design-stack-and-ui-visual-verification.md`).
+
+Significant UI does not authorize a Mode A suite or the full Mode A→B
+loop. Policy details live in `docs/contracts/features/browser-qa.md`.
 
 ## Consequences
 

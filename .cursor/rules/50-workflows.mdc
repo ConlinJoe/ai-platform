@@ -70,6 +70,12 @@ Running bootstrap on a target project:
 -   Restores required project skills
 
 Bootstrap is safe to re-run on an already-bootstrapped project.
+Shared Cursor rules update immediately through those symlinks. A re-run
+also prunes retired managed skills, refreshes Claude/Grok skill adapter
+links, applies current bootstrap-managed project configuration, and adds
+current ignore entries such as `.hallmark/`. Developers do not need to
+edit those managed files by hand.
+
 It does not run Composer, `boost:install`, add Playwright, or install
 WordPress plugins or npm packages.
 It does not install or authenticate GitHub CLI (`gh`).
@@ -191,15 +197,19 @@ only unfilled template placeholders.
 Existing projects use **Existing Project Adoption** above, not this
 greenfield fill-in path.
 
-## Browser QA loop (opt-in)
+## Browser QA loop (full loop is opt-in)
 
 Laravel web applications are browser-capable and may have Playwright
-Mode A plus Mode B exploration. Do **not** run that loop after feature
-work unless the current task explicitly authorizes browser QA
-(`60-browser-qa`).
+Mode A plus Mode B exploration. Do **not** run the full Mode A→B loop
+after feature work unless the current task explicitly authorizes browser
+QA (`60-browser-qa`).
 
-When authorized, see `core/prompts/browser-qa-loop.md` and
-`docs/contracts/features/browser-qa.md`.
+Significant UI work authorizes a **bounded Mode B visual pass** of that
+UI only (`40-ui`). That is not the full loop and does not authorize
+writing Mode A tests.
+
+When the full loop is authorized, see `core/prompts/browser-qa-loop.md`
+and `docs/contracts/features/browser-qa.md`.
 
 ## Initial Documentation Contracts
 

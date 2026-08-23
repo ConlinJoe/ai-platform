@@ -2,8 +2,9 @@
 
 Reserved for browser-tool notes. Policy for Mode A / Mode B lives in
 `docs/contracts/features/browser-qa.md`. Playwright MCP vs project Playwright
-is summarized in `mcp/playwright/README.md`. Agent invocation is opt-in
-(`.cursor/rules/60-browser-qa.mdc`).
+is summarized in `mcp/playwright/README.md`. Agent invocation follows
+`.cursor/rules/60-browser-qa.mdc` (availability is not general
+authorization; significant UI allows a bounded Mode B visual pass).
 
 BrowserMCP is a typical **user-global** Cursor MCP for Mode B. The AI
 Platform does not install it, does not write its config, and does not

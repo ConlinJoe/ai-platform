@@ -60,7 +60,9 @@ Find the AI Platform clone from a shared-rule symlink target when
 present. Do not apply a profile that this project is not.
 
 Do not run Playwright or other browser automation unless this session
-explicitly authorizes it.
+explicitly authorizes it, or `40-ui` classifies later implementation as
+significant UI (bounded Mode B visual pass only). Adoption itself is
+inspection and documentation — do not start a browser QA loop.
 
 ### 2. Establish identity before changing anything
 
@@ -111,6 +113,11 @@ Inspect, as applicable:
 - GitHub / contribution conventions when present: Issue conventions,
   PR templates, branch naming, `CONTRIBUTING` (or equivalent), and
   GitHub Actions tied to PRs
+- Design system, tokens, component conventions, existing UI rules,
+  accessibility conventions, and browser/visual QA capabilities
+
+Preserve reasonable existing project conventions. Do not impose a new
+design system during adoption.
 
 Follow Current-First Engineering and Framework-Native First in
 `00-platform`. The installed environment is the starting point. Do not
@@ -250,7 +257,8 @@ warranted, say so and skip.
 
 - Diagnose Laravel Boost; do not install it without approval.
 - Playwright Mode A is expected; do not add `@playwright/test` without
-  approval. Do not run Playwright unless this session authorizes it.
+  approval. Do not run Playwright unless this session authorizes it or
+  later significant UI work authorizes a bounded Mode B visual pass.
 - Leave Boost-owned files (`AGENTS.md`, `.cursor/mcp.json`, Boost skills)
   under Boost's installer. Keep `.ai/guidelines/ai-platform.md` (symlink
   to `core/agent-core.md`). After Boost install/update, generated agent

@@ -1,47 +1,51 @@
 ---
-description: Frontend, UI, UX, and design system tasks — consult Hallmark, Anthropic Frontend Design, and UI/UX Pro Max
+description: Frontend, UI, UX, and design-system work — principles, scope routing, Hallmark, and rendered verification
 alwaysApply: false
 ---
 
-### Frontend / UI / UX
+# UI / UX
 
-For tasks involving:
+Canonical UI router. Do not load extra design skills. Do not dump Hallmark's
+reference corpus into context.
 
-- UI design
-- UX
-- Marketing pages
-- Landing pages
-- Dashboards
-- Design systems
-- Typography
-- Layout
-- Spacing
-- Color
-- Responsive design
-- Accessibility
-- Frontend refactoring
+Instruction priority (`00-platform`) still applies: project/harness rules
+outrank Hallmark. Vendor skills do not authorize browser automation beyond
+what `60-browser-qa` allows.
 
-Automatically consult:
+## Design-system ownership
 
-- Hallmark
-- Anthropic Frontend Design
-- UI/UX Pro Max (when available)
+If the project already has tokens, a Tailwind/theme config, a component
+library, a design contract, `design.md` / `DESIGN.md`, or equivalent
+project-owned design documentation, **that system is authoritative**.
 
-Synthesize their guidance into a single recommendation. Do not require the user to explicitly reference these tools.
+Hallmark may reason within it or propose a deliberate evolution. It must
+not silently replace it. If the task requires changing the established
+system, say so explicitly before drifting.
 
-Do not run Playwright, browser automation, or automated screenshots unless
-the current task explicitly authorizes them (`60-browser-qa`). Vendor
-UI/design skills do not authorize browser automation.
+Load relevant feature contracts from `docs/README.md` (design system, page
+behavior, component contracts) before implementing. Update those contracts
+when user-visible behavior changes.
 
-For Tailwind implementation (utilities, theme, containers, tokens), follow
-the Tailwind specialization of Framework-Native First in `20-coding`. That
-standard takes precedence over vendor-skill CSS/Tailwind shortcuts.
+## Always-on floor
+
+- Understand the product, user, and job before designing.
+- Design for this subject. Do not ship a generic SaaS/marketing template.
+- Avoid common AI/template clusters (interchangeable palettes, stock
+  card grids, decorative gradients, fake chrome, invented metrics).
+- Establish clear visual hierarchy. Spend boldness in one place, not
+  everywhere.
+- Prefer one coherent signature over many decorative ideas.
+- UX writing is interface design: specific, user-facing, consistent.
+- Preserve consistency across an established product.
+- Implement framework-natively. Tailwind composition follows `20-coding`.
+- Responsive behavior and accessibility are part of design, not extras.
+- Do not declare significant UI complete from source code alone.
 
 ### Decorative numbering
 
 Do not use decorative section numbering in UI unless the user explicitly
 requests numbering. This is a visual convention, not a ban on meaningful
-ordered content. It applies to any UI technology or framework.
+ordered content. It applies to any UI technology.
 
 Do not use numbers merely as a design device on cards, sections,
 navigation tiles, process blocks, page modules, sidebars, or content
@@ -58,8 +62,105 @@ If the content does not require ordinal meaning, use typography, spacing,
 rules, imagery, surfaces, hierarchy, and composition instead.
 
 This convention takes precedence over vendor-skill numbered-section or
-decorative-ordinal patterns (Instruction Priority in `00-platform`).
+decorative-ordinal patterns.
 
-For UI work, load relevant feature contracts from `docs/README.md` (design
-system, page behavior, component contracts) before implementing. Update those
-contracts when user-visible behavior changes.
+## Scope router
+
+Classify every UI task before loading Hallmark or opening a browser.
+
+### Small
+
+Examples: spacing, margin/padding, image replacement, copy, a minor
+token/color tweak, isolated component polish, a single-state visual fix.
+
+Default:
+
+1. Inspect neighboring implementation and the project design system.
+2. Make the bounded change. Preserve existing tokens and patterns.
+3. Do **not** load Hallmark.
+4. Do **not** run Playwright.
+
+If a seemingly small change has uncertain visual, responsive, state, or
+interaction consequences, recommend or perform the smallest appropriate
+visual check **only when** `60-browser-qa` already authorizes browser
+work for this task. Do not turn trivia into a QA loop.
+
+### Significant
+
+Examples: new screen, dashboard, navigation, major component, redesign,
+new visual direction, design-system work, substantial responsive/layout
+change, UI the developer cannot reasonably verify immediately.
+
+1. Inspect the existing design system and product context.
+2. Invoke Hallmark when design intelligence is useful (see below).
+3. Implement framework-natively.
+4. Perform bounded Mode B visual verification when browser tooling is
+   available (`60-browser-qa`).
+5. Review against the design-review and accessibility floors.
+6. Iterate if the rendered result exposes real problems.
+
+Significant UI work **is** authorization for that bounded visual pass.
+It is **not** authorization for a Mode A suite, the full Mode A→B loop,
+broad exploration, or unrelated browser QA.
+
+### Exploration
+
+Use when visual direction is genuinely unresolved. Do not introduce a
+hosted canvas or extra design tool.
+
+Offer 2–3 meaningfully different directions in concise description and
+reference language. Ask the developer to choose before significant
+implementation when approval is actually needed. Skip ceremony when the
+direction is already clear.
+
+## Hallmark
+
+Hallmark is the only managed design skill. Load its `SKILL.md`, then only
+the reference files that verb requires.
+
+Use it for significant greenfield UI, redesign, audit, reference study,
+visual-direction work, and meaningful component or system design.
+
+Do not invoke it for every UI edit.
+
+Project design systems, contracts, tokens, and framework-native rules
+remain authoritative over Hallmark recommendations.
+
+## Reference-driven design
+
+When given a screenshot, URL, live site, internal product, named
+aesthetic (Linear, Stripe, Vercel, Apple, and similar), or an existing
+project design system: extract design language, do not copy.
+
+Reason about hierarchy, density, spacing rhythm, typography, geometry,
+navigation, component treatment, color behavior, motion, information
+architecture, and interaction patterns. Translate those into constraints
+for **this** product.
+
+Hallmark `study` may be used when that extraction needs the skill.
+References inspire language; they do not override product identity.
+
+## Design-review floor (significant UI)
+
+Review the **rendered** result proportionately:
+
+- visual hierarchy
+- usability
+- consistency with the project system
+- responsive behavior
+- accessibility
+- performance implications when relevant
+
+Subjective taste is judgment, not proof. Keep it distinct from objective
+checks (contrast, keyboard, overflow, semantics).
+
+## Accessibility floor
+
+Target WCAG 2.2 AA where applicable. For significant UI, proportionately
+consider: contrast, visible focus, keyboard operation for new controls,
+semantic structure, accessible names/labels, important
+hover/focus/disabled/error states, reduced motion, and responsive overflow.
+
+Verify against the real application when tooling permits. Do not import a
+third-party accessibility harness. Do not pile automated tests onto
+trivial changes.

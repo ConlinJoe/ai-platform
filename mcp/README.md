@@ -10,7 +10,6 @@ user-global MCP servers during clone or bootstrap.
 | Playwright MCP | User-global | You configure Cursor (`~/.cursor/mcp.json`) |
 | BrowserMCP (`browsermcp`) | User-global (typical) | You configure Cursor; platform does not install it |
 | GitKraken or other SCM MCPs | User-global (optional) | You configure Cursor; **not** owned or required here |
-| Superdesign | Not an MCP server | Agent **skill** plus on-demand CLI; see README |
 
 Authoritative contracts:
 
@@ -18,8 +17,10 @@ Authoritative contracts:
 - Browser QA: `docs/contracts/features/browser-qa.md`
 - Playwright MCP setup: `mcp/playwright/README.md`
 
-Agent invocation of Playwright / browser MCP is opt-in
-(`.cursor/rules/60-browser-qa.mdc`). Availability is not authorization.
+Agent invocation of Playwright / browser MCP follows
+`.cursor/rules/60-browser-qa.mdc`. Availability is not general
+authorization. Significant UI authorizes a bounded Mode B visual pass
+of that UI only.
 
 Do not add project-bound servers (Boost) to user-global MCP config.
 Do not add user-global browser MCPs to a Laravel app's `.cursor/mcp.json`

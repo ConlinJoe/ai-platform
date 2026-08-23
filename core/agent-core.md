@@ -86,14 +86,18 @@ Do not apply a framework profile to a project that is not that stack.
 
 ## Skills
 
-Canonical skill copies: `.agents/skills/` (`hallmark`, `frontend-design`,
-`ui-ux-pro-max`, `superdesign`). Invoke when the task matches. Skills do
-not authorize browser automation.
+Canonical skill copies: `.agents/skills/` (`hallmark`). Invoke Hallmark
+when `40-ui` classifies the work as significant UI, redesign, audit,
+reference study, or visual-direction work. Do not load Hallmark for every
+UI edit. Skills do not authorize general browser automation.
 
 ## Browser automation
 
-Do not run Playwright or browser MCP unless the current task explicitly
-authorizes it.
+Follow `.cursor/rules/60-browser-qa.mdc`. Availability is not general
+authorization. Significant UI work authorizes a bounded Mode B visual
+pass of that UI only (`40-ui`). Do not run Playwright or browser MCP
+otherwise unless the current task explicitly authorizes it. Mode B visual
+verification does not authorize Mode A tests.
 
 ## Adoption
 

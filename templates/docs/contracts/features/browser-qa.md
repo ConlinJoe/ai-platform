@@ -13,11 +13,14 @@ type: feature
 # Browser QA
 
 Project-owned browser QA contract. Platform policy (applicability, Mode A/B,
-opt-in agent invocation, defect→regression, isolation principles) lives in
-the AI Platform: `docs/contracts/features/browser-qa.md`.
+invocation, bounded significant-UI visual pass, defect→regression, isolation)
+lives in the AI Platform: `docs/contracts/features/browser-qa.md`.
 
-Agent invocation of Mode A/B is opt-in. Do not run Playwright or browser
-automation unless the current task explicitly authorizes it.
+Agent invocation of the full Mode A/B loop is opt-in. Significant UI
+work authorizes a bounded Mode B visual pass of that UI only
+(`.cursor/rules/40-ui.mdc`, `.cursor/rules/60-browser-qa.mdc`). Do not
+run Playwright or browser automation otherwise unless the current task
+explicitly authorizes it.
 
 Fill this file from **this** project's reality. Delete sections that do not
 apply. Do not copy another application's specs, helpers, or domain coverage.

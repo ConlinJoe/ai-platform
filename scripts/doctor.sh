@@ -89,8 +89,50 @@ check_platform() {
   check_file "${RULES_DIR}/30-laravel.mdc" "Rule 30-laravel.mdc"
   check_file "${RULES_DIR}/35-roots.mdc" "Rule 35-roots.mdc"
   check_file "${RULES_DIR}/50-workflows.mdc" "Rule 50-workflows.mdc"
+  check_file "${RULES_DIR}/40-ui.mdc" "Rule 40-ui.mdc"
   check_file "${RULES_DIR}/60-browser-qa.mdc" "Rule 60-browser-qa.mdc"
   check_file "${RULES_DIR}/70-work-items.mdc" "Rule 70-work-items.mdc"
+
+  if [[ -d "${AI_REPO}/.agents/skills/hallmark" ]]; then
+    ok "Hallmark skill present"
+  else
+    fail "Hallmark skill missing"
+  fi
+
+  local retired
+  for retired in frontend-design ui-ux-pro-max superdesign; do
+    if [[ -e "${AI_REPO}/.agents/skills/${retired}" ]]; then
+      fail "Retired skill still present: ${retired}"
+    else
+      ok "Retired skill absent: ${retired}"
+    fi
+    if [[ -e "${AI_REPO}/.claude/skills/${retired}" ]]; then
+      fail "Retired Claude skill still present: ${retired}"
+    else
+      ok "Retired Claude skill absent: ${retired}"
+    fi
+    if [[ -e "${AI_REPO}/.grok/skills/${retired}" ]]; then
+      fail "Retired Grok skill still present: ${retired}"
+    else
+      ok "Retired Grok skill absent: ${retired}"
+    fi
+  done
+
+  local lock_skills
+  lock_skills="$(python3 - "${SKILLS_LOCK}" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    data = json.load(handle)
+print(" ".join(sorted(data.get("skills", {}))))
+PY
+)"
+  if [[ "${lock_skills}" == "hallmark" ]]; then
+    ok "skills-lock.json contains only hallmark"
+  else
+    fail "skills-lock.json expected only hallmark, got: ${lock_skills}"
+  fi
   check_file "${SKILLS_LOCK}" "skills-lock.json"
   check_file "${AI_REPO}/core/project-profiles/laravel-webapp.md" "Laravel webapp profile"
   check_file "${AI_REPO}/core/project-profiles/roots-radicle.md" "Roots/Radicle/Sage profile"
@@ -98,6 +140,7 @@ check_platform() {
   check_file "${AI_REPO}/docs/contracts/features/laravel-boost.md" "Laravel Boost contract"
   check_file "${AI_REPO}/docs/contracts/features/work-item-lifecycle.md" "Work-item lifecycle contract"
   check_file "${AI_REPO}/docs/contracts/adrs/0003-work-item-lifecycle.md" "Work-item lifecycle ADR"
+  check_file "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" "Design-stack ADR"
   check_file "${AI_REPO}/.github/PULL_REQUEST_TEMPLATE.md" "PR template"
   check_file "${AI_REPO}/templates/github/PULL_REQUEST_TEMPLATE.md" "Optional project PR template"
   check_file "${AI_REPO}/mcp/README.md" "MCP guidance index"
@@ -105,7 +148,8 @@ check_platform() {
   check_file "${AI_REPO}/mcp/playwright/README.md" "Playwright MCP guidance"
   check_file "${AI_REPO}/core/prompts/browser-qa-loop.md" "Browser QA loop prompt"
   check_file "${AI_REPO}/core/prompts/project-adoption.md" "Project adoption prompt"
-  check_file "${AI_REPO}/LICENSE" "MIT LICENSE"
+  check_file "${AI_REPO}/CHANGELOG.md" "CHANGELOG"
+  check_file "${AI_REPO}/LICENSE" "LICENSE"
   check_file "${AI_REPO}/core/prompts/existing-project-bootstrap.md" "Existing-project bootstrap alias"
   check_file "${AI_REPO}/core/agent-core.md" "Canonical agent-core"
   check_file "${AI_REPO}/core/adapters/README.md" "Agent adapter index"

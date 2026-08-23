@@ -15,8 +15,9 @@ Status documents are not architectural authority.
 
 ## Current phase
 
-Platform promotion of two-layer browser QA and Laravel Boost capability
-enforcement (bootstrap + doctor). Version 1.1.1.
+Design-stack simplification: Hallmark-only UI intelligence, `40-ui` scope
+routing, and bounded significant-UI Mode B visual verification.
+Version 1.2.0.
 
 ## Progress
 
@@ -32,8 +33,11 @@ enforcement (bootstrap + doctor). Version 1.1.1.
   Page/menu provisioning is an explicit idempotent project-native
   operation driven by each project's contracts, not a universal sitemap.
 - Two-layer browser QA policy: documented and wired into Laravel profile.
-  Agent invocation of Playwright/browser automation is opt-in
-  (`60-browser-qa`); availability is not authorization.
+  Availability is not general authorization (`60-browser-qa`). Significant
+  UI authorizes a bounded Mode B visual pass (`40-ui`).
+- Design stack: Hallmark is the only managed design skill; `40-ui` routes
+  UI work. frontend-design, ui-ux-pro-max, and Superdesign were removed
+  from the harness.
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented
 - Existing-project reconciliation: bootstrap copies a draft

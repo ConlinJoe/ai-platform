@@ -5,7 +5,9 @@ Playwright / browser QA. Do not run this loop merely because a feature
 was implemented, Playwright is installed, or a browser-QA contract exists.
 
 Policy: `docs/contracts/features/browser-qa.md`.
-Agent invocation: `.cursor/rules/60-browser-qa.mdc` (opt-in).
+Agent invocation: `.cursor/rules/60-browser-qa.mdc`. This prompt is the
+**full** Mode A→B loop. A significant-UI bounded Mode B visual pass is
+not this loop and does not by itself require new Mode A tests.
 Laravel/Livewire extras: `core/project-profiles/laravel-webapp.md`.
 
 ## Loop
