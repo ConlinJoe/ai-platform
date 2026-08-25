@@ -53,8 +53,11 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   Significant UI authorizes a bounded Mode B visual pass of that UI only
   (`40-ui`, `60-browser-qa`).
 - UI: product-specific, spacious, hierarchy-driven design. Avoid
-  recognizable AI/template conventions. Hard constraints (no decorative
-  sequential numbering; no em dashes in generated end-user copy) live in
+  recognizable AI/template conventions. Cards are semantic containers,
+  not decoration. Adjacent semantic sections must remain visually
+  distinguishable; this is not a mandate to alternate section
+  backgrounds. Hard constraints (no decorative sequential numbering;
+  no em dashes in generated end-user copy) live in
   `.cursor/rules/40-ui.mdc` and outrank Hallmark.
 - User-global Cursor MCP (Playwright MCP, BrowserMCP) is configured in
   Cursor, not by bootstrap. See `mcp/README.md`.

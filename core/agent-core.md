@@ -103,7 +103,13 @@ that outrank Hallmark:
   Rewrite naturally. Preserve author punctuation when reproducing or
   editing existing source text.
 - Favor generous whitespace and hierarchy (type, space, scale,
-  alignment) over cards, dividers, badges, and decoration.
+  alignment) before decoration. Cards are semantic containers, not
+  decoration; use them when containment earns grouping.
+- Adjacent semantic sections must remain visually distinguishable.
+  Do not let them merge through identical backgrounds, uninterrupted
+  imagery, or insufficient spacing. This is not a mandate to alternate
+  section backgrounds; whitespace or other compositional delineation
+  can suffice.
 - Design for this product. Avoid recognizable AI/template conventions.
 
 Do not add another design skill.

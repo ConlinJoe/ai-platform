@@ -72,8 +72,13 @@ as a visual device; no em dashes in generated end-user copy; no generic
 AI/template decoration used only because it is familiar. Generous
 whitespace is an intentional tool, not an AI-design tell. Prefer
 typography, spacing, scale, alignment, composition, contrast, and
-content hierarchy before cards, borders, dividers, badges, icons,
-numbers, gradients, or decorative graphics.
+content hierarchy before unearned cards, borders, dividers, badges,
+icons, numbers, gradients, or decorative graphics.
+Cards are semantic containers, not a prohibited pattern; they must earn grouping.
+Imagery and responsive composition guidance also live in `40-ui`.
+Adjacent semantic sections must remain visually distinguishable;
+semantic section boundaries should also be perceptible visual
+boundaries. This is not a mechanical alternating-background rule.
 
 ## Consequences
 

@@ -382,6 +382,84 @@ assert_grep 'Hallmark is the only managed design skill' \
 assert_grep 'outrank Hallmark' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui design constraints outrank Hallmark"
+assert_grep 'Semantic section boundaries should also be perceptible visual' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires perceptible visual section boundaries"
+assert_grep 'Adjacent semantic sections must remain visually distinguishable' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires adjacent sections to remain distinguishable"
+assert_grep 'not a mechanical alternating-background rule' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not mandate alternating section backgrounds"
+assert_grep 'Whitespace alone can provide sufficient separation' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui allows whitespace-only section separation"
+assert_grep 'Identical backgrounds between adjacent sections are allowed' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui allows identical adjacent backgrounds when delineation is clear"
+assert_grep 'CTA immediately preceding a footer' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires a pre-footer CTA to read as a distinct section"
+assert_grep 'Do not add containers or cards merely to manufacture separation' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not manufacture section separation with cards"
+assert_grep 'mechanically alternating white/gray/dark section backgrounds' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui challenges mechanically alternating section backgrounds"
+assert_grep 'Cards are semantic containers' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui treats cards as semantic containers, not decoration"
+assert_grep 'would the conceptual grouping become less clear' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui includes the card-earning test"
+assert_grep 'coherent vocabulary of' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires a coherent card vocabulary"
+assert_grep 'colored icon circles' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui rejects the colored-icon-circle feature-card tell"
+assert_grep 'imagery must have a purpose' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires purposeful imagery"
+assert_grep 'art-direct visual assets' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires art-directed visual assets"
+assert_grep 'not merely be desktop content' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui forbids treating mobile as stacked desktop content"
+assert_grep 'Feature/capability card' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui documents a feature/capability card pattern"
+assert_grep 'Media/content card' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui documents a media/content card pattern"
+assert_grep 'Action/resource card' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui documents an action/resource card pattern"
+assert_grep 'not mandatory components' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui card patterns are conceptual, not required components"
+assert_grep 'every section placed inside a card' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui still prohibits boxing every section as a card"
+assert_grep 'repetitive icon \+ heading \+ paragraph feature grids' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui still challenges repetitive feature grids"
+assert_grep 'excessive rounded cards/containers' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui still challenges excessive decorative cards"
+assert_grep 'arbitrary badges/eyebrows above every heading' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui still challenges arbitrary badges"
+assert_grep 'Cards are semantic containers' \
+  "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" \
+  "design-stack ADR does not treat cards as prohibited"
+assert_grep 'not a mechanical alternating-background rule' \
+  "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" \
+  "design-stack ADR does not mandate alternating section backgrounds"
+assert_not_grep 'over cards, dividers' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core does not rank hierarchy over cards as such"
 assert_grep '### Exploration' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui keeps exploration routing"
@@ -400,6 +478,15 @@ assert_grep 'em dashes in generated end-user' \
 assert_grep 'generous whitespace' \
   "${AI_REPO}/core/agent-core.md" \
   "portable core favors generous whitespace"
+assert_grep 'Cards are semantic containers' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core treats cards as semantic containers"
+assert_grep 'Adjacent semantic sections must remain visually distinguishable' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core requires distinguishable semantic sections"
+assert_grep 'not a mandate to alternate' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core does not mandate alternating section backgrounds"
 assert_grep 'AI/template conventions' \
   "${AI_REPO}/core/agent-core.md" \
   "portable core avoids generic AI/template design patterns"
@@ -412,6 +499,9 @@ assert_not_grep 'excessive whitespace' \
 assert_grep 'inherit harness UI design preferences' \
   "${AI_REPO}/core/prompts/project-adoption.md" \
   "adoption inherits harness UI design preferences"
+assert_grep 'Semantic cards that earn' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption does not treat semantic cards as default-AI patterns"
 assert_grep 'Do not silently rewrite' \
   "${AI_REPO}/core/prompts/project-adoption.md" \
   "adoption does not silently rewrite existing visual language"

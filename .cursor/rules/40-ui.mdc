@@ -46,16 +46,25 @@ when user-visible behavior changes.
   comfortable section spacing, and clear separation through space before
   adding containers or dividers. Do not fill empty space merely because
   it exists.
+- Adjacent semantic sections must remain visually distinguishable.
+  Semantic section boundaries should also be perceptible visual
+  boundaries. Do not solve this by mechanically alternating backgrounds
+  or adding unearned containers.
 - Establish structure with typography, spacing, scale, alignment,
-  composition, contrast, and content hierarchy before adding cards,
-  borders, dividers, badges, icons, numbers, gradients, or decorative
-  graphics. Do not use decoration to compensate for weak hierarchy.
+  composition, contrast, and content hierarchy before adding unearned
+  cards, borders, dividers, badges, icons, numbers, gradients, or
+  decorative graphics. Cards that earn semantic grouping are structure,
+  not decoration. Do not use decoration to compensate for weak hierarchy.
+- Consider whether custom imagery, photography, illustration, or vector
+  artwork would materially improve a composition. Do not default to
+  text-only UI, and do not add filler imagery.
 - Avoid recognizable AI/template conventions unless they serve this
   product, content, and user.
 - UX writing is interface design: specific, user-facing, consistent.
 - Preserve consistency across an established product.
 - Implement framework-natively. Tailwind composition follows `20-coding`.
 - Responsive behavior and accessibility are part of design, not extras.
+  Mobile composition is not merely desktop content stacked vertically.
 - Do not declare significant UI complete from source code alone.
 
 ## Hard prohibitions
@@ -125,7 +134,8 @@ product, content, and user, or because it is a familiar template
 pattern?
 
 Do not prohibit a legitimate design technique merely because AI
-sometimes overuses it.
+sometimes overuses it. Cards are not an AI tell. Unearned cards,
+repetitive card grids, and boxing every section are.
 
 Hard (see above): decorative sequential numbering; em dashes in
 generated end-user copy; generic "AI startup" visual treatment when not
@@ -151,6 +161,7 @@ automatically use:
 - excessive tiny uppercase labels
 - unnecessary dividers
 - decorative lines with no structural purpose
+- mechanically alternating white/gray/dark section backgrounds
 - generic stock imagery when meaningful project imagery exists
 - invented metrics/statistics used to make a layout look populated
 - generic copy such as "Elevate your experience," "Unlock the power of,"
@@ -166,6 +177,8 @@ information density when the product permits it, and layouts that allow
 important content to stand on its own.
 
 Use space for hierarchy before adding containers or dividers.
+Whitespace alone can be a sufficient section boundary when the spatial
+break is clearly intentional.
 
 Whitespace must still preserve usability and information relationships.
 Do not disconnect related controls or content. Do not create needless
@@ -184,8 +197,132 @@ When creating visual structure, prefer, in order:
 6. contrast
 7. content hierarchy
 
-before adding cards, borders, dividers, badges, icons, numbers,
+before adding unearned cards, borders, dividers, badges, icons, numbers,
 gradients, or decorative graphics.
+
+## Semantic section boundaries
+
+Semantic section boundaries should also be perceptible visual
+boundaries.
+
+Adjacent semantic sections must remain visually distinguishable. Do not
+allow neighboring sections to visually merge through identical
+backgrounds, uninterrupted imagery, or insufficient spacing. Establish
+separation using intentional whitespace, background or tonal contrast,
+borders or dividers, changes in composition, image boundaries, or
+another deliberate transition appropriate to the design.
+
+A CTA immediately preceding a footer must read as a distinct section
+rather than an extension of the footer.
+
+This is not a mechanical alternating-background rule:
+
+- Alternating white, gray, or dark backgrounds on every section is not
+  the desired solution.
+- Identical backgrounds between adjacent sections are allowed when the
+  composition still provides clear intentional delineation.
+- Whitespace alone can provide sufficient separation.
+- The appropriate technique depends on the composition.
+- Preserve visual rhythm. Do not create unnecessary boxes, bands,
+  cards, or dividers.
+- Do not add containers or cards merely to manufacture separation.
+
+## Cards as semantic containers
+
+Cards are semantic containers, not decoration. Do not treat cards
+themselves as undesirable.
+
+Use a card when containment materially helps the user understand that
+an item is:
+
+- one member of a discrete peer group
+- a self-contained feature, capability, resource, product, option, or
+  action
+- independently scannable
+- meaningfully interactive or navigable as a unit
+- content whose image or icon and copy genuinely belong together
+
+Do not use cards merely to:
+
+- break ordinary page copy into boxes
+- make a sparse section look designed
+- surround headings and paragraphs without semantic reason
+- turn every feature, statistic, process step, or section into a
+  component
+- create visual variety
+- manufacture separation between adjacent sections
+- fill a grid because a grid is convenient
+- reproduce common AI/SaaS landing-page patterns
+
+If the border, background, or container disappeared, would the conceptual grouping become less clear?
+If not, the card is not earning its container.
+
+This is a refinement of the underlying design reasoning, not a rollback.
+Existing prohibitions against decorative sequential numbering, excessive
+or unearned cards, generic SaaS patterns, arbitrary badges and pills,
+repetitive component grids, and other documented AI design tells remain
+in force.
+
+### Reusable card vocabulary
+
+A project or site should generally establish a small, coherent vocabulary of
+card patterns rather than inventing unrelated treatments section by section.
+
+These are conceptual patterns, not mandatory components, and not a
+requirement that every project implement all of them. Projects may need
+fewer or different patterns. Coherence across the set matters more than
+covering every type.
+
+Examples may include:
+
+1. Feature/capability card: visual or icon, heading, concise supporting
+   copy
+2. Media/content card: meaningful photography or visual with associated
+   content
+3. Action/resource card: only when the entire unit represents a genuine
+   action or destination
+
+### Icons and supporting visuals
+
+Where feature cards use icons or illustrations:
+
+- the visual must communicate the subject, not merely decorate the card
+- prefer a coherent visual language across the set
+- custom or restrained vector artwork is preferable when appropriate
+- avoid generic icon-library appearance when the design calls for
+  stronger brand expression
+- avoid unrelated icons selected simply because they approximately
+  match a keyword
+- avoid the common AI pattern of colored icon circles above every
+  heading
+
+## Imagery and art direction
+
+Capable models can generate strong visual assets. Consider whether
+custom imagery, photography, illustration, or vector artwork would
+materially improve a composition rather than defaulting to text-only UI.
+
+However:
+
+- imagery must have a purpose
+- do not add images at mechanically alternating intervals
+- do not generate filler imagery
+- full-bleed or edge-to-edge imagery should not continue into the next
+  semantic section without an intentional transition
+- choose the visual medium from the communication need
+- generated product or architectural imagery must remain physically
+  credible
+- art-direct visual assets for their actual placement, crop, hierarchy,
+  and responsive use
+
+## Responsive composition
+
+Visual assets can be important for preventing mobile pages from becoming
+long uninterrupted sequences of text.
+Mobile should not merely be desktop content stacked vertically.
+
+Evaluate text density, visual pacing, crop, ordering, and whether visual
+elements should move or change prominence at smaller widths.
 
 ## Product-specific design
 
@@ -294,8 +431,18 @@ agent output):
 - Are there obvious generic AI/template patterns?
 - Are cards, pills, badges, icons, dividers, or gradients being used
   without a real structural purpose?
+- If a card is used, would removing the container make the grouping
+  less clear?
+- Does imagery have a purpose and fit its actual crop, hierarchy, and
+  viewport?
+- On smaller viewports, is the composition paced, or merely stacked
+  text?
 - Is the interface unnecessarily dense?
 - Could spacing provide hierarchy instead of another visual container?
+- Can adjacent semantic sections be distinguished, or do they visually
+  merge (including a CTA that reads as part of the footer)?
+- Was section separation manufactured with alternating backgrounds or
+  unearned boxes instead of composition?
 - Does the result feel specific to this product?
 - Is any copy generic filler rather than useful communication?
 

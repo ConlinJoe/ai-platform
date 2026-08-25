@@ -40,7 +40,11 @@ Version 1.2.0.
   from the harness. `40-ui` owns hard developer design constraints (no
   decorative sequential numbering, no em dashes in generated end-user
   copy, generous whitespace, product-specific hierarchy-driven design)
-  that outrank Hallmark.
+  that outrank Hallmark. Cards are semantic containers that must earn
+  grouping; unearned card grids remain prohibited. `40-ui` also covers
+  purposeful imagery, art direction, responsive composition, and
+  perceptible visual boundaries between adjacent semantic sections
+  (not mechanical background alternation).
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented
 - Existing-project reconciliation: bootstrap copies a draft

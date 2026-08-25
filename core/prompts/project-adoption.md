@@ -123,8 +123,9 @@ Adopted projects inherit harness UI design preferences (`40-ui`) for
 new work unless an existing project requirement explicitly conflicts.
 Do not silently rewrite an established application's visual language
 because it already contains decorative numbering, em dashes,
-template-like cards, or similar patterns. Preserve those patterns when
-changing them is outside scope. Record them as classified differences
+unearned or template-like cards, or similar patterns. Preserve those
+patterns when changing them is outside scope. Semantic cards that earn
+grouping are not a default-AI pattern. Record classified differences
 when they matter. Recommend removing prohibited or default-AI patterns
 when a significant redesign is in scope. Project requirements outrank
 aesthetic preference when a pattern is functionally required.

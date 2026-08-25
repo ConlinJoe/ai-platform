@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+Refined `40-ui` card, imagery, responsive-composition, and section-separation
+guidance.
+Cards remain allowed as semantic containers; unearned decorative cards
+and generic AI/SaaS card grids remain prohibited. Agents should consider
+purposeful, art-directed imagery and mobile visual pacing rather than
+defaulting to stacked text-only UI.
+Adjacent semantic sections must remain visually distinguishable.
+Semantic section boundaries should also be perceptible visual
+boundaries. This is not a mechanical alternating-background rule:
+whitespace or other compositional delineation can suffice, and agents
+must not manufacture separation with unearned boxes, bands, or cards.
+
 ## 1.2.0 — 2026-08-23
 
 Simplified the UI/UX design stack. Hallmark is the only managed design
