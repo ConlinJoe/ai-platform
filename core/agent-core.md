@@ -91,6 +91,23 @@ when `40-ui` classifies the work as significant UI, redesign, audit,
 reference study, or visual-direction work. Do not load Hallmark for every
 UI edit. Skills do not authorize general browser automation.
 
+## UI design preferences
+
+Detailed rules: `.cursor/rules/40-ui.mdc`. Hard developer constraints
+that outrank Hallmark:
+
+- Do not use decorative sequential numbering (`01 / 02 / 03` and
+  equivalents) as a visual device. Numbers are allowed when they
+  communicate real information.
+- Do not use em dashes in generated end-user UI or marketing copy.
+  Rewrite naturally. Preserve author punctuation when reproducing or
+  editing existing source text.
+- Favor generous whitespace and hierarchy (type, space, scale,
+  alignment) over cards, dividers, badges, and decoration.
+- Design for this product. Avoid recognizable AI/template conventions.
+
+Do not add another design skill.
+
 ## Browser automation
 
 Follow `.cursor/rules/60-browser-qa.mdc`. Availability is not general

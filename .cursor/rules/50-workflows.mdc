@@ -115,6 +115,15 @@ that describes verified existing behavior. It must **not** make material
 implementation or architectural changes merely because the project
 differs from AI Platform standards.
 
+Adopted projects inherit harness UI design preferences (`40-ui`) unless
+an existing project requirement explicitly conflicts. Do not silently
+rewrite an established visual language because it already uses a
+prohibited or default-AI pattern. New work follows current harness
+preferences. Preserve existing patterns when changing them is outside
+scope. During a significant redesign, recommend removing prohibited or
+default-AI patterns where appropriate. Project requirements outrank
+aesthetic preference when a pattern is functionally required.
+
 Classify findings:
 
 - **A.** Sound — document and preserve

@@ -52,6 +52,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   / browser automation is not generally authorized by tool availability.
   Significant UI authorizes a bounded Mode B visual pass of that UI only
   (`40-ui`, `60-browser-qa`).
+- UI: product-specific, spacious, hierarchy-driven design. Avoid
+  recognizable AI/template conventions. Hard constraints (no decorative
+  sequential numbering; no em dashes in generated end-user copy) live in
+  `.cursor/rules/40-ui.mdc` and outrank Hallmark.
 - User-global Cursor MCP (Playwright MCP, BrowserMCP) is configured in
   Cursor, not by bootstrap. See `mcp/README.md`.
 
@@ -63,6 +67,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | ChatGPT export workflow | `chatgpt-projects.md` |
 | Cursor rules | `.cursor/rules/` |
 | First-time clone / onboarding | `../README.md`, `mcp/README.md` |
+| UI / design preferences | `.cursor/rules/40-ui.mdc`, ADR 0004 |
 | Multi-agent adapters | `core/adapters/README.md` |
 | New / existing project setup | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Existing project adoption | `core/prompts/project-adoption.md` |

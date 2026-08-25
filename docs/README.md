@@ -62,6 +62,7 @@ flowchart TD
 | Documentation standard | `documentation-philosophy.md` |
 | ChatGPT export setup | `chatgpt-projects.md` |
 | First-time clone / onboarding | `../README.md`, `mcp/README.md` |
+| UI / design preferences | `.cursor/rules/40-ui.mdc`, `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` |
 | Multi-agent adapters | `core/adapters/README.md` |
 | New or existing project bootstrap | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Existing project adoption | `core/prompts/project-adoption.md` |

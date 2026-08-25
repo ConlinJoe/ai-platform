@@ -119,6 +119,16 @@ Inspect, as applicable:
 Preserve reasonable existing project conventions. Do not impose a new
 design system during adoption.
 
+Adopted projects inherit harness UI design preferences (`40-ui`) for
+new work unless an existing project requirement explicitly conflicts.
+Do not silently rewrite an established application's visual language
+because it already contains decorative numbering, em dashes,
+template-like cards, or similar patterns. Preserve those patterns when
+changing them is outside scope. Record them as classified differences
+when they matter. Recommend removing prohibited or default-AI patterns
+when a significant redesign is in scope. Project requirements outrank
+aesthetic preference when a pattern is functionally required.
+
 Follow Current-First Engineering and Framework-Native First in
 `00-platform`. The installed environment is the starting point. Do not
 upgrade anything merely because a newer version exists.

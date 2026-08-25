@@ -344,6 +344,8 @@ Work inside the **target** repository, not this clone.
 - Do not run Playwright or browser MCP unless the current task
   authorizes it (`60-browser-qa`). Significant UI authorizes a bounded
   Mode B visual pass of that UI only (`40-ui`).
+- UI should feel specific to the product: spacious, hierarchy-driven,
+  and not assembled from recognizable AI/template conventions (`40-ui`).
 - Keep contracts current as implementation changes
   (`.cursor/rules/10-documentation.mdc`).
 - After documentation/rule/skill changes in a project:

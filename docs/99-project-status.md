@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-23
+last_reviewed: 2026-08-25
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -37,7 +37,10 @@ Version 1.2.0.
   UI authorizes a bounded Mode B visual pass (`40-ui`).
 - Design stack: Hallmark is the only managed design skill; `40-ui` routes
   UI work. frontend-design, ui-ux-pro-max, and Superdesign were removed
-  from the harness.
+  from the harness. `40-ui` owns hard developer design constraints (no
+  decorative sequential numbering, no em dashes in generated end-user
+  copy, generous whitespace, product-specific hierarchy-driven design)
+  that outrank Hallmark.
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented
 - Existing-project reconciliation: bootstrap copies a draft

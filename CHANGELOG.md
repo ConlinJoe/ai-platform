@@ -22,3 +22,10 @@ Claude and Grok adapters expose only Hallmark. Bootstrap prunes retired
 managed skills on re-run, adds `.hallmark/` to project gitignores, and
 keeps Cursor, Grok Build, Codex, Claude Code, and Hermes supported.
 Doctor and platform tests cover the new stack.
+
+`40-ui` now encodes hard developer constraints against decorative
+sequential numbering and em dashes in generated end-user copy, plus
+anti-AI-template heuristics, generous whitespace, and
+hierarchy-before-decoration. These preferences outrank Hallmark and
+apply to new work in adopted projects without silently restyling
+existing interfaces.

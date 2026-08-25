@@ -27,6 +27,8 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 - Framework-Native First: use the installed stack's native capabilities
   before custom implementations, parallel abstractions, or new
   dependencies (see `.cursor/rules/00-platform.mdc`).
+- UI: product-specific, spacious, hierarchy-driven design. Avoid
+  recognizable AI/template conventions (see `.cursor/rules/40-ui.mdc`).
 
 <!-- Additional non-negotiable technical, business, or operational constraints. -->
 

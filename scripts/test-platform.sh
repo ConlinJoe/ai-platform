@@ -355,6 +355,69 @@ assert_grep 'Design system, tokens, component conventions' \
 assert_grep 'Do not impose a new' \
   "${AI_REPO}/core/prompts/project-adoption.md" \
   "adoption does not impose a new design system"
+assert_grep 'decorative numeric sequencing as a visual design device' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui prohibits decorative sequential numbering"
+assert_grep 'Do not use em dashes' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui prohibits em dashes in generated end-user copy"
+assert_grep 'generated end-user copy' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui scopes the em-dash rule to generated end-user copy"
+assert_grep 'generous whitespace' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui positively supports generous whitespace"
+assert_grep 'Do not treat generous whitespace as an AI-design tell' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not treat whitespace as an AI-design prohibition"
+assert_not_grep 'excessive whitespace' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not list excessive whitespace as an anti-pattern"
+assert_grep 'challenge rather than' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui includes anti-AI design heuristics"
+assert_grep 'Hallmark is the only managed design skill' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Hallmark remains the only managed design skill"
+assert_grep 'outrank Hallmark' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui design constraints outrank Hallmark"
+assert_grep '### Exploration' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui keeps exploration routing"
+assert_grep '### Significant' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui keeps significant-UI routing"
+assert_grep 'bounded Mode B visual verification' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui keeps Mode B visual verification"
+assert_grep 'decorative sequential numbering' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core prohibits decorative sequential numbering"
+assert_grep 'em dashes in generated end-user' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core prohibits em dashes in generated end-user copy"
+assert_grep 'generous whitespace' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core favors generous whitespace"
+assert_grep 'AI/template conventions' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core avoids generic AI/template design patterns"
+assert_grep 'outrank Hallmark' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core states UI constraints outrank Hallmark"
+assert_not_grep 'excessive whitespace' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core does not list excessive whitespace as an anti-pattern"
+assert_grep 'inherit harness UI design preferences' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption inherits harness UI design preferences"
+assert_grep 'Do not silently rewrite' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption does not silently rewrite existing visual language"
+assert_grep 'inherit harness UI design preferences' \
+  "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
+  "workflows inherit harness UI design preferences on adoption"
 
 echo ""
 echo "--- Doctor (AI Platform repo) ---"

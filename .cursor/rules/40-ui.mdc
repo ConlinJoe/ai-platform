@@ -12,6 +12,14 @@ Instruction priority (`00-platform`) still applies: project/harness rules
 outrank Hallmark. Vendor skills do not authorize browser automation beyond
 what `60-browser-qa` allows.
 
+These platform-owned design constraints outrank Hallmark. If Hallmark
+recommends a technique prohibited here, do not use it. Do not modify
+Hallmark vendor content to encode developer preferences. Keep those
+preferences in this rule.
+
+Design philosophy: product-specific, spacious, hierarchy-driven design.
+Avoid recognizable AI/template conventions.
+
 ## Design-system ownership
 
 If the project already has tokens, a Tailwind/theme config, a component
@@ -28,41 +36,162 @@ when user-visible behavior changes.
 
 ## Always-on floor
 
-- Understand the product, user, and job before designing.
-- Design for this subject. Do not ship a generic SaaS/marketing template.
-- Avoid common AI/template clusters (interchangeable palettes, stock
-  card grids, decorative gradients, fake chrome, invented metrics).
-- Establish clear visual hierarchy. Spend boldness in one place, not
-  everywhere.
-- Prefer one coherent signature over many decorative ideas.
+- Before significant UI, identify: what product this is, who uses it,
+  what the user is trying to accomplish, the established visual language
+  if one exists, the appropriate information density, and what should
+  receive visual emphasis.
+- Design for this subject. A layout that could be dropped unchanged into
+  an unrelated SaaS product is suspect.
+- Prefer generous whitespace: breathing room between conceptual groups,
+  comfortable section spacing, and clear separation through space before
+  adding containers or dividers. Do not fill empty space merely because
+  it exists.
+- Establish structure with typography, spacing, scale, alignment,
+  composition, contrast, and content hierarchy before adding cards,
+  borders, dividers, badges, icons, numbers, gradients, or decorative
+  graphics. Do not use decoration to compensate for weak hierarchy.
+- Avoid recognizable AI/template conventions unless they serve this
+  product, content, and user.
 - UX writing is interface design: specific, user-facing, consistent.
 - Preserve consistency across an established product.
 - Implement framework-natively. Tailwind composition follows `20-coding`.
 - Responsive behavior and accessibility are part of design, not extras.
 - Do not declare significant UI complete from source code alone.
 
-### Decorative numbering
+## Hard prohibitions
 
-Do not use decorative section numbering in UI unless the user explicitly
-requests numbering. This is a visual convention, not a ban on meaningful
-ordered content. It applies to any UI technology.
+Hard developer constraints, not subjective Hallmark recommendations.
 
-Do not use numbers merely as a design device on cards, sections,
-navigation tiles, process blocks, page modules, sidebars, or content
-chapters — including `01` / `02` / `03` labels or small numbers in card
-corners. Do not introduce numbers to make a layout feel editorial,
-technical, architectural, premium, or structured.
+### Decorative sequential numbering
 
-Do use numbering when it has genuine semantic meaning: ordered
-instructions, ranked lists, numbered legal clauses, steps where sequence
-is materially important, data that is actually numbered, or when the user
-explicitly requests numbering.
+Do not use decorative numeric sequencing as a visual design device.
 
-If the content does not require ordinal meaning, use typography, spacing,
-rules, imagery, surfaces, hierarchy, and composition instead.
+This applies even when a reference or inspiration uses the pattern. Do
+not reinterpret this as "avoid leading zeroes." The unwanted pattern is
+decorative sequencing itself.
 
-This convention takes precedence over vendor-skill numbered-section or
-decorative-ordinal patterns.
+Prohibited examples include:
+
+- `01 / 02 / 03`, `1 / 2 / 3`, `001 / 002 / 003`
+- numbered feature rows, benefit lists, cards, or marketing sections
+- oversized background numbers
+- numbers added solely to create visual structure
+- step numbering that is merely presentational
+
+Numbers are allowed when they communicate real information or when
+sequence is functionally necessary. Examples: actual ordered
+instructions, pagination, rankings, quantities, prices, statistics,
+dates, measurements, progress indicators, numbered legal or technical
+references, and workflows where order itself is essential to
+comprehension.
+
+Even for a genuinely sequential process, do not automatically turn the
+steps into large decorative `01 / 02 / 03` visual elements. Prefer
+hierarchy, layout, headings, connectors, or other product-appropriate
+treatments unless numbering materially improves comprehension.
+
+### Em dashes in generated product copy
+
+Do not use em dashes (`—`) in UI copy, headings, subheadings, marketing
+copy, calls to action, explanatory website copy, or other generated
+end-user copy.
+
+Prefer natural sentence structure, periods, commas, colons, or
+parentheses where appropriate. Do not merely replace every em dash
+mechanically with another punctuation mark. Rewrite awkward sentences
+naturally.
+
+Preserve em dashes when reproducing user-provided or source text
+exactly, when required by an external content source, when editing
+content where changing the author's punctuation is outside scope, or
+when technically required in a literal value.
+
+This is a generated-copy rule.
+
+### Generic AI/template decoration
+
+Do not use a generic "AI startup" visual treatment when it is not
+justified by the product. Do not add decorative elements that exist
+only because they are common in generated templates.
+
+## Anti-AI design tells
+
+Recurring patterns that should trigger skepticism during design.
+
+Do not treat generous whitespace as an AI-design tell.
+
+Governing question: does this element exist because it serves this
+product, content, and user, or because it is a familiar template
+pattern?
+
+Do not prohibit a legitimate design technique merely because AI
+sometimes overuses it.
+
+Hard (see above): decorative sequential numbering; em dashes in
+generated end-user copy; generic "AI startup" visual treatment when not
+justified; decorative elements that exist only as generated-template
+convention.
+
+Unless product and context justify them, challenge rather than
+automatically use:
+
+- repetitive icon + heading + paragraph feature grids
+- excessive pill-shaped UI
+- excessive rounded cards/containers
+- every section placed inside a card
+- unnecessary gradients
+- gratuitous glow effects
+- generic abstract gradient backgrounds
+- excessive glassmorphism
+- floating decorative blobs/orbs
+- generic hero layouts that could belong to any company
+- repetitive equal-width three-column marketing sections
+- overly symmetrical composition used by default
+- arbitrary badges/eyebrows above every heading
+- excessive tiny uppercase labels
+- unnecessary dividers
+- decorative lines with no structural purpose
+- generic stock imagery when meaningful project imagery exists
+- invented metrics/statistics used to make a layout look populated
+- generic copy such as "Elevate your experience," "Unlock the power of,"
+  "Seamless solutions," and similar filler
+- repeated "Learn More" CTAs when a specific action can be named
+- unnecessary explanatory copy added merely to fill space
+
+## Whitespace
+
+Generous whitespace is an intentional design tool. Favor breathing room
+between conceptual groups, comfortable section spacing, restrained
+information density when the product permits it, and layouts that allow
+important content to stand on its own.
+
+Use space for hierarchy before adding containers or dividers.
+
+Whitespace must still preserve usability and information relationships.
+Do not disconnect related controls or content. Do not create needless
+scrolling in dense operational interfaces. Project context determines
+appropriate density.
+
+## Hierarchy before decoration
+
+When creating visual structure, prefer, in order:
+
+1. typography
+2. spacing
+3. scale
+4. alignment
+5. composition
+6. contrast
+7. content hierarchy
+
+before adding cards, borders, dividers, badges, icons, numbers,
+gradients, or decorative graphics.
+
+## Product-specific design
+
+Hallmark should help create product-specific design, not merely polished
+generic design. If the agent cannot name the product, the user, the job,
+and what deserves emphasis, it is not ready to design significant UI.
 
 ## Scope router
 
@@ -123,8 +252,9 @@ visual-direction work, and meaningful component or system design.
 
 Do not invoke it for every UI edit.
 
-Project design systems, contracts, tokens, and framework-native rules
-remain authoritative over Hallmark recommendations.
+Project design systems, contracts, tokens, framework-native rules, and
+the hard prohibitions in this file remain authoritative over Hallmark
+recommendations.
 
 ## Reference-driven design
 
@@ -132,10 +262,15 @@ When given a screenshot, URL, live site, internal product, named
 aesthetic (Linear, Stripe, Vercel, Apple, and similar), or an existing
 project design system: extract design language, do not copy.
 
-Reason about hierarchy, density, spacing rhythm, typography, geometry,
-navigation, component treatment, color behavior, motion, information
-architecture, and interaction patterns. Translate those into constraints
-for **this** product.
+References are not permission to import prohibited developer-preference
+patterns. If a reference contains decorative `01 / 02 / 03` numbering,
+excessive pills or cards, generic AI-style treatments, or other
+prohibited or default-avoid patterns, extract the useful underlying
+qualities without reproducing those elements.
+
+Extract typography, rhythm, hierarchy, density, composition, navigation,
+image treatment, and interaction model. Translate those into constraints
+for **this** product, adapted to the harness constraints above.
 
 Hallmark `study` may be used when that extraction needs the skill.
 References inspire language; they do not override product identity.
@@ -150,6 +285,19 @@ Review the **rendered** result proportionately:
 - responsive behavior
 - accessibility
 - performance implications when relevant
+
+Internal review floor (do not dump this as a giant checklist in normal
+agent output):
+
+- Is any decorative numbering being used?
+- Does generated end-user copy contain em dashes?
+- Are there obvious generic AI/template patterns?
+- Are cards, pills, badges, icons, dividers, or gradients being used
+  without a real structural purpose?
+- Is the interface unnecessarily dense?
+- Could spacing provide hierarchy instead of another visual container?
+- Does the result feel specific to this product?
+- Is any copy generic filler rather than useful communication?
 
 Subjective taste is judgment, not proof. Keep it distinct from objective
 checks (contrast, keyboard, overflow, semantics).

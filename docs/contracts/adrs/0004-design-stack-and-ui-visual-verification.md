@@ -1,10 +1,11 @@
 ---
 status: accepted
-last_reviewed: 2026-08-23
+last_reviewed: 2026-08-25
 source_of_truth_for:
   - Decision that Hallmark is the only managed design skill
   - Decision that 40-ui is the UI router and always-on design floor
   - Decision that significant UI authorizes a bounded Mode B visual pass
+  - Decision that developer design constraints live in 40-ui and outrank Hallmark
 depends_on:
   - 0001-two-layer-browser-qa.md
   - ../features/browser-qa.md
@@ -58,6 +59,21 @@ contracts, `design.md`) are authoritative over Hallmark. Exploration
 uses written directions, not a hosted canvas.
 
 Do not install `ux-ui-agent-skills` or restore the removed skills.
+
+Developer design constraints are owned by `40-ui`, not by Hallmark.
+They outrank Hallmark. Do not fork Hallmark vendor content to encode
+them.
+
+Design philosophy: product-specific, spacious, hierarchy-driven design.
+Avoid recognizable AI/template conventions.
+
+Hard constraints in `40-ui` include: no decorative sequential numbering
+as a visual device; no em dashes in generated end-user copy; no generic
+AI/template decoration used only because it is familiar. Generous
+whitespace is an intentional tool, not an AI-design tell. Prefer
+typography, spacing, scale, alignment, composition, contrast, and
+content hierarchy before cards, borders, dividers, badges, icons,
+numbers, gradients, or decorative graphics.
 
 ## Consequences
 
