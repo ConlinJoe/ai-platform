@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-21
+last_reviewed: 2026-08-26
 source_of_truth_for:
   - Laravel Boost capability policy for the AI Platform
   - Boost detection levels used by bootstrap and doctor
@@ -104,5 +104,7 @@ as an open deviation — not as an accepted difference.
 
 Boost MCP is not Mode A and not a substitute for Playwright. When Mode B
 is explicitly authorized, it may use Boost's `browser-logs` tool when
-Boost is available, in addition to Playwright MCP / browsermcp. Do not
-use those tools unless the current task authorizes browser QA.
+Boost is available, in addition to the best available real-browser
+capability (IDE-integrated browser, Playwright MCP, browsermcp, or
+equivalent). Do not use those tools unless the current task authorizes
+browser QA. An interactive pass is not Playwright execution.

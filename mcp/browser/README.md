@@ -5,7 +5,9 @@ Reserved for browser-tool notes. Policy for Mode A / Mode B lives in
 is summarized in `mcp/playwright/README.md`. Agent invocation follows
 `.cursor/rules/60-browser-qa.mdc` (availability is not general
 authorization; availability is also not justification for use;
-significant UI allows a bounded Mode B visual pass).
+significant UI allows a bounded Mode B visual pass using the best
+available real-browser capability; that pass is not Playwright
+execution).
 
 BrowserMCP is a typical **user-global** Cursor MCP for Mode B. The AI
 Platform does not install it, does not write its config, and does not

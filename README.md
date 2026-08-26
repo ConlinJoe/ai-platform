@@ -203,7 +203,9 @@ Or Cursor Settings → MCP → Add new MCP Server, command
 `npx -y @playwright/mcp@latest`. Enable the server in Cursor MCP
 settings. Availability is not general authorization to run browser
 automation (`.cursor/rules/60-browser-qa.mdc`). Significant UI work
-authorizes a bounded Mode B visual pass of that UI only (`40-ui`).
+authorizes a bounded Mode B visual pass of that UI only (`40-ui`). That
+pass uses the best available real-browser capability and is not
+Playwright execution.
 
 ### BrowserMCP (user-global)
 
@@ -346,7 +348,9 @@ Work inside the **target** repository, not this clone.
   See **10. Issues and pull requests**.
 - Do not run Playwright or browser MCP unless the current task
   authorizes it (`60-browser-qa`). Significant UI authorizes a bounded
-  Mode B visual pass of that UI only (`40-ui`).
+  Mode B visual pass of that UI only (`40-ui`). Use the best available
+  real-browser capability for that pass; do not report it as Playwright
+  execution.
 - UI should feel specific to the product: spacious, hierarchy-driven,
   and not assembled from recognizable AI/template conventions (`40-ui`).
 - Keep contracts current as implementation changes

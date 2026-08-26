@@ -4,6 +4,9 @@ last_reviewed: 2026-08-26
 source_of_truth_for:
   - Two-layer browser QA policy (Mode A deterministic, Mode B agentic)
   - Playwright applicability rules
+  - Capability-aware visual/interactive verification (best available real-browser capability)
+  - Distinction among static inspection, interactive real-browser verification, and Playwright/E2E execution
+  - Behavior when a Playwright browser binary is unavailable
   - Agent invocation of Playwright/browser automation is not generally authorized by tool availability
   - Tool availability is also not justification for invoking a browser tool the bounded task does not need
   - Significant UI authorizes a bounded Mode B visual pass of that UI only
@@ -49,9 +52,14 @@ profile.
 `doctor.sh` warns when a Laravel web application lacks Playwright. It does
 not require Playwright of other project types.
 
-Mode B uses whatever browser MCP tooling is already available (typically
-user-global Playwright MCP and/or browsermcp). Do not add those servers to
-a project's `.cursor/mcp.json` merely to satisfy this policy.
+Mode B uses the **best available real-browser capability** in the
+current environment: an IDE-integrated browser, browser MCP (typically
+user-global Playwright MCP and/or browsermcp), another equivalent
+browser automation capability, or an external browser when that is
+what the environment actually provides. Do not add browser MCP
+servers to a project's `.cursor/mcp.json` merely to satisfy this
+policy. Do not encode opening an external Chrome window as the
+fallback.
 
 ## Agent invocation
 
@@ -78,7 +86,8 @@ Vendor UI/design skills do not authorize browser automation.
 ### Significant UI — bounded Mode B visual pass
 
 Significant UI work authorizes **proportionate rendered visual
-verification of that UI only**, when browser tooling is available.
+verification of that UI only**, when a real-browser capability is
+available in the current environment.
 
 That pass may render the actual implementation, inspect affected
 viewport classes and materially affected interaction states, compare
@@ -102,7 +111,8 @@ through the work-item lifecycle.
 Small UI does not automatically authorize Playwright.
 
 Do not claim visual correctness for significant UI merely because
-source code looks correct. If browser tooling is unavailable, say so.
+source code looks correct. If no real-browser capability is
+available, say so.
 
 ### Explicit browser QA
 
@@ -127,6 +137,92 @@ are unaffected.
 Cursor rule `60-browser-qa` is the agent-facing owner of this
 invocation standard.
 
+## Capability-aware verification
+
+Authorization decides **whether** browser verification runs. The
+current environment decides **how**.
+
+Do not assume every environment has the same browser implementation.
+The harness describes required verification **outcomes and
+capabilities**, not one vendor or browser interface. Developers and
+agents may have an IDE-integrated browser, Playwright, another
+browser automation capability, an external browser, or CI-only
+browser execution.
+
+### Visual and interactive verification
+
+When UI work requires visual verification, use the **best available
+real-browser capability** in the current environment.
+
+An IDE-integrated browser (for example, an editor-owned browser
+panel) is valid, and may be preferable during interactive
+development, when it can render the actual application, navigate it,
+interact with controls, inspect responsive layouts, use or
+approximate the required viewport sizes, and expose enough browser
+behavior to verify the task.
+
+Do not unnecessarily launch an external browser window when an
+integrated browser already provides equivalent interactive visual
+verification. This is Mode B visual/interactive verification. It is
+not Mode A, and it is not execution of a Playwright spec.
+
+Cursor's integrated browser is one example of this capability. It is
+not a platform requirement. Other agents may have a different
+integrated or available real-browser surface.
+
+### Playwright remains Mode A
+
+Do not weaken the role of Playwright.
+
+Playwright remains appropriate for repeatable automated browser
+verification, existing E2E/browser specifications, regression
+coverage, scripted interaction, CI, and tasks or contracts that
+explicitly require Playwright execution.
+
+An integrated or manual browser pass **must not** be reported as
+execution of a Playwright test.
+
+If a project has an existing Playwright spec relevant to the changed
+behavior, run it when the environment supports it **and** the
+applicable verification mode requires it (explicit browser QA /
+Mode A, not the bounded significant-UI visual pass alone).
+
+### Missing Playwright browser binary
+
+If Playwright is installed or configured but its required browser
+binary is unavailable:
+
+- determine whether this is an expected environment capability
+  limitation or a broken project setup
+- do not silently install large browser dependencies unless existing
+  project or platform guidance authorizes that
+- do not silently downgrade the verification claim
+- use an available real-browser capability for visual/interactive
+  verification when that is appropriate and authorized
+- explicitly report that Playwright automation was **not** executed
+- report what browser verification **was** performed instead
+- distinguish automated verification from interactive visual
+  verification
+
+Example acceptable reporting:
+
+> Interactive browser verification passed at 1440, 1280, 1024, 768,
+> and 390px using the available IDE browser. The relevant Playwright
+> spec was updated but not executed because the Playwright browser
+> binary is unavailable in this environment.
+
+### Verification honesty
+
+Preserve a hard distinction between:
+
+1. static / code inspection
+2. interactive real-browser verification
+3. automated Playwright / E2E execution
+
+Report which level actually occurred. A browser inspection must not
+be described as an automated E2E pass. Source-code inspection must
+not be described as visual verification.
+
 ## Two-layer model
 
 ### Mode A — deterministic Playwright regression
@@ -145,8 +241,9 @@ Project-owned Playwright specs. Repeatable browser workflows.
 
 ### Mode B — agentic browser exploration
 
-When authorized, the agent uses available browser tooling/MCP interactively
-and behaves like a real operator rather than replaying Mode A.
+When authorized, the agent uses the best available real-browser
+capability interactively and behaves like a real operator rather than
+replaying Mode A.
 
 Explore realistic alternate paths, including:
 

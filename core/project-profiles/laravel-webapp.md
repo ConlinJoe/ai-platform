@@ -59,7 +59,9 @@ Laravel web applications are expected to use Laravel Boost.
 This profile is **browser-capable**. Capability is not authorization.
 Agent invocation of Mode A/B is not generally authorized by tool
 availability. Significant UI authorizes a bounded Mode B visual pass of
-that UI only (`40-ui`, `60-browser-qa`). Do not run Playwright or
+that UI only (`40-ui`, `60-browser-qa`). Use the best available
+real-browser capability for that pass; do not treat it as Playwright
+execution. Do not run Playwright or
 browser automation otherwise unless the current task explicitly
 authorizes it.
 

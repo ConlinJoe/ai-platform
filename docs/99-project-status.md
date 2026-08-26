@@ -17,8 +17,9 @@ Status documents are not architectural authority.
 
 Design-stack simplification: Hallmark-only UI intelligence, `40-ui` scope
 routing, and bounded significant-UI Mode B visual verification.
-Version 1.2.0. Capability-on-demand and significant-motion review are
-refinements of this architecture, not a new release.
+Version 1.2.0. Capability-on-demand, significant-motion review, and
+capability-aware browser verification are refinements of this
+architecture, not a new release.
 
 ## Progress
 
@@ -36,7 +37,12 @@ refinements of this architecture, not a new release.
 - Two-layer browser QA policy: documented and wired into Laravel profile.
   Availability is not general authorization (`60-browser-qa`). Availability
   is also not justification for using a tool. Significant UI authorizes
-  a bounded Mode B visual pass (`40-ui`). Meaningful motion receives
+  a bounded Mode B visual pass (`40-ui`). That pass is capability-aware:
+  use the best available real-browser capability; do not report an
+  interactive pass as Playwright execution. If Playwright is required
+  but its browser binary is unavailable, report the gap instead of
+  silently installing browsers or silently downgrading the claim.
+  Meaningful motion receives
   proportionate review in that pass; it does not by itself authorize
   Mode A or performance profiling.
 - Design stack: Hallmark is the only managed design skill; `40-ui` routes

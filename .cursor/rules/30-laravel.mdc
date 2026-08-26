@@ -100,7 +100,8 @@ authorizes it (`60-browser-qa`).
 
 When authorized, follow the project's `docs/contracts/features/browser-qa.md`
 when present. Platform policy: two-layer Mode A (Playwright specs) + Mode B
-(agentic browser MCP). A meaningful Mode B defect should normally become
+(best available real-browser capability). A Mode B visual pass is not
+Playwright execution. A meaningful Mode B defect should normally become
 Mode A coverage.
 
 Laravel / Livewire:

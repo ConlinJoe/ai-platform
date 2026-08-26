@@ -102,7 +102,8 @@ Fresh threads remain preferred for bounded implementation tasks.
 6. Create or use the appropriate branch when implementation is authorized.
 7. Implement.
 8. Test/verify proportionately (`60-browser-qa`: explicit request, or
-   bounded significant-UI Mode B visual pass).
+   bounded significant-UI Mode B visual pass). Report which
+   verification level actually occurred.
 9. Update project documentation when required.
 10. Create the PR only when explicitly requested or when the developer
     invokes the PR workflow.

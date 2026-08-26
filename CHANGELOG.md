@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+Browser verification is capability-aware. Significant-UI Mode B visual
+verification uses the best available real-browser capability in the
+current environment, including an IDE-integrated browser when it can
+render, navigate, interact, and inspect responsive layouts. That pass
+is not Playwright execution. Playwright remains Mode A for repeatable
+automation, existing specs, regression, CI, and explicitly required
+Playwright runs. If Playwright is installed but its browser binary is
+unavailable, agents must not silently install large browser
+dependencies or silently downgrade the verification claim; they should
+use an available real-browser capability for visual checks when
+appropriate and report which level actually ran. Do not encode opening
+an external Chrome window as the fallback.
+
 Formalized two refinements of the current v1.2.0 architecture.
 External tools are capability-on-demand, not capability-by-default:
 tool availability is not authorization, and availability is also not

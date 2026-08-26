@@ -5,6 +5,7 @@ source_of_truth_for:
   - Decision that Hallmark is the only managed design skill
   - Decision that 40-ui is the UI router and always-on design floor
   - Decision that significant UI authorizes a bounded Mode B visual pass
+  - Decision that Mode B visual verification uses the best available real-browser capability, not Playwright specifically
   - Decision that developer design constraints live in 40-ui and outrank Hallmark
   - Decision that significant motion is a specialized UI concern with proportionate review, not a separate skill or Mode A authorization
 depends_on:
@@ -44,8 +45,10 @@ Canonical ownership:
    and accessibility floors
 2. Hallmark — on-demand design intelligence for significant UI
 3. Framework/project rules — implementation
-4. Playwright Mode B — bounded rendered visual verification for
-   significant UI
+4. Mode B — bounded rendered visual verification for significant UI,
+   using the best available real-browser capability in the current
+   environment (IDE-integrated browser, browser MCP, or equivalent).
+   This is not Playwright execution.
 5. Playwright Mode A — workflow/regression testing when separately
    authorized
 
@@ -104,7 +107,9 @@ static UI; decorative AI/template motion is challenged in `40-ui`.
 ### Negative
 
 - Agents must classify UI scope; borderline cases need judgment
-- Visual verification still depends on available browser tooling
+- Visual verification still depends on an available real-browser
+  capability; environments differ, and agents must report which
+  verification level actually occurred
 
 ## Alternatives considered
 

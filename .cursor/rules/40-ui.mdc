@@ -370,8 +370,10 @@ change, UI the developer cannot reasonably verify immediately.
 1. Inspect the existing design system and product context.
 2. Invoke Hallmark when design intelligence is useful (see below).
 3. Implement framework-natively.
-4. Perform bounded Mode B visual verification when browser tooling is
-   available (`60-browser-qa`).
+4. Perform bounded Mode B visual verification when a real-browser
+   capability is available (`60-browser-qa`). Use the best available
+   real-browser capability; do not treat that pass as Playwright
+   execution.
 5. Review against the design-review and accessibility floors. When
    meaningful motion is involved, also apply the motion review floor.
 6. Iterate if the rendered result exposes real problems.
@@ -472,7 +474,8 @@ consider: contrast, visible focus, keyboard operation for new controls,
 semantic structure, accessible names/labels, important
 hover/focus/disabled/error states, reduced motion, and responsive overflow.
 
-Verify against the real application when tooling permits. Do not import a
+Verify against the real application when a real-browser capability
+permits. Do not import a
 third-party accessibility harness. Do not pile automated tests onto
 trivial changes.
 
@@ -533,8 +536,8 @@ review proportionately. In addition to the visual floor, inspect:
 - whether content or control access is delayed
 - whether the experience remains understandable without motion
 
-Use the real rendered application when browser tooling permits
-(`60-browser-qa`). Bounded Mode B visual verification may include
+Use the real rendered application when a real-browser capability
+permits (`60-browser-qa`). Bounded Mode B visual verification may include
 observing the relevant animation and interaction states.
 
 Do not require formal performance profiling for every animation.

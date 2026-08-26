@@ -308,10 +308,15 @@ automation.
 
 Significant UI work (see `40-ui`) authorizes a **bounded Mode B visual
 verification pass** of that UI only. It does not authorize a Mode A
-suite, the full Mode A→B loop, or unrelated browser QA.
+suite, the full Mode A→B loop, or unrelated browser QA. Use the best
+available real-browser capability for that pass; do not treat it as
+Playwright execution.
 
 Do not run Playwright or other browser automation outside that exception
-unless the current task explicitly instructs it.
+unless the current task explicitly instructs it. If Playwright is
+required but its browser binary is unavailable, do not silently
+downgrade the claim: report that Playwright was not executed and what
+interactive verification ran instead.
 
 ## Instruction Priority
 

@@ -53,7 +53,8 @@ Agent invocation of Playwright / browser MCP follows
 `.cursor/rules/60-browser-qa.mdc`. Availability is not general
 authorization. Availability is also not justification for using a
 tool. Significant UI authorizes a bounded Mode B visual pass of that
-UI only.
+UI only. Use the best available real-browser capability for that pass;
+do not treat it as Playwright execution.
 
 Do not add project-bound servers (Boost) to user-global MCP config.
 Do not add user-global browser MCPs to a Laravel app's `.cursor/mcp.json`

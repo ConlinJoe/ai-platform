@@ -18,7 +18,9 @@ lives in the AI Platform: `docs/contracts/features/browser-qa.md`.
 
 Agent invocation of the full Mode A/B loop is opt-in. Significant UI
 work authorizes a bounded Mode B visual pass of that UI only
-(`.cursor/rules/40-ui.mdc`, `.cursor/rules/60-browser-qa.mdc`). Do not
+(`.cursor/rules/40-ui.mdc`, `.cursor/rules/60-browser-qa.mdc`). That
+pass uses the best available real-browser capability and is not
+Playwright execution. Do not
 run Playwright or browser automation otherwise unless the current task
 explicitly authorizes it. Meaningful motion may be observed in that
 pass; it does not by itself authorize Mode A tests or performance
@@ -41,7 +43,9 @@ If no, state why Mode A is not used and stop.
 
 ## Mode B
 
-Agentic exploration with available browser MCP. Do not replay Mode A.
+Agentic exploration with the best available real-browser capability
+(IDE-integrated browser, browser MCP, or equivalent). Do not replay
+Mode A. Do not report an interactive pass as Playwright execution.
 Meaningful defects become Mode A coverage.
 
 ## Data isolation

@@ -225,7 +225,8 @@ QA (`60-browser-qa`).
 
 Significant UI work authorizes a **bounded Mode B visual pass** of that
 UI only (`40-ui`). That is not the full loop and does not authorize
-writing Mode A tests.
+writing Mode A tests. Use the best available real-browser capability
+for that pass; do not report it as Playwright execution.
 
 When the full loop is authorized, see `core/prompts/browser-qa-loop.md`
 and `docs/contracts/features/browser-qa.md`.

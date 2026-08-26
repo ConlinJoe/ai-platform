@@ -343,6 +343,54 @@ assert_grep 'creating or expanding a Playwright Mode A suite' \
 assert_grep 'availability is not general authorization' \
   "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
   "tool availability is not general authorization"
+assert_grep 'best available real-browser capability' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "visual verification uses the best available real-browser capability"
+assert_grep 'An IDE-integrated browser is valid' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "IDE-integrated browser is a valid visual-verification capability"
+assert_not_grep 'Cursor' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "canonical browser-qa rule is not Cursor-specific"
+assert_grep 'Do not weaken the role of Playwright' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "capability-aware verification does not weaken Playwright"
+assert_grep 'must not\*\* be reported as' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "interactive browser pass is not reported as Playwright execution"
+assert_grep 'Do not weaken the role of Playwright' \
+  "${AI_REPO}/docs/contracts/features/browser-qa.md" \
+  "browser-qa contract does not weaken Playwright"
+assert_grep 'do not silently install large browser dependencies' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "missing Playwright browser binaries are not silently installed"
+assert_grep 'do not silently downgrade the verification claim' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "missing Playwright binaries do not silently downgrade claims"
+assert_grep 'Do not encode opening an external Chrome window as the fallback' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "Chrome is not the encoded fallback browser"
+assert_grep 'static / code inspection' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "verification honesty distinguishes static inspection"
+assert_grep 'interactive real-browser verification' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "verification honesty distinguishes interactive real-browser verification"
+assert_grep 'automated Playwright / E2E execution' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "verification honesty distinguishes Playwright/E2E execution"
+assert_grep 'best available real-browser capability' \
+  "${AI_REPO}/docs/contracts/features/browser-qa.md" \
+  "browser-qa contract owns capability-aware visual verification"
+assert_grep 'not a platform requirement' \
+  "${AI_REPO}/docs/contracts/features/browser-qa.md" \
+  "contract treats an IDE browser as an example, not a requirement"
+assert_grep 'This is not Playwright execution' \
+  "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" \
+  "design-stack ADR uncouples Mode B visual verification from Playwright"
+assert_grep 'best available real-browser capability' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core uses capability-aware visual verification"
 assert_not_grep 'Superdesign' "${AI_REPO}/README.md" \
   "README does not document Superdesign as current tooling"
 assert_not_grep '@superdesign/cli' "${AI_REPO}/README.md" \

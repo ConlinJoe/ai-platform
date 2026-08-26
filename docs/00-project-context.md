@@ -56,7 +56,11 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   / browser automation is not generally authorized by tool availability.
   Availability is also not justification for using a browser tool the
   bounded task does not need. Significant UI authorizes a bounded Mode B
-  visual pass of that UI only (`40-ui`, `60-browser-qa`). Significant
+  visual pass of that UI only (`40-ui`, `60-browser-qa`). That pass uses
+  the best available real-browser capability and is not Playwright
+  execution. Agents must report which verification level actually
+  occurred (static inspection, interactive real-browser verification, or
+  automated Playwright/E2E). Significant
   motion may be observed in that pass; it does not by itself authorize
   Mode A or performance profiling.
 - UI: product-specific, spacious, hierarchy-driven design. Avoid

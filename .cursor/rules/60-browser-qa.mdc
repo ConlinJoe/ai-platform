@@ -1,5 +1,5 @@
 ---
-description: Browser QA invocation — availability is not general authorization; significant UI allows a bounded Mode B visual pass
+description: Browser QA invocation — availability is not general authorization; significant UI allows a bounded Mode B visual pass; verification is capability-aware
 alwaysApply: true
 ---
 
@@ -36,8 +36,8 @@ Vendor UI/design skills do not authorize browser automation.
 ### Significant UI — bounded Mode B visual pass
 
 Significant UI work (see `40-ui`) authorizes **proportionate rendered
-visual verification of that UI only**, when browser tooling is
-available.
+visual verification of that UI only**, when a real-browser capability
+is available in the current environment.
 
 That pass may:
 
@@ -77,8 +77,8 @@ change has uncertain visual consequences, use the smallest check already
 authorized for this task; do not start an expensive QA loop.
 
 Do not claim visual correctness for significant UI merely because source
-code looks correct. If browser tooling is unavailable, say so and do not
-pretend the UI was visually verified.
+code looks correct. If no real-browser capability is available, say so
+and do not pretend the UI was visually verified.
 
 ### Explicit browser QA
 
@@ -111,20 +111,111 @@ controls **when agents invoke** browser automation.
 
 Follow the project's `docs/contracts/features/browser-qa.md` when present.
 
+## Capability-aware verification
+
+Authorization (above) decides **whether** browser verification runs.
+The current environment decides **how**.
+
+Do not assume every environment has the same browser implementation.
+Describe required verification **outcomes and capabilities**, not one
+vendor or browser interface.
+
+### Visual and interactive verification
+
+When UI work requires visual verification, use the **best available real-browser capability** in the current environment.
+
+An IDE-integrated browser is valid, and may be preferable during
+interactive development, when it can:
+
+- render the actual application
+- navigate the application
+- interact with controls
+- inspect responsive layouts
+- use or approximate the required viewport sizes
+- expose enough browser behavior to verify the task
+
+Do not unnecessarily launch an external browser window when an
+integrated browser already provides equivalent interactive visual
+verification.
+
+This is Mode B visual/interactive verification. It is not Mode A.
+
+### Playwright (Mode A)
+
+Do not weaken the role of Playwright.
+
+Playwright remains appropriate for:
+
+- repeatable automated browser verification
+- existing E2E/browser specifications
+- regression coverage
+- scripted interaction
+- CI
+- tasks or contracts that explicitly require Playwright execution
+
+An integrated or manual browser pass **must not** be reported as
+execution of a Playwright test.
+
+If a project has an existing Playwright spec relevant to the changed
+behavior, run it when the environment supports it **and** the
+applicable verification mode requires it (explicit browser QA / Mode A,
+not the bounded significant-UI visual pass alone).
+
+### Missing Playwright browser binary
+
+If Playwright is installed or configured but its required browser
+binary is unavailable:
+
+- determine whether this is an expected environment capability
+  limitation or a broken project setup
+- do not silently install large browser dependencies unless existing
+  project or platform guidance authorizes that
+- do not silently downgrade the verification claim
+- use an available real-browser capability for visual/interactive
+  verification when that is appropriate and authorized
+- explicitly report that Playwright automation was **not** executed
+- report what browser verification **was** performed instead
+- distinguish automated verification from interactive visual
+  verification
+
+Example acceptable reporting:
+
+> Interactive browser verification passed at 1440, 1280, 1024, 768,
+> and 390px using the available IDE browser. The relevant Playwright
+> spec was updated but not executed because the Playwright browser
+> binary is unavailable in this environment.
+
+Do not encode opening an external Chrome window as the fallback.
+Environments may have an IDE-integrated browser, Playwright, another
+browser automation capability, an external browser, or CI-only
+browser execution.
+
+### Verification honesty
+
+Preserve a hard distinction between:
+
+1. static / code inspection
+2. interactive real-browser verification
+3. automated Playwright / E2E execution
+
+Report which level actually occurred. A browser inspection must not
+be described as an automated E2E pass. Source-code inspection must
+not be described as visual verification.
+
 ## When authorized (full loop)
 
 Two-layer model: Mode A (deterministic Playwright specs) + Mode B
-(agentic browser MCP). A meaningful Mode B **behavioral** defect should
-normally become Mode A coverage. A significant-UI visual pass does not
-by itself require new Mode A tests; recommend coverage through the
-work-item lifecycle when a regression deserves permanence.
+(agentic real-browser exploration). A meaningful Mode B **behavioral**
+defect should normally become Mode A coverage. A significant-UI visual
+pass does not by itself require new Mode A tests; recommend coverage
+through the work-item lifecycle when a regression deserves permanence.
 
 ### Modes
 
 - **Mode A** — deterministic, project-owned Playwright specs. Workflows
   and state transitions, not page-load smoke only. Significant UI does
   not automatically authorize writing Mode A tests.
-- **Mode B** — agentic exploration with available browser MCP. For
+- **Mode B** — agentic exploration with the best available real-browser capability (IDE-integrated browser, browser MCP, or equivalent). For
   significant UI, keep Mode B inside the bounded visual pass unless
   full browser QA was explicitly requested.
 

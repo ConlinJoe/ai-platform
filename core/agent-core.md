@@ -132,11 +132,15 @@ Do not add another design skill.
 Follow `.cursor/rules/60-browser-qa.mdc`. Availability is not general
 authorization. Availability is also not justification for using a
 browser tool the bounded task does not need. Significant UI work
-authorizes a bounded Mode B visual pass of that UI only (`40-ui`). Do
-not run Playwright or browser MCP otherwise unless the current task
-explicitly authorizes it. Mode B visual verification does not authorize
-Mode A tests. Significant motion may be observed in that pass; it does
-not by itself authorize Mode A or performance profiling.
+authorizes a bounded Mode B visual pass of that UI only (`40-ui`). Use
+the best available real-browser capability for that pass; do not treat
+it as Playwright execution. Do not run Playwright or browser MCP
+otherwise unless the current task explicitly authorizes it. Mode B
+visual verification does not authorize Mode A tests. Significant motion
+may be observed in that pass; it does not by itself authorize Mode A
+or performance profiling. Report which verification level actually
+occurred: static inspection, interactive real-browser verification, or
+automated Playwright/E2E execution.
 
 ## Adoption
 

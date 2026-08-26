@@ -10,12 +10,20 @@ Agent invocation: `.cursor/rules/60-browser-qa.mdc`. This prompt is the
 not this loop and does not by itself require new Mode A tests.
 Laravel/Livewire extras: `core/project-profiles/laravel-webapp.md`.
 
+If Playwright is required by this loop but its browser binary is
+unavailable, do not silently install large browser dependencies and do
+not report an interactive browser pass as Mode A. Use an available
+real-browser capability for authorized visual/interactive checks, and
+report that Playwright automation was not executed.
+
 ## Loop
 
 1. Implement the change.
 2. Run the application's automated tests (PHPUnit/Pest/etc.).
 3. Run Mode A (`npm run test:e2e` or the project's equivalent).
-4. Explore with Mode B using available browser MCP. Do not merely replay Mode A.
+4. Explore with Mode B using the best available real-browser
+   capability. Do not merely replay Mode A. Do not report that pass as
+   Playwright execution.
 5. Fix defects.
 6. Add Mode A coverage for meaningful defects.
 7. Re-run application tests and Mode A.

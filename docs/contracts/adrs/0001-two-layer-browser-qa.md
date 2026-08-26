@@ -1,9 +1,10 @@
 ---
 status: accepted
-last_reviewed: 2026-08-23
+last_reviewed: 2026-08-26
 source_of_truth_for:
   - Decision to use a two-layer (Mode A / Mode B) browser QA model
   - Decision that Playwright is profile-applicable, not universal
+  - Decision that Mode B uses the best available real-browser capability, not one vendor interface
 depends_on:
   - ../features/browser-qa.md
 referenced_by:
@@ -33,7 +34,10 @@ apps).
 Browser-capable project profiles use a two-layer model:
 
 - **Mode A** — project-owned deterministic Playwright regression.
-- **Mode B** — agentic browser exploration with available browser MCP tooling.
+- **Mode B** — agentic browser exploration with the best available
+  real-browser capability in the current environment (IDE-integrated
+  browser, browser MCP, or equivalent). Mode B is not Playwright
+  execution.
 
 A meaningful defect found in Mode B should normally become a Mode A
 regression test.
@@ -51,7 +55,9 @@ browser automation only when:
    visual pass of that UI is in scope (`0004-design-stack-and-ui-visual-verification.md`).
 
 Significant UI does not authorize a Mode A suite or the full Mode A→B
-loop. Policy details live in `docs/contracts/features/browser-qa.md`.
+loop. An interactive real-browser pass must not be reported as
+Playwright execution. Policy details live in
+`docs/contracts/features/browser-qa.md`.
 
 ## Consequences
 
@@ -60,6 +66,8 @@ loop. Policy details live in `docs/contracts/features/browser-qa.md`.
 - Repeatable regression without treating agent exploration as the suite.
 - Defects discovered interactively are not lost.
 - Non-browser repositories are not forced onto Playwright.
+- Visual verification can use the environment's available real-browser
+  capability without pretending it ran Playwright.
 
 ### Negative
 
@@ -71,4 +79,11 @@ loop. Policy details live in `docs/contracts/features/browser-qa.md`.
 - Playwright for every repository — rejected; not all projects have a UI.
 - Mode B only — rejected; exploration is not deterministic regression.
 - Dusk as the platform default — rejected; the proven implementation used
-  Playwright, and Mode B already uses Playwright-oriented browser tooling.
+  Playwright, and Mode B uses available real-browser capability rather
+  than a Dusk-specific driver.
+- Treat an IDE-integrated or manual browser pass as Playwright
+  execution — rejected; verification claims must name the level that
+  actually ran.
+- Encode "open Chrome" as the universal fallback — rejected;
+  environments differ, and an integrated browser may already provide
+  equivalent interactive visual verification.
