@@ -108,7 +108,13 @@ Inspect, as applicable:
 - Configuration (env examples, framework config, CI/CD)
 - Directory structure and source architecture
 - Tests and how they are run
-- MCP, editor, and agent config
+- MCP, editor, and agent config. Inspect relevant project tooling
+  before recommending additional integrations. If existing tools
+  adequately provide a capability, preserve them unless there is a
+  material reason to change. Do not add an MCP simply because the
+  harness documentation mentions one.
+  Project requirements drive tool selection.
+  Additional MCPs are not bootstrap dependencies.
 - Deployment/infrastructure evidence that exists in-repo
 - GitHub / contribution conventions when present: Issue conventions,
   PR templates, branch naming, `CONTRIBUTING` (or equivalent), and

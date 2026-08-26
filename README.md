@@ -178,7 +178,10 @@ agent instructions and includes the portable core.
 | GitKraken or other SCM MCPs | User-global where the client supports it | You; **not** owned or required by this harness |
 | Laravel Boost MCP | Laravel **project** `.cursor/mcp.json` | `php artisan boost:install`, not bootstrap |
 
-Bootstrap does **not** install MCP servers. Per-agent MCP notes:
+Bootstrap does **not** install MCP servers. Additional MCPs are not
+bootstrap dependencies. MCP configuration is client-specific; do not
+force identical setups across agents merely for parity. External tools
+are capability-on-demand (`mcp/README.md`). Per-agent MCP notes:
 `core/adapters/`.
 
 ### Playwright MCP (Cursor user-global; reference)

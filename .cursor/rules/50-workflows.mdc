@@ -78,6 +78,9 @@ edit those managed files by hand.
 
 It does not run Composer, `boost:install`, add Playwright, or install
 WordPress plugins or npm packages.
+It does not install MCP servers or make additional MCPs required
+bootstrap dependencies. Client-specific MCP configuration remains
+client-specific.
 It does not install or authenticate GitHub CLI (`gh`).
 It does not copy `.github/` templates or overwrite existing GitHub
 Issue/PR/Actions files.
@@ -149,6 +152,13 @@ harness approval boundaries (no automatic Issue/PR/commit/push/merge;
 never auto-merge), surface the difference during reconciliation. Do not
 create GitHub infrastructure merely because the project was adopted.
 See `70-work-items`.
+
+Inspect relevant project tooling (MCP, CLIs, browser capabilities,
+editor integrations) before recommending additional integrations. If
+the project already has tools that adequately provide a capability,
+preserve them unless there is a material reason to change. Do not add an MCP simply because the harness documentation mentions one.
+Project requirements drive tool selection. External tools remain
+capability-on-demand (`00-platform`, `mcp/README.md`).
 
 During adoption, load the full existing `docs/` set. That is an
 exception to selective loading in `10-documentation`. Presenting

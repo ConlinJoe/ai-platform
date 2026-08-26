@@ -1,11 +1,13 @@
 ---
 status: active
-last_reviewed: 2026-08-23
+last_reviewed: 2026-08-26
 source_of_truth_for:
   - Two-layer browser QA policy (Mode A deterministic, Mode B agentic)
   - Playwright applicability rules
   - Agent invocation of Playwright/browser automation is not generally authorized by tool availability
+  - Tool availability is also not justification for invoking a browser tool the bounded task does not need
   - Significant UI authorizes a bounded Mode B visual pass of that UI only
+  - Significant motion may be observed in that pass and does not by itself authorize Mode A or performance profiling
   - Mode A regression, selector, artifact, and data-isolation policy
   - Defect-to-regression policy
   - Browser QA implementation loop (when authorized)
@@ -68,6 +70,9 @@ existing browser tests, Playwright MCP, a browser-QA contract, frontend
 or responsive code changes, this contract existing, a UI/design skill
 recommending verification, or prior turns that used Playwright.
 
+Availability is also not justification for invoking a browser tool the
+bounded task does not need.
+
 Vendor UI/design skills do not authorize browser automation.
 
 ### Significant UI — bounded Mode B visual pass
@@ -78,11 +83,21 @@ verification of that UI only**, when browser tooling is available.
 That pass may render the actual implementation, inspect affected
 viewport classes and materially affected interaction states, compare
 against supplied references, check relevant accessibility on the real
-UI, and iterate if the rendered result exposes meaningful problems.
+UI, observe relevant animation and interaction states when meaningful
+motion is involved, and iterate if the rendered result exposes
+meaningful problems.
 
 It does **not** authorize creating or expanding a Mode A suite, the
 full Mode A→B loop, broad application exploration, unrelated browser
-QA, destructive actions, or expanding task scope.
+QA, destructive actions, expanding task scope, formal performance
+profiling, new animation dependencies, or additional MCP installation.
+
+Significant motion does not by itself authorize Mode A tests or
+performance profiling. Simple hover/focus transitions and minor state
+changes do not trigger an expanded motion review. Motion and
+performance review details live in `40-ui`. If motion creates behavior
+that warrants permanent regression coverage, recommend or capture that
+through the work-item lifecycle.
 
 Small UI does not automatically authorize Playwright.
 

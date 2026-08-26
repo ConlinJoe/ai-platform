@@ -37,9 +37,13 @@ satisfy this platform — that file is owned by Laravel Boost.
 ## Invocation
 
 Agent invocation follows `.cursor/rules/60-browser-qa.mdc`. Playwright MCP
-being configured does not generally authorize Mode B. Significant UI
-authorizes a bounded Mode B visual pass of that UI only (`40-ui`). Do not
-treat Playwright MCP as the regression suite.
+being configured does not generally authorize Mode B. Availability is
+also not justification for using it when the bounded task does not need
+it. Significant UI authorizes a bounded Mode B visual pass of that UI
+only (`40-ui`). That pass may observe relevant animation states when
+meaningful motion is involved; it does not authorize Mode A or
+performance profiling. Do not treat Playwright MCP as the regression
+suite.
 
 The `mcp/browser/` directory is reserved for additional browser-tool notes;
 policy lives in the browser-QA contract, not here.

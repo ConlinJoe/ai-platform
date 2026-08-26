@@ -28,6 +28,12 @@ Bootstrap installs safe lightweight adapters automatically. It does not
 detect which agents are installed and does not ask. A project may use
 more than one agent.
 
+MCP configuration is client-specific. Do not force identical MCP
+setups across agents merely for parity. Capability parity is not the goal;
+reliable workflow behavior is. Additional MCPs are not bootstrap
+dependencies. External tools are capability-on-demand
+(`.cursor/rules/00-platform.mdc`, `mcp/README.md`).
+
 ## Capability matrix
 
 Verified against current official agent documentation. Blank or

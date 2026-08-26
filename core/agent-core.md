@@ -56,6 +56,19 @@ model memory. Use the installed stack's native capabilities before
 custom implementations or new packages. Details:
 `.cursor/rules/00-platform.mdc`.
 
+## Capability-on-demand
+
+External tools are **capability-on-demand, not capability-by-default**.
+Prefer the smallest active toolset that can reliably accomplish the
+current work. Do not accumulate MCP servers, CLIs, integrations, or
+agent tools merely because they might be useful.
+
+Tool availability is not authorization. Tool availability is also not justification for using a tool. Invoke an available capability only
+when it materially helps the bounded task. Additional MCPs are not
+bootstrap dependencies. Client-specific MCP configuration stays
+client-specific; capability parity across agents is not the goal.
+Details: `.cursor/rules/00-platform.mdc`, `mcp/README.md`.
+
 ## Documentation
 
 `docs/README.md` is the contract index. Load only contracts relevant to
@@ -117,10 +130,13 @@ Do not add another design skill.
 ## Browser automation
 
 Follow `.cursor/rules/60-browser-qa.mdc`. Availability is not general
-authorization. Significant UI work authorizes a bounded Mode B visual
-pass of that UI only (`40-ui`). Do not run Playwright or browser MCP
-otherwise unless the current task explicitly authorizes it. Mode B visual
-verification does not authorize Mode A tests.
+authorization. Availability is also not justification for using a
+browser tool the bounded task does not need. Significant UI work
+authorizes a bounded Mode B visual pass of that UI only (`40-ui`). Do
+not run Playwright or browser MCP otherwise unless the current task
+explicitly authorizes it. Mode B visual verification does not authorize
+Mode A tests. Significant motion may be observed in that pass; it does
+not by itself authorize Mode A or performance profiling.
 
 ## Adoption
 

@@ -28,6 +28,9 @@ tooling, a browser-QA contract, frontend or responsive code changes,
 this rule, a UI/design skill recommending screenshots, or previous
 turns that used Playwright.
 
+Availability is also not justification for invoking a browser tool the
+bounded task does not need.
+
 Vendor UI/design skills do not authorize browser automation.
 
 ### Significant UI — bounded Mode B visual pass
@@ -43,6 +46,8 @@ That pass may:
 - inspect materially affected interaction states
 - compare against supplied references when applicable
 - check relevant accessibility concerns on the real UI
+- when meaningful motion is involved, observe the relevant animation
+  and interaction states (`40-ui`)
 - iterate if the rendered result exposes meaningful problems
 
 It does **not** authorize:
@@ -53,6 +58,19 @@ It does **not** authorize:
 - unrelated browser QA
 - destructive actions
 - expanding task scope
+- formal performance profiling
+- new animation dependencies
+- additional MCP installation
+
+Significant motion does not by itself authorize Mode A tests or
+performance profiling. Trivial hover/focus transitions and minor state
+changes do not trigger an expanded motion review. Escalate to deeper
+performance tooling only when visible problems exist, the
+implementation is unusually complex, performance is a stated project
+requirement, or evidence suggests profiling would materially help.
+
+If motion creates behavior that warrants permanent regression coverage,
+recommend or capture that separately through the work-item lifecycle.
 
 Small UI does **not** automatically authorize Playwright. If a small
 change has uncertain visual consequences, use the smallest check already

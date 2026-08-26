@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+Formalized two refinements of the current v1.2.0 architecture.
+External tools are capability-on-demand, not capability-by-default:
+tool availability is not authorization, and availability is also not
+justification for using a tool. MCP servers keep a small default
+footprint with a defined responsibility; additional MCPs are not
+bootstrap dependencies, and client-specific MCP configuration is not
+forced to parity across agents.
+Significant motion is a specialized significant-UI concern with
+proportionate motion and performance review. It does not add a motion
+skill or animation dependency, does not trigger expanded QA for trivial
+transitions, and does not by itself authorize Mode A tests or formal
+performance profiling.
+
 Refined `40-ui` card, imagery, responsive-composition, and section-separation
 guidance.
 Cards remain allowed as semantic containers; unearned decorative cards

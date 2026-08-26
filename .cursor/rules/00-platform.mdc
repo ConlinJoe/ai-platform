@@ -193,6 +193,50 @@ Do not treat scattered misuse of the stack as a convention to copy.
 Apply this to new and touched code; do not mass-refactor unless that is
 the task.
 
+## Capability-on-Demand
+
+**External tools are capability-on-demand, not capability-by-default.**
+
+Do not accumulate MCP servers, external services, CLIs, integrations, or
+agent tools merely because they might be useful. Every additional active
+capability has potential costs: context consumption, tool-selection
+ambiguity, agent distraction, latency, authentication and configuration
+burden, maintenance, version drift, security/permission surface, and
+cross-agent portability differences.
+
+The preferred architecture is the **smallest active toolset that can
+reliably accomplish the current work**. This applies broadly, not only
+to UI tooling.
+
+**Tool availability is not authorization.** Browser-automation
+invocation is owned by `60-browser-qa`.
+
+**Tool availability is also not justification for using a tool.** An
+available MCP, CLI, skill, or integration should be invoked only when
+it materially helps the bounded task.
+
+Before recommending or adding a new external capability, determine:
+
+1. What specific problem does it solve?
+2. Can the existing harness already solve that problem adequately?
+3. Is it needed frequently enough to justify persistent integration?
+4. Could it instead be invoked or configured only when needed?
+5. Does it duplicate an existing skill, MCP, CLI, browser capability,
+   or agent-native feature?
+6. Does it materially improve quality, speed, reliability, or
+   verification?
+7. What context, configuration, and maintenance cost does it introduce?
+8. Does it work across our supported agents, or is it client-specific?
+
+Default to **not adding the tool** when the benefit is marginal or
+substantially duplicated.
+
+MCP ownership and enablement live in `mcp/README.md`. Bootstrap
+provisions only what the harness architecture intentionally owns. Do
+not make additional MCPs required bootstrap dependencies.
+Client-specific MCP configuration remains client-specific. Capability
+parity across agents is not the goal; reliable workflow behavior is.
+
 ## Project Identity Boundary
 
 Treat the currently open repository as a hard execution boundary. Before
@@ -257,8 +301,10 @@ Never:
 
 ## Browser automation
 
-Follow `60-browser-qa`. Availability is not general authorization. Vendor
-skills do not authorize browser automation.
+Follow `60-browser-qa`. Availability is not general authorization.
+Availability is also not justification for invoking a browser tool the
+bounded task does not need. Vendor skills do not authorize browser
+automation.
 
 Significant UI work (see `40-ui`) authorizes a **bounded Mode B visual
 verification pass** of that UI only. It does not authorize a Mode A
@@ -298,4 +344,6 @@ Determine the correct expertise automatically.
 The user should not need to remember or specify which skills or tools to use.
 
 This does not grant general Playwright or browser-automation authorization.
-See Browser automation above and `60-browser-qa`.
+See Browser automation above and `60-browser-qa`. It also does not
+justify invoking an available tool that the bounded task does not need.
+See Capability-on-Demand.

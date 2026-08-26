@@ -510,6 +510,103 @@ assert_grep 'inherit harness UI design preferences' \
   "workflows inherit harness UI design preferences on adoption"
 
 echo ""
+echo "--- Capability-on-demand and motion ---"
+assert_grep 'capability-on-demand, not capability-by-default' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "capability-on-demand is canonical platform guidance"
+assert_grep 'capability-on-demand, not capability-by-default' \
+  "${AI_REPO}/core/agent-core.md" \
+  "capability-on-demand is in the portable core"
+assert_grep 'not justification for using a tool' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "tool availability does not itself justify usage"
+assert_grep 'not justification for using a tool' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core states availability is not justification"
+assert_grep 'not justification for using a tool' \
+  "${AI_REPO}/mcp/README.md" \
+  "MCP guidance states availability is not justification"
+assert_grep 'availability is not general authorization' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "tool availability is not authorization"
+assert_grep 'purpose and value' "${AI_REPO}/mcp/README.md" \
+  "MCP discipline is governed by purpose and value, not count"
+assert_grep 'not required bootstrap dependencies' \
+  "${AI_REPO}/mcp/README.md" \
+  "additional MCPs are not required bootstrap dependencies"
+assert_grep 'Capability parity is not the goal' \
+  "${AI_REPO}/mcp/README.md" \
+  "MCP guidance does not force cross-agent capability parity"
+assert_grep 'does not install MCP servers' \
+  "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
+  "bootstrap policy does not install MCP servers"
+assert_not_grep 'mcpServers' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap script does not write MCP server config"
+assert_not_grep 'mcp.json' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap script does not write mcp.json"
+assert_not_grep 'Context7' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap does not add Context7"
+assert_not_grep 'chrome-devtools' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap does not add Chrome DevTools MCP"
+assert_not_grep 'gsap' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap does not add GSAP"
+assert_not_grep 'framer-motion' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap does not add Framer Motion"
+assert_missing "${AI_REPO}/.agents/skills/motion" \
+  "no motion skill is introduced"
+assert_not_grep 'motion' "${AI_REPO}/skills-lock.json" \
+  "skills-lock does not pin a motion skill"
+assert_grep 'Do not add a motion skill' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui forbids adding a motion skill"
+assert_grep 'Hallmark is the only managed design skill' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Hallmark remains the only managed design skill"
+assert_grep '## Significant motion' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "significant motion receives proportionate review"
+assert_grep 'do \*\*not\*\* trigger an expanded motion review' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "trivial transitions do not trigger expanded motion QA"
+assert_grep 'prefers-reduced-motion' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "reduced-motion consideration exists"
+assert_grep 'does \*\*not\*\* automatically authorize new Mode A' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "motion does not automatically authorize Mode A"
+assert_grep 'Do not require formal performance profiling' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "motion does not automatically authorize performance profiling"
+assert_grep 'formal performance profiling' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "Mode B motion observation does not authorize profiling"
+assert_grep 'observe the relevant animation' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "bounded Mode B may observe significant motion"
+assert_grep 'everything fading upward on scroll' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "anti-AI motion patterns remain in design heuristics"
+assert_grep 'Do not add an MCP simply because' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption does not add MCPs merely because docs mention them"
+assert_grep 'Project requirements drive tool selection' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption lets project requirements drive tool selection"
+assert_grep 'Capability parity is not the goal' \
+  "${AI_REPO}/core/adapters/README.md" \
+  "adapter index does not force MCP parity"
+assert_grep 'Cursor \(reference\)' "${AI_REPO}/core/adapters/README.md" \
+  "Cursor remains a supported agent"
+assert_grep 'Grok Build' "${AI_REPO}/core/adapters/README.md" \
+  "Grok Build remains a supported agent"
+assert_grep 'OpenAI Codex' "${AI_REPO}/core/adapters/README.md" \
+  "Codex remains a supported agent"
+assert_grep 'Claude Code' "${AI_REPO}/core/adapters/README.md" \
+  "Claude Code remains a supported agent"
+assert_grep 'Nous Research Hermes Agent' "${AI_REPO}/core/adapters/README.md" \
+  "Hermes remains a supported agent"
+
+echo ""
 echo "--- Doctor (AI Platform repo) ---"
 if "${AI_REPO}/scripts/doctor.sh" "${AI_REPO}" >"${LOGDIR}/doctor-platform.log" 2>&1; then
   pass "doctor on AI Platform exits 0"

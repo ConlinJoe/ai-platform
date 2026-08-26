@@ -38,6 +38,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 - Framework-Native First: use the installed stack's native capabilities
   before custom implementations, parallel abstractions, or new
   dependencies (see `.cursor/rules/00-platform.mdc`).
+- Capability-on-demand: external tools are not capability-by-default.
+  Tool availability is not authorization and is also not justification
+  for using a tool. Prefer the smallest active toolset that can
+  reliably accomplish the current work (`00-platform`, `mcp/README.md`).
 - Never commit unless explicitly instructed.
 - Do not modify dependencies without approval.
 - Discovered work outside the current task is captured, not used to
@@ -50,17 +54,22 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 - Playwright Mode A is expected only for browser-capable profiles (Laravel
   web applications), not every repository. Agent invocation of Playwright
   / browser automation is not generally authorized by tool availability.
-  Significant UI authorizes a bounded Mode B visual pass of that UI only
-  (`40-ui`, `60-browser-qa`).
+  Availability is also not justification for using a browser tool the
+  bounded task does not need. Significant UI authorizes a bounded Mode B
+  visual pass of that UI only (`40-ui`, `60-browser-qa`). Significant
+  motion may be observed in that pass; it does not by itself authorize
+  Mode A or performance profiling.
 - UI: product-specific, spacious, hierarchy-driven design. Avoid
   recognizable AI/template conventions. Cards are semantic containers,
   not decoration. Adjacent semantic sections must remain visually
   distinguishable; this is not a mandate to alternate section
-  backgrounds. Hard constraints (no decorative sequential numbering;
-  no em dashes in generated end-user copy) live in
-  `.cursor/rules/40-ui.mdc` and outrank Hallmark.
+  backgrounds. Meaningful motion is a specialized significant-UI
+  concern, not a separate skill. Hard constraints (no decorative
+  sequential numbering; no em dashes in generated end-user copy) live
+  in `.cursor/rules/40-ui.mdc` and outrank Hallmark.
 - User-global Cursor MCP (Playwright MCP, BrowserMCP) is configured in
-  Cursor, not by bootstrap. See `mcp/README.md`.
+  Cursor, not by bootstrap. Additional MCPs are not bootstrap
+  dependencies. See `mcp/README.md`.
 
 ## Where to Look
 

@@ -168,6 +168,16 @@ automatically use:
   "Seamless solutions," and similar filler
 - repeated "Learn More" CTAs when a specific action can be named
 - unnecessary explanatory copy added merely to fill space
+- everything fading upward on scroll
+- gratuitous staggered entrances
+- excessive hover movement
+- animated gradients or glows added without product rationale
+- movement added merely because the implementation framework makes it easy
+
+Do not prohibit motion techniques absolutely. Use them only when they
+serve this product and composition. Generous whitespace, hierarchy,
+typography, and strong static composition remain preferable to
+decorative motion.
 
 ## Whitespace
 
@@ -362,12 +372,15 @@ change, UI the developer cannot reasonably verify immediately.
 3. Implement framework-natively.
 4. Perform bounded Mode B visual verification when browser tooling is
    available (`60-browser-qa`).
-5. Review against the design-review and accessibility floors.
+5. Review against the design-review and accessibility floors. When
+   meaningful motion is involved, also apply the motion review floor.
 6. Iterate if the rendered result exposes real problems.
 
 Significant UI work **is** authorization for that bounded visual pass.
 It is **not** authorization for a Mode A suite, the full Mode A→B loop,
-broad exploration, or unrelated browser QA.
+broad exploration, or unrelated browser QA. Significant motion does
+not by itself authorize Mode A tests, formal performance profiling,
+new animation dependencies, or additional MCP installation.
 
 ### Exploration
 
@@ -382,7 +395,8 @@ direction is already clear.
 ## Hallmark
 
 Hallmark is the only managed design skill. Load its `SKILL.md`, then only
-the reference files that verb requires.
+the reference files that verb requires. Do not add a motion skill or
+another design skill.
 
 Use it for significant greenfield UI, redesign, audit, reference study,
 visual-direction work, and meaningful component or system design.
@@ -422,6 +436,8 @@ Review the **rendered** result proportionately:
 - responsive behavior
 - accessibility
 - performance implications when relevant
+- significant motion, when meaningful animation is part of the work
+  (see Significant motion below)
 
 Internal review floor (do not dump this as a giant checklist in normal
 agent output):
@@ -459,3 +475,77 @@ hover/focus/disabled/error states, reduced motion, and responsive overflow.
 Verify against the real application when tooling permits. Do not import a
 third-party accessibility harness. Do not pile automated tests onto
 trivial changes.
+
+## Significant motion
+
+Meaningful motion and animation are a specialized concern within
+significant UI. Do not add a motion skill to the harness. Do not add
+GSAP, Motion, Framer Motion, or any other animation dependency to the
+harness. Framework and project requirements determine implementation
+technology. Prefer the project's existing animation technology before
+introducing another dependency.
+
+### When motion is significant
+
+Examples include page transitions, scroll-driven animation, coordinated
+entrance sequences, complex microinteraction systems, animated
+navigation, substantial state transitions, parallax, timeline-based
+animation, spring or physics-based interaction, and animation that is
+central to the experience or visual direction.
+
+Simple hover/focus transitions and minor state changes do **not** trigger an expanded motion review.
+
+### Implementation principles
+
+When significant motion is part of an approved UI task:
+
+- motion must serve comprehension, hierarchy, feedback, orientation, or
+  intentional product character
+- animation should not exist merely to make the interface look more
+  sophisticated
+- do not use motion to compensate for weak static composition
+- the interface should remain coherent when motion is removed or reduced
+- preserve responsiveness during animation
+- avoid unnecessary layout thrashing
+- avoid animation that delays access to content or controls
+- avoid excessive simultaneous movement
+- respect `prefers-reduced-motion` where appropriate
+- preserve keyboard and assistive-technology usability
+- ensure interaction state remains understandable without relying solely
+  on motion
+
+Motion follows the same product-specific design philosophy as static UI.
+Challenge common AI/template motion patterns (see Anti-AI design tells).
+
+### Motion and performance review
+
+When meaningful motion is involved, extend the significant-UI rendered
+review proportionately. In addition to the visual floor, inspect:
+
+- whether the motion communicates something useful
+- timing and pacing
+- whether multiple animations compete for attention
+- interaction responsiveness
+- reduced-motion behavior where relevant
+- layout stability
+- obvious jank or stuttering
+- unnecessary animation work
+- whether content or control access is delayed
+- whether the experience remains understandable without motion
+
+Use the real rendered application when browser tooling permits
+(`60-browser-qa`). Bounded Mode B visual verification may include
+observing the relevant animation and interaction states.
+
+Do not require formal performance profiling for every animation.
+Escalate to deeper performance tooling only when visible performance
+problems exist, the implementation is unusually complex, performance is
+a stated project requirement, or evidence suggests profiling would
+materially help.
+
+Significant motion does **not** automatically authorize new Mode A
+tests, broad performance profiling, unrelated browser exploration, new
+animation dependencies, additional MCP installation, or scope expansion.
+If the motion creates behavior that warrants permanent regression
+coverage, recommend or capture that separately through the work-item
+lifecycle.

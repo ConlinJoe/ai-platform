@@ -1,11 +1,12 @@
 ---
 status: accepted
-last_reviewed: 2026-08-25
+last_reviewed: 2026-08-26
 source_of_truth_for:
   - Decision that Hallmark is the only managed design skill
   - Decision that 40-ui is the UI router and always-on design floor
   - Decision that significant UI authorizes a bounded Mode B visual pass
   - Decision that developer design constraints live in 40-ui and outrank Hallmark
+  - Decision that significant motion is a specialized UI concern with proportionate review, not a separate skill or Mode A authorization
 depends_on:
   - 0001-two-layer-browser-qa.md
   - ../features/browser-qa.md
@@ -52,7 +53,16 @@ Small UI does not automatically load Hallmark or run Playwright.
 Significant UI authorizes a **bounded Mode B visual pass of that UI
 only**. That pass is not Mode A, not the full Mode A→B loop, and not
 general browser QA. Tool availability remains insufficient for unrelated
-browser automation.
+browser automation. Tool availability is also not justification for
+using a tool the bounded task does not need.
+
+Meaningful motion and animation are a specialized concern within
+significant UI. They receive proportionate motion and performance
+review when they are part of the work. They do not add a motion skill,
+animation dependency, or MCP to the harness. Simple hover/focus
+transitions do not trigger an expanded motion review. Significant
+motion does not by itself authorize Mode A tests or formal performance
+profiling.
 
 Project-owned design systems (tokens, theme, components, design
 contracts, `design.md`) are authoritative over Hallmark. Exploration
@@ -79,6 +89,8 @@ Imagery and responsive composition guidance also live in `40-ui`.
 Adjacent semantic sections must remain visually distinguishable;
 semantic section boundaries should also be perceptible visual
 boundaries. This is not a mechanical alternating-background rule.
+Significant motion follows the same product-specific philosophy as
+static UI; decorative AI/template motion is challenged in `40-ui`.
 
 ## Consequences
 

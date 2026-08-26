@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-25
+last_reviewed: 2026-08-26
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -17,7 +17,8 @@ Status documents are not architectural authority.
 
 Design-stack simplification: Hallmark-only UI intelligence, `40-ui` scope
 routing, and bounded significant-UI Mode B visual verification.
-Version 1.2.0.
+Version 1.2.0. Capability-on-demand and significant-motion review are
+refinements of this architecture, not a new release.
 
 ## Progress
 
@@ -33,8 +34,11 @@ Version 1.2.0.
   Page/menu provisioning is an explicit idempotent project-native
   operation driven by each project's contracts, not a universal sitemap.
 - Two-layer browser QA policy: documented and wired into Laravel profile.
-  Availability is not general authorization (`60-browser-qa`). Significant
-  UI authorizes a bounded Mode B visual pass (`40-ui`).
+  Availability is not general authorization (`60-browser-qa`). Availability
+  is also not justification for using a tool. Significant UI authorizes
+  a bounded Mode B visual pass (`40-ui`). Meaningful motion receives
+  proportionate review in that pass; it does not by itself authorize
+  Mode A or performance profiling.
 - Design stack: Hallmark is the only managed design skill; `40-ui` routes
   UI work. frontend-design, ui-ux-pro-max, and Superdesign were removed
   from the harness. `40-ui` owns hard developer design constraints (no
@@ -44,7 +48,13 @@ Version 1.2.0.
   grouping; unearned card grids remain prohibited. `40-ui` also covers
   purposeful imagery, art direction, responsive composition, and
   perceptible visual boundaries between adjacent semantic sections
-  (not mechanical background alternation).
+  (not mechanical background alternation). Significant motion is a
+  specialized UI concern, not a separate skill or harness animation
+  dependency.
+- Capability-on-demand: external tools are not capability-by-default.
+  Bootstrap does not install MCP servers or make additional MCPs
+  required dependencies. Client-specific MCP configuration remains
+  client-specific. Capability parity across agents is not the goal.
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented
 - Existing-project reconciliation: bootstrap copies a draft

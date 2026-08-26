@@ -20,7 +20,9 @@ Agent invocation of the full Mode A/B loop is opt-in. Significant UI
 work authorizes a bounded Mode B visual pass of that UI only
 (`.cursor/rules/40-ui.mdc`, `.cursor/rules/60-browser-qa.mdc`). Do not
 run Playwright or browser automation otherwise unless the current task
-explicitly authorizes it.
+explicitly authorizes it. Meaningful motion may be observed in that
+pass; it does not by itself authorize Mode A tests or performance
+profiling.
 
 Fill this file from **this** project's reality. Delete sections that do not
 apply. Do not copy another application's specs, helpers, or domain coverage.
