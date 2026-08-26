@@ -208,6 +208,99 @@ assert_grep 'You do not choose an agent during bootstrap' "${AI_REPO}/README.md"
   "README states bootstrap does not require choosing an agent"
 
 echo ""
+echo "--- Agent continuation ---"
+assert_file "${AI_REPO}/docs/working-mode.md" \
+  "platform working-mode exists"
+assert_file "${AI_REPO}/templates/docs/working-mode.md" \
+  "working-mode template exists"
+assert_file "${AI_REPO}/core/prompts/resume.md" \
+  "resume prompt exists"
+assert_file "${AI_REPO}/docs/contracts/adrs/0005-agent-continuation-and-concise-reporting.md" \
+  "continuation ADR exists"
+assert_missing "${AI_REPO}/docs/98-agent-handoff.md" \
+  "platform does not use a 98-agent-handoff filename"
+assert_missing "${AI_REPO}/templates/docs/98-agent-handoff.md" \
+  "templates do not ship a 98-agent-handoff file"
+assert_grep 'type: continuation' "${AI_REPO}/templates/docs/working-mode.md" \
+  "working-mode template uses continuation type"
+assert_grep 'Not project context' "${AI_REPO}/templates/docs/working-mode.md" \
+  "working-mode template is not a second context document"
+assert_grep 'do not copy them' "${AI_REPO}/templates/docs/working-mode.md" \
+  "working-mode template forbids copying authoritative docs"
+assert_grep 'docs/working-mode.md' "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform tells agents to read working-mode"
+assert_grep 'docs/working-mode.md' "${AI_REPO}/core/agent-core.md" \
+  "portable core tells agents to read working-mode"
+assert_grep 'short completion: DONE or BLOCKED' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform defaults to concise completion"
+assert_grep 'short completion: DONE or BLOCKED' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core defaults to concise completion"
+assert_grep 'not after routine bounded tasks' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform does not rewrite working-mode after every task"
+assert_grep 'not after routine bounded tasks' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core does not rewrite working-mode after every task"
+assert_grep 'Do not routinely emit file lists' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform forbids routine file-list completions"
+assert_grep 'unrelated docs' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core requires progressive disclosure on resume"
+assert_grep 'type: continuation' "${AI_REPO}/.cursor/rules/10-documentation.mdc" \
+  "documentation rule recognizes continuation type"
+assert_grep 'not a progress log' "${AI_REPO}/docs/documentation-philosophy.md" \
+  "documentation philosophy treats continuation as not a progress log"
+assert_grep 'Read `docs/working-mode.md` before the first edit' \
+  "${AI_REPO}/.cursor/rules/10-documentation.mdc" \
+  "selective loading starts with working-mode"
+assert_grep 'Do not ingest the whole documentation tree on resume' \
+  "${AI_REPO}/docs/documentation-philosophy.md" \
+  "philosophy forbids ingesting all docs on resume"
+assert_grep 'Concise completion reporting is the default' \
+  "${AI_REPO}/.cursor/rules/10-documentation.mdc" \
+  "documentation rule states concise completion default"
+assert_grep 'exhaustive files-changed lists' \
+  "${AI_REPO}/.cursor/rules/10-documentation.mdc" \
+  "documentation rule forbids routine files-changed lists"
+assert_grep 'core/prompts/resume.md' "${AI_REPO}/README.md" \
+  "README documents the resume prompt"
+assert_grep 'current working mode for a fresh agent' "${AI_REPO}/README.md" \
+  "README says what working-mode is for"
+assert_grep 'when that mode changes, not after every task' \
+  "${AI_REPO}/README.md" \
+  "README says when to update working-mode"
+assert_grep 'load working mode automatically' "${AI_REPO}/README.md" \
+  "README says a bounded task is enough; always-on loads working mode"
+assert_grep 're-run bootstrap to add the' "${AI_REPO}/README.md" \
+  "README says existing projects get working-mode via bootstrap"
+assert_grep 'Resume this project from its working mode' \
+  "${AI_REPO}/core/prompts/resume.md" \
+  "resume prompt orients without editing"
+assert_grep 'Do not make speculative changes' \
+  "${AI_REPO}/core/prompts/resume.md" \
+  "resume prompt forbids speculative edits"
+assert_grep 'Do not load other docs unless those files cannot answer' \
+  "${AI_REPO}/core/prompts/resume.md" \
+  "resume prompt does not eagerly load extra docs"
+assert_not_grep '00-project-context.md' "${AI_REPO}/core/prompts/resume.md" \
+  "resume prompt does not load project context by default"
+assert_not_grep 'docs/README.md' "${AI_REPO}/core/prompts/resume.md" \
+  "resume prompt does not load the docs index by default"
+assert_grep 'working-mode.md' "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption establishes working-mode"
+assert_grep 'docs/working-mode.md' "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
+  "workflows require a working-mode file"
+working_mode_template_lines="$(wc -l < "${AI_REPO}/templates/docs/working-mode.md" | tr -d ' ')"
+if [[ "${working_mode_template_lines}" -le 50 ]]; then
+  pass "working-mode template stays small (${working_mode_template_lines} lines)"
+else
+  fail "working-mode template stays small (${working_mode_template_lines} lines)"
+fi
+
+echo ""
 echo "--- Work-item lifecycle ---"
 assert_file "${AI_REPO}/.cursor/rules/70-work-items.mdc" \
   "70-work-items rule exists"
@@ -676,6 +769,8 @@ printf 'hello\n' > "${GENERIC}/README.md"
 "${AI_REPO}/scripts/bootstrap-project.sh" "${GENERIC}" >${LOGDIR}/boot-generic.log 2>&1
 
 assert_file "${GENERIC}/docs/README.md" "generic received docs templates"
+assert_file "${GENERIC}/docs/working-mode.md" \
+  "generic received working-mode template"
 assert_file "${GENERIC}/AGENTS.md" "generic received AGENTS.md"
 assert_file "${GENERIC}/CLAUDE.md" "generic received CLAUDE.md"
 if [[ -L "${GENERIC}/AGENTS.md" ]] && [[ "$(readlink "${GENERIC}/AGENTS.md")" == "${AI_REPO}/core/agent-core.md" ]]; then
@@ -961,6 +1056,10 @@ assert_file "${LARAVEL_EXISTING}/docs/contracts/features/browser-qa.md" \
   "existing Laravel project received missing browser-QA draft"
 assert_file "${LARAVEL_EXISTING}/docs/contracts/foundational/platform-reconciliation.md" \
   "existing Laravel project received reconciliation draft"
+assert_file "${LARAVEL_EXISTING}/docs/working-mode.md" \
+  "existing Laravel project received missing working-mode draft"
+assert_file "${LARAVEL_EXISTING}/docs/99-project-status.md" \
+  "existing Laravel project received missing status draft"
 assert_grep "Existing project" ${LOGDIR}/boot-existing.log \
   "bootstrap detected existing-project mode"
 assert_grep "core/prompts/project-adoption.md" ${LOGDIR}/boot-existing.log \
@@ -978,6 +1077,7 @@ cat > "${EXISTING_GH}/docs/README.md" <<'EOF'
 EOF
 printf 'UNIQUE_PR_TEMPLATE_MARKER\n' > "${EXISTING_GH}/.github/PULL_REQUEST_TEMPLATE.md"
 printf 'UNIQUE_ISSUE_TEMPLATE_MARKER\n' > "${EXISTING_GH}/.github/ISSUE_TEMPLATE/bug.md"
+printf 'UNIQUE_WORKING_MODE_MARKER\n' > "${EXISTING_GH}/docs/working-mode.md"
 
 "${AI_REPO}/scripts/bootstrap-project.sh" "${EXISTING_GH}" >${LOGDIR}/boot-existing-github.log 2>&1
 
@@ -985,6 +1085,8 @@ assert_grep "UNIQUE_PR_TEMPLATE_MARKER" "${EXISTING_GH}/.github/PULL_REQUEST_TEM
   "existing PR template was not overwritten"
 assert_grep "UNIQUE_ISSUE_TEMPLATE_MARKER" "${EXISTING_GH}/.github/ISSUE_TEMPLATE/bug.md" \
   "existing Issue template was not overwritten"
+assert_grep "UNIQUE_WORKING_MODE_MARKER" "${EXISTING_GH}/docs/working-mode.md" \
+  "existing working-mode was not overwritten"
 assert_grep "does not copy or overwrite .github/" ${LOGDIR}/boot-existing-github.log \
   "existing-project bootstrap states it does not overwrite GitHub templates"
 assert_not_grep 'gh auth' ${LOGDIR}/boot-existing-github.log \
@@ -1014,6 +1116,8 @@ assert_dir "${AI_REPO}/.build/chatgpt-context" \
   "ChatGPT export directory exists"
 assert_file "${AI_REPO}/.build/chatgpt-context/docs/00-project-context.md" \
   "export includes project context"
+assert_file "${AI_REPO}/.build/chatgpt-context/docs/working-mode.md" \
+  "export includes working-mode"
 assert_file "${AI_REPO}/.build/chatgpt-context/.cursor/rules/40-ui.mdc" \
   "export includes 40-ui"
 assert_file "${AI_REPO}/.build/chatgpt-context/.cursor/rules/60-browser-qa.mdc" \

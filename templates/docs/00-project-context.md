@@ -42,5 +42,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Product vision | `contracts/foundational/vision.md` |
 | System architecture | `contracts/foundational/architecture.md` |
 | Architectural decisions | `contracts/adrs/` |
+| Current working mode | `working-mode.md` |
+| Implementation status | `99-project-status.md` |
 
 Update this table as contracts are added.

@@ -163,6 +163,8 @@ PY
     ok "No .hermes.md (Hermes uses AGENTS.md)"
   fi
   check_file "${AI_REPO}/templates/docs/99-project-status.md" "Status template"
+  check_file "${AI_REPO}/templates/docs/working-mode.md" "Working-mode template"
+  check_file "${AI_REPO}/core/prompts/resume.md" "Resume prompt"
   check_file "${AI_REPO}/templates/docs/contracts/features/browser-qa.md" "Browser QA project template"
   check_file "${AI_REPO}/templates/existing-project/platform-reconciliation.md" "Reconciliation template"
 
@@ -361,6 +363,12 @@ check_docs() {
     ok "docs/99-project-status.md present"
   else
     warn "docs/99-project-status.md missing"
+  fi
+
+  if [[ -f "${target}/docs/working-mode.md" ]]; then
+    ok "docs/working-mode.md present"
+  else
+    warn "docs/working-mode.md missing"
   fi
 
   if [[ "${mode}" == "existing" ]]; then

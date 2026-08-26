@@ -25,6 +25,36 @@ it can be applied here. Ask the user to switch to the intended project or
 explicitly confirm that the request should be applied to the current
 project.
 
+## Fresh threads and completion reporting
+
+Fresh threads are the default for bounded tasks. Do not reconstruct a
+large kickoff prompt.
+
+Before the first edit in a session, read `docs/working-mode.md` if it
+exists. It is operational continuation state, not project context,
+architecture, or a progress log. Follow its references. Do not ingest
+unrelated docs. If the user only asked to resume or orient, confirm
+readiness and wait. If they supplied a bounded task, proceed under that
+working mode.
+
+Portable orientation prompt: `core/prompts/resume.md` in the AI Platform
+clone.
+
+Update `docs/working-mode.md` only when the working mode itself changes,
+not after routine bounded tasks. Durable facts belong in the
+authoritative contract, ADR, or status document.
+
+Default to a short completion: DONE or BLOCKED, what materially changed,
+verification performed, and any actual concern or required human action.
+Do not require headings. Do not routinely emit file lists, walkthroughs,
+unchanged-behavior tables, architecture recaps, exhaustive test counts,
+or long READY reports. Use a longer report when the user asks, the task
+is an audit or review, architecture changed, operations require it,
+something failed or is blocked, the next decision needs the detail, or
+another contract requires it.
+
+Details: `.cursor/rules/10-documentation.mdc`.
+
 ## Scope control
 
 Keep work inside the current bounded task. **Capture, don't expand scope.**
@@ -71,6 +101,7 @@ Details: `.cursor/rules/00-platform.mdc`, `mcp/README.md`.
 
 ## Documentation
 
+`docs/working-mode.md` is continuation state for a fresh session.
 `docs/README.md` is the contract index. Load only contracts relevant to
 the task. If implementation would contradict an active contract, stop
 and report the conflict.
@@ -152,6 +183,6 @@ Document → Compare → Question → Recommend → Approve → Align.
 
 1. User instructions
 2. Project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `90-*.mdc`)
-3. Project documentation contracts
+3. Project documentation contracts (working mode first, then selective loading)
 4. AI Platform canonical rules
 5. Vendor skills

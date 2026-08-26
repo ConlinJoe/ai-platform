@@ -79,7 +79,8 @@ New projects bootstrapped via `scripts/bootstrap-project.sh` receive:
 - Documentation contract templates under `docs/`
 - Symlinks to `scripts/export-chatgpt-context.sh` and `scripts/doctor.sh`
 
-Existing projects keep their docs. Bootstrap adds only missing drafts and
+Existing projects keep their docs. Bootstrap adds only missing drafts
+(working mode, status, reconciliation, Laravel browser QA) and
 prints a capability diagnosis (Laravel Boost, Playwright, Roots stack)
 without installing packages. It does not analyze or adopt the project
 and does not install user-global MCP servers.

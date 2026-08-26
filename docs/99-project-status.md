@@ -13,6 +13,8 @@ type: status
 
 Status documents are not architectural authority.
 
+Working mode and agent continuation live in `docs/working-mode.md`.
+
 ## Current phase
 
 Design-stack simplification: Hallmark-only UI intelligence, `40-ui` scope
@@ -79,6 +81,10 @@ architecture, not a new release.
   workflow (`70-work-items`). `gh` is optional. Merge remains a
   developer approval boundary. Bootstrap does not install GitHub
   infrastructure or credentials.
+- Agent continuation: `docs/working-mode.md` stores current working
+  mode for fresh threads. Concise completion reporting is the default
+  (`00-platform`, ADR 0005). Working mode is updated on mode
+  transitions, not after every bounded task.
 
 ## Validation
 

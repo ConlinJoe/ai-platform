@@ -84,6 +84,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Cursor rules | `.cursor/rules/` |
 | First-time clone / onboarding | `../README.md`, `mcp/README.md` |
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, ADR 0004 |
+| Fresh agent / resume | `working-mode.md`, `../core/prompts/resume.md` |
 | Multi-agent adapters | `core/adapters/README.md` |
 | New / existing project setup | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Existing project adoption | `core/prompts/project-adoption.md` |

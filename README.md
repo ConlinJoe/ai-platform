@@ -12,6 +12,7 @@ persistent:
 - project context
 - architecture, ADR, and documentation-contract workflows
 - project adoption and reconciliation
+- fresh-thread working mode and concise agent reporting
 - reusable skills
 - tooling integration
 - documentation maintenance
@@ -245,7 +246,7 @@ From the **harness** clone:
 | Locked skills | Copied into `.agents/skills/` (`npx skills experimental_install`) |
 | `docs/` | Copied from templates if `docs/README.md` is missing; existing docs are not overwritten |
 | `.github/` Issue/PR templates | Not copied; existing GitHub files are not overwritten |
-| Existing projects | May add missing drafts: `99-project-status.md`, `platform-reconciliation.md`, Laravel `browser-qa.md` |
+| Existing projects | May add missing drafts: `working-mode.md`, `99-project-status.md`, `platform-reconciliation.md`, Laravel `browser-qa.md` |
 | `.cursor/rules/90-*.mdc` | Not created; project-owned if you add them later |
 | Application code, Composer, npm, WordPress plugins | Not modified / not installed |
 
@@ -341,8 +342,14 @@ Work inside the **target** repository, not this clone.
 - Linked `00`–`70` rules apply in Cursor; `AGENTS.md` / `CLAUDE.md` apply
   in Codex, Claude Code, Grok Build, and Hermes.
 - Project `docs/` and `.cursor/rules/90-*.mdc` are local context.
-- Use a fresh agent thread for bounded tasks when the work needs a
-  clean adoption/implementation boundary.
+- `docs/working-mode.md` is current working mode for a fresh agent.
+  Update it when that mode changes, not after every task.
+- Start a fresh thread by stating the bounded task. Always-on rules
+  load working mode automatically; no kickoff prompt is required.
+- Orientation only: follow `$AI_PLATFORM/core/prompts/resume.md`, or
+  say: Resume from `docs/working-mode.md`. Do not edit yet.
+- Existing projects that lack this file: re-run bootstrap to add the
+  draft, then fill it.
 - Work discovered outside the current task should normally be captured
   as a GitHub Issue (or host equivalent), not fixed in the same session.
   See **10. Issues and pull requests**.
@@ -416,7 +423,8 @@ Edit shared rules in `$AI_PLATFORM`, not through project symlinks.
 - `core/adapters/` — per-agent setup, limitations, and capability matrix
 - `.agents/skills/` — locked third-party skills (`.claude/skills/` and
   `.grok/skills/` are symlinks; Hermes reads `.agents/skills/` natively)
-- `core/` — profiles, prompts (`core/prompts/project-adoption.md`)
+- `core/` — profiles, prompts (`core/prompts/project-adoption.md`,
+  `core/prompts/resume.md`)
 - `scripts/` — `bootstrap-project.sh`, `doctor.sh`, `update-skills.sh`,
   `export-chatgpt-context.sh`, `test-platform.sh`
 - `mcp/` — MCP **ownership** (not an installer)

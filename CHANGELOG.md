@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+Fresh agent threads resume from `docs/working-mode.md` instead of a
+large kickoff prompt. That file stores current working mode and
+continuation instructions only; project context, status, ADRs, and
+contracts remain authoritative. Working mode is updated on mode
+transitions, not after every bounded task. Concise completion
+reporting is the default. Orientation-only sessions can follow
+`core/prompts/resume.md`. See ADR 0005.
+
 Browser verification is capability-aware. Significant-UI Mode B visual
 verification uses the best available real-browser capability in the
 current environment, including an IDE-integrated browser when it can

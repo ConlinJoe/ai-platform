@@ -59,7 +59,8 @@ Running bootstrap on a target project:
 -   Links `scripts/export-chatgpt-context.sh` and `scripts/doctor.sh`
 -   Copies documentation templates when `docs/README.md` does not exist
 -   For existing projects (docs index already present): does not overwrite
-    docs; may add missing draft templates (browser QA, reconciliation)
+    docs; may add missing draft templates (working mode, status, browser QA,
+    reconciliation)
 -   Adds `.build/` to `.gitignore` when missing
 -   For Laravel web apps: ensures Playwright artifact gitignore entries;
     diagnoses Laravel Boost and Playwright without installing packages
@@ -94,13 +95,13 @@ the project.
 ## New vs existing projects
 
 **New** (no `docs/README.md`): copy documentation templates, including
-`99-project-status.md` and a draft browser-QA contract for Laravel web
-apps. Then establish contracts from the installed scaffold.
+`working-mode.md`, `99-project-status.md`, and a draft browser-QA contract
+for Laravel web apps. Then establish contracts from the installed scaffold.
 
 **Existing** (docs index present): do not clone the platform into the
 app. Bootstrap only provisions/links the platform and may add missing
-drafts (status, reconciliation, Laravel browser QA). Then run Project
-Adoption in a fresh agent session:
+drafts (working mode, status, reconciliation, Laravel browser QA). Then
+run Project Adoption in a fresh agent session:
 `core/prompts/project-adoption.md`.
 
 Do not migrate or refactor application code during bootstrap.
@@ -167,7 +168,7 @@ violation of the single-recommendation rule. Each **C** item still has
 one recommended state.
 
 Adoption is complete only when purpose, architecture, significant
-decisions, applicable contracts, roadmap/status, and needed
+decisions, applicable contracts, roadmap/status, working mode, and needed
 `90-*.mdc` rules are in place; important deviations have been reviewed;
 approved remediation is done or explicitly on the roadmap; and
 documentation matches the resulting implementation.
@@ -180,9 +181,9 @@ contracts:
 
 1. Inspect the project structure, installed environment, dependencies,
    architecture, MCP, tests, and any available documentation.
-2. Fill `docs/00-project-context.md` and foundational contracts so they
-   describe this project — not generic platform assumptions or leftover
-   template placeholders.
+2. Fill `docs/00-project-context.md`, `docs/working-mode.md`, and
+   foundational contracts so they describe this project — not generic
+   platform assumptions or leftover template placeholders.
 3. Follow Current-First Engineering in `00-platform`:
    - Newly scaffolded projects: respect the selected/installed stack.
    - Do not upgrade dependencies merely because newer versions exist;
@@ -237,6 +238,8 @@ Every project must include:
 
 -   `docs/README.md` — dependency graph and contract registry
 -   `docs/00-project-context.md` — concise ChatGPT and agent entry point
+-   `docs/working-mode.md` — current working mode and agent continuation
+    (update when the working mode itself changes)
 -   `docs/99-project-status.md` — current implementation status (update when
     phases or major milestones complete)
 

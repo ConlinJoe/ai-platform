@@ -17,6 +17,7 @@ and declares its dependencies in frontmatter.
 | Contract | Type | Status | Source of Truth For |
 | --- | --- | --- | --- |
 | `00-project-context.md` | foundational | active | Project summary for ChatGPT and agents |
+| `working-mode.md` | continuation | active | Current working mode and agent continuation |
 | `99-project-status.md` | status | active | Phase progress and validation (not architectural authority) |
 | `contracts/foundational/vision.md` | foundational | active | Product purpose, goals, constraints |
 | `contracts/foundational/architecture.md` | foundational | active | System structure, major components |
@@ -31,12 +32,15 @@ Remove or mark deprecated contracts when retired.
 ```mermaid
 flowchart TD
   context[00-project-context.md]
+  workingMode[working-mode.md]
   status[99-project-status.md]
   vision[contracts/foundational/vision.md]
   architecture[contracts/foundational/architecture.md]
   roadmap[contracts/planning/roadmap.md]
 
   context --> vision
+  workingMode --> context
+  workingMode --> status
   status --> context
   architecture --> vision
   roadmap --> vision
@@ -49,6 +53,7 @@ Update this graph when contract dependencies change.
 | Task type | Start with |
 | --- | --- |
 | ChatGPT / high-level context | `00-project-context.md` → foundational contracts |
+| Fresh agent / resume | `working-mode.md` → only the contracts it references |
 | New feature | `docs/README.md` → relevant feature contract → `depends_on` chain |
 | Architecture change | `contracts/foundational/architecture.md` → affected engine contracts |
 | Bug fix | Feature or engine contract for affected area |

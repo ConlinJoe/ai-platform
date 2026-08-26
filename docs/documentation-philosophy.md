@@ -53,6 +53,9 @@ entry point for humans and agents.
 `docs/00-project-context.md` is the concise ChatGPT entry point: project
 purpose, stack, constraints, and pointers to key contracts.
 
+`docs/working-mode.md` is operational continuation for a fresh agent.
+It is not a second context document and not a progress log.
+
 The project root `README.md` may summarize the project and link to
 `docs/README.md`, but the documentation index lives under `docs/`.
 
@@ -70,7 +73,7 @@ depends_on:
   - path/to/other-contract.md
 referenced_by:
   - path/to/dependent-contract.md
-type: foundational | engine | feature | adr | planning
+type: foundational | engine | feature | adr | planning | status | continuation
 ---
 ```
 
@@ -139,6 +142,7 @@ The user resolves the conflict before work continues.
 | `adr` | Single architectural or technical decision | Immutable history; supersede instead of edit |
 | `planning` | Roadmaps, spikes, temporary plans | Temporary; not source of truth for implementation |
 | `status` | Current implementation progress and readiness | Snapshot; not architectural authority |
+| `continuation` | Current working mode and how a fresh agent should operate | Snapshot; not architectural authority; not a progress log |
 
 **Planning documents** must never be treated as implementation authority.
 When a plan is executed, its durable truths move into foundational, engine,
@@ -158,11 +162,28 @@ More complexity earns more contracts. Do not split prematurely.
 
 The index enables surgical loading:
 
-1. Read `docs/README.md`
-2. Match task scope to `source_of_truth_for` entries
-3. Load matched contracts plus `depends_on` chain only
-4. Skip unrelated contracts, deprecated contracts, and planning docs unless
+1. Read `docs/working-mode.md` before the first edit if it exists
+2. Read `docs/README.md` when locating contracts for the task
+3. Match task scope to `source_of_truth_for` entries
+4. Load matched contracts plus `depends_on` chain only
+5. Skip unrelated contracts, deprecated contracts, and planning docs unless
    explicitly requested
+6. Read project context or status only when that information is needed
+
+Do not ingest the whole documentation tree on resume.
+
+`docs/working-mode.md` stays small and points at authoritative docs.
+Do not copy architecture, vision, or status into it. Update it when
+working mode changes, not after every bounded task.
+
+If a future thread needs a fact, record it in the appropriate contract,
+ADR, or status document rather than in a long chat report. Do not
+over-document routine implementation details.
+
+Concise completion reporting is the default. Return only what the human
+needs to continue unless the user asks for detail, the task is an
+audit or review, architecture or operations require it, or work is
+blocked. Details: `.cursor/rules/10-documentation.mdc`.
 
 ## ChatGPT Projects
 
@@ -216,10 +237,11 @@ Example registry row:
 
 ### Before implementation
 
-1. Load `docs/README.md`
-2. Identify relevant contracts from the task description and index
-3. Load those contracts and their `depends_on` dependencies
-4. If contracts are missing for the work scope, ask whether to create them
+1. Read `docs/working-mode.md` if it exists
+2. Load `docs/README.md` when locating contracts for the task
+3. Identify relevant contracts from the task description and index
+4. Load those contracts and their `depends_on` dependencies
+5. If contracts are missing for the work scope, ask whether to create them
    or proceed under explicit user direction
 
 ### During implementation
@@ -270,6 +292,7 @@ work. They do not replace contracts, ADRs, or status/roadmap documents.
 | Artifact | Owns |
 | --- | --- |
 | Contracts / ADRs | Architecture, decisions, behavior, constraints, current truth |
+| Working mode | How a fresh agent should operate now |
 | Issues / work items | Discrete future work that has not started |
 | Pull Requests | A specific implementation / change set |
 | Status / roadmap | Project-level progress and direction |

@@ -198,6 +198,7 @@ Required outcomes:
 | Significant decisions | `docs/contracts/adrs/` (one decision per file) |
 | Important boundaries/behaviors | applicable engine/feature contracts |
 | Current status | `docs/99-project-status.md` |
+| Working mode | `docs/working-mode.md` |
 | Planned work and deferred remediation | `docs/contracts/planning/roadmap.md` |
 | Index | `docs/README.md` (registry + dependency graph) |
 | A/B/C/D findings | `docs/contracts/foundational/platform-reconciliation.md` |
@@ -213,6 +214,8 @@ Do not duplicate unnecessarily:
 - `00-project-context.md` summarizes and points; it does not own architecture
 - Vision owns purpose; architecture owns structure
 - ADRs own individual decisions
+- `working-mode.md` owns how a fresh agent should operate now; it does
+  not copy context, architecture, or status
 - Reconciliation owns classified differences, not the architecture itself
 - Roadmap and status are not implementation authority
 - GitHub Issues (or host work items) track discrete future work; they
@@ -307,7 +310,7 @@ Adoption is complete only when all of the following are true:
 - Architecture is documented
 - Significant architectural decisions are captured
 - Applicable contracts are documented
-- Roadmap and current status are documented
+- Roadmap, current status, and working mode are documented
 - Project-specific agent rules are established where needed
 - Important deviations have been reviewed with the developer
 - Approved remediation has been completed **or** explicitly placed on

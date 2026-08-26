@@ -252,6 +252,11 @@ add_missing_profile_templates() {
     "project status"
 
   copy_if_missing \
+    "${AI_REPO}/templates/docs/working-mode.md" \
+    "${target_docs}/working-mode.md" \
+    "working mode"
+
+  copy_if_missing \
     "${RECONCILIATION_TEMPLATE}" \
     "${target_docs}/contracts/foundational/platform-reconciliation.md" \
     "platform reconciliation"

@@ -12,7 +12,8 @@ type: status
 # Project Status
 
 Status documents are not architectural authority. Load engine, feature, and
-ADR contracts for design decisions.
+ADR contracts for design decisions. Working mode and agent continuation live
+in `working-mode.md`, not here.
 
 ## Current phase
 

@@ -17,14 +17,33 @@ part of the implementation.
 **contract registry**.
 
 Every project defines its own contract layout. The platform does not mandate
-specific filenames beyond the index, project context file, and metadata
-requirements.
+specific filenames beyond the index, project context file, working-mode
+file, and metadata requirements.
 
 ## Project Context
 
 `docs/00-project-context.md` is the concise entry point for ChatGPT Projects
 and high-level agent context. Keep it current when purpose, stack, or
 constraints change.
+
+## Working Mode
+
+`docs/working-mode.md` is operational continuation state for a fresh
+agent: current working mode, what to preserve, minimum orientation,
+in-mode scope, and mode-specific prohibitions.
+
+Keep it small. Point at authoritative docs; do not copy architecture,
+vision, status, or standing constraints into it. Do not recopy
+platform-wide safety rules.
+
+Update it only when the working mode itself changes — for example
+architecture → implementation, implementation → stabilization,
+site-wide design → individual polish, audit → remediation,
+pre-launch → launch, or a major decision that changes how future
+agents should operate. Do not rewrite it after routine bounded tasks.
+
+It is not a second project-context document and not a progress log.
+Progress, validation, and readiness stay in `docs/99-project-status.md`.
 
 ## Contract Types
 
@@ -36,6 +55,7 @@ constraints change.
 | `adr` | Single architecture decision (one decision per file) |
 | `planning` | Roadmaps, spikes, temporary plans (not implementation authority) |
 | `status` | Current implementation status, phase progress, validation, readiness (not architectural authority) |
+| `continuation` | Current working mode and agent continuation instructions (not architectural authority) |
 
 Small projects may have only a few contracts. Large platforms may have
 dozens. Scale the contract count to project complexity.
@@ -58,7 +78,7 @@ depends_on:
   - path/to/other-contract.md
 referenced_by:
   - path/to/dependent-contract.md
-type: foundational | engine | feature | adr | planning | status
+type: foundational | engine | feature | adr | planning | status | continuation
 ---
 ```
 
@@ -69,11 +89,14 @@ contracts are added, removed, or dependencies change.
 
 Do not load all project documentation for every task.
 
-1. Read `docs/00-project-context.md` for high-level context when needed.
-2. Read `docs/README.md` first.
+1. Read `docs/working-mode.md` before the first edit if it exists.
+2. Read `docs/README.md` when you need to locate contracts for the task.
 3. Identify contracts whose `source_of_truth_for` matches the task scope.
 4. Load only those contracts and their `depends_on` chain.
-5. Skip unrelated, deprecated, and planning contracts unless the task
+5. Read `docs/00-project-context.md` or `docs/99-project-status.md` only
+   when identity, stack, constraints, progress, or readiness are needed
+   and working mode did not already point at the relevant fact.
+6. Skip unrelated, deprecated, and planning contracts unless the task
    explicitly requires them.
 
 Planning documents (`type: planning`) are never authoritative for
@@ -84,9 +107,10 @@ load the full existing `docs/` set for that task, then resume selective
 loading afterward.
 
 Status documents (`type: status`) — typically `docs/99-project-status.md` —
-summarize current implementation progress and readiness. They are not
-architectural authority; load engine, feature, and ADR contracts for design
-decisions.
+summarize current implementation progress and readiness. Continuation
+documents (`type: continuation`) — typically `docs/working-mode.md` —
+tell a fresh agent how to operate now. Neither is architectural
+authority; load engine, feature, and ADR contracts for design decisions.
 
 Work items (GitHub Issues in the reference implementation) track discrete
 future work. They are not documentation contracts and do not replace
@@ -124,14 +148,15 @@ At the completion of every feature, refactor, bug fix, or architectural
 change, exactly one of these outcomes is required:
 
 1. **Update** affected contract(s) and set `last_reviewed` to today.
-2. **Explicitly state** why no documentation changes were required:
-
-   > Documentation reviewed. No updates required.
-
+2. **Explicitly state** why no documentation changes were required.
+   In the default short completion, a brief clause is enough
+   (`Docs unchanged.`). Do not add a documentation section unless
+   contracts changed, a conflict exists, or the user asked for detail.
 3. **Stop and report** a documentation conflict (see below).
 
 There is no silent fourth option. Never allow contracts to drift from the
-implementation.
+implementation. Evaluate documentation on every meaningful change; do
+not turn that evaluation into a long report.
 
 When documentation, Cursor rules, agent skills, or AI metadata change, re-run
 the ChatGPT export.
@@ -178,6 +203,42 @@ When a **phase or major milestone** is completed, update
 `last_reviewed` to today and refresh: current phase, progress, validation
 status, completed milestones, and production readiness.
 
+When that completion **changes how future agents should operate**, also
+update `docs/working-mode.md`. A milestone that does not change working
+mode does not require a working-mode rewrite.
+
+# Completion reporting
+
+Concise completion reporting is the default. Return only what the human
+needs to continue:
+
+DONE or BLOCKED, what materially changed, verification performed, any
+actual concern or required human action.
+
+Do not require headings or bullets when a shorter reply is clearer.
+
+Do not routinely output:
+
+- exhaustive files-changed lists
+- implementation walkthroughs
+- tables of unchanged behavior
+- repeated architecture explanations
+- every test assertion or count
+- sections describing what was not changed
+- long READY reports
+- candidate platform lessons
+- documentation summaries
+- detailed reasoning already captured in project docs
+
+Use a longer report when the user asks for detail, the task is an
+audit or review, architecture changed, a migration or deployment needs
+operational detail, something failed or is blocked, the information is
+necessary for the next decision, or another contract requires it.
+
+If a future thread needs a fact, record it in the appropriate
+authoritative document rather than relying on a long chat report. Do
+not over-document routine implementation details.
+
 # Completion Criteria
 
 A task is not complete until:
@@ -192,6 +253,7 @@ A task is not complete until:
    reported).
 5. If a phase or major milestone was completed, `docs/99-project-status.md` is
    updated.
+6. If working mode changed, `docs/working-mode.md` is updated.
 
 # Reference
 
