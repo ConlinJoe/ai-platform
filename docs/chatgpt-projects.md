@@ -86,8 +86,8 @@ prints a capability diagnosis (Laravel Boost, Playwright, Roots stack)
 without installing packages. It does not analyze or adopt the project
 and does not install user-global MCP servers.
 After bootstrap, run Project Adoption in a fresh agent session:
-`core/prompts/project-adoption.md`. First-time clone steps are in the
-repository `README.md`.
+`core/prompts/project-adoption.md`. First-time clone steps:
+`docs/getting-started.md`.
 
 ## .gitignore
 

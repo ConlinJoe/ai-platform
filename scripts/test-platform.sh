@@ -170,22 +170,39 @@ assert_grep 'Joe Conlin' "${AI_REPO}/LICENSE" \
   "LICENSE names the copyright holder"
 assert_grep '2026' "${AI_REPO}/LICENSE" \
   "LICENSE uses the current year"
+assert_file "${AI_REPO}/docs/getting-started.md" "getting-started guide exists"
+assert_file "${AI_REPO}/docs/how-it-works.md" "how-it-works guide exists"
+assert_file "${AI_REPO}/docs/adopting-projects.md" "adopting-projects guide exists"
+assert_file "${AI_REPO}/docs/maintaining.md" "maintaining guide exists"
+assert_file "${AI_REPO}/docs/llm-support-prompt.md" "LLM support prompt exists"
+assert_grep 'docs/getting-started.md' "${AI_REPO}/README.md" \
+  "README links to getting-started"
+assert_grep 'docs/llm-support-prompt.md' "${AI_REPO}/README.md" \
+  "README links to the LLM support prompt"
 assert_not_grep 'bootstrap-ai' "${AI_REPO}/README.md" \
   "README does not mention bootstrap-ai"
 assert_not_grep '/Users/joeconlin' "${AI_REPO}/README.md" \
   "README does not require a personal absolute path"
+assert_not_grep '/Users/joeconlin' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started does not require a personal absolute path"
+assert_not_grep '/Sites/AI' "${AI_REPO}/README.md" \
+  "README does not use an author-specific clone path"
+assert_not_grep '/Sites/AI' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started does not use an author-specific clone path"
 assert_grep 'AI_PLATFORM=' "${AI_REPO}/README.md" \
   "README defines an AI_PLATFORM path convention"
-assert_grep 'npx skills experimental_install' "${AI_REPO}/README.md" \
-  "README documents skill restore from skills-lock.json"
+assert_grep 'AI_PLATFORM=' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started defines an AI_PLATFORM path convention"
+assert_grep 'npx skills experimental_install' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started documents skill restore from skills-lock.json"
 assert_grep 'npx skills update' "${AI_REPO}/scripts/update-skills.sh" \
   "update-skills.sh is the skill-update command"
 assert_grep 'npx -y @playwright/mcp@latest' "${AI_REPO}/mcp/playwright/README.md" \
   "Playwright MCP docs include the user-global npx invocation"
 assert_grep 'user-global MCP servers during clone' "${AI_REPO}/mcp/README.md" \
   "MCP index states the platform does not install user-global MCP servers"
-assert_grep 'install MCP servers' "${AI_REPO}/README.md" \
-  "README states bootstrap does not install MCP servers"
+assert_grep 'install MCP servers' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started states bootstrap does not install MCP servers"
 assert_file "${AI_REPO}/core/agent-core.md" "canonical agent-core exists"
 assert_file "${AI_REPO}/AGENTS.md" "platform AGENTS.md exists"
 assert_file "${AI_REPO}/core/adapters/README.md" "adapter index exists"
@@ -273,15 +290,18 @@ assert_grep 'exhaustive files-changed lists' \
   "documentation rule forbids routine files-changed lists"
 assert_grep 'core/prompts/resume.md' "${AI_REPO}/README.md" \
   "README documents the resume prompt"
-assert_grep 'current working mode for a fresh agent' "${AI_REPO}/README.md" \
-  "README says what working-mode is for"
+assert_grep 'current working mode for a fresh agent' \
+  "${AI_REPO}/docs/adopting-projects.md" \
+  "adopting-projects says what working-mode is for"
 assert_grep 'when that mode changes, not after every task' \
-  "${AI_REPO}/README.md" \
-  "README says when to update working-mode"
-assert_grep 'load working mode automatically' "${AI_REPO}/README.md" \
-  "README says a bounded task is enough; always-on loads working mode"
-assert_grep 're-run bootstrap to add the' "${AI_REPO}/README.md" \
-  "README says existing projects get working-mode via bootstrap"
+  "${AI_REPO}/docs/adopting-projects.md" \
+  "adopting-projects says when to update working-mode"
+assert_grep 'load working mode automatically' \
+  "${AI_REPO}/docs/adopting-projects.md" \
+  "adopting-projects says a bounded task is enough; always-on loads working mode"
+assert_grep 're-run bootstrap to add the' \
+  "${AI_REPO}/docs/adopting-projects.md" \
+  "adopting-projects says existing projects get working-mode via bootstrap"
 assert_grep 'Resume this project from its working mode' \
   "${AI_REPO}/core/prompts/resume.md" \
   "resume prompt orients without editing"
@@ -354,12 +374,13 @@ assert_grep 'a replacement for canonical project documentation' \
 assert_grep 'Discrete future work' \
   "${AI_REPO}/docs/contracts/features/work-item-lifecycle.md" \
   "contract assigns Issues to discrete future work"
-assert_grep '## 10. Issues and pull requests' "${AI_REPO}/README.md" \
-  "README has an Issues and pull requests section"
-assert_grep 'gh. is' "${AI_REPO}/README.md" \
-  "README states gh is optional"
-assert_grep 'Existing project Issue/PR/branch' "${AI_REPO}/README.md" \
-  "README states existing project conventions are respected"
+assert_grep 'work-item-lifecycle.md' "${AI_REPO}/README.md" \
+  "README links to the work-item lifecycle contract"
+assert_grep 'gh. is optional' "${AI_REPO}/docs/adopting-projects.md" \
+  "adopting-projects states gh is optional"
+assert_grep 'Existing project Issue/PR/branch' \
+  "${AI_REPO}/docs/adopting-projects.md" \
+  "adopting-projects states existing project conventions are respected"
 assert_grep 'GitHub / contribution conventions' \
   "${AI_REPO}/core/prompts/project-adoption.md" \
   "adoption inspects existing GitHub conventions"

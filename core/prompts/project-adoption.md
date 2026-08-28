@@ -5,8 +5,9 @@ target project after `/path/to/ai-platform/scripts/bootstrap-project.sh`
 has provisioned the AI Platform. Bootstrap only links shared
 infrastructure. This prompt performs the intelligent adoption work.
 
-The clone path is whatever the developer chose (see the repository
-`README.md`). Bootstrap prints this file's absolute path. From the
+The clone path is whatever the developer chose. First-time clone steps
+are `docs/getting-started.md` in the **harness clone**, not in the
+target project's `docs/`. Bootstrap prints this file's absolute path. From the
 target project you can also resolve it via a shared-rule symlink:
 
 ```bash

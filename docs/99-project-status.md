@@ -76,8 +76,11 @@ architecture, not a new release.
   `platform-reconciliation.md` for any existing project; Project
   Adoption (`core/prompts/project-adoption.md`) performs the analysis
   after bootstrap. Bootstrap does not analyze or migrate the app.
-- First-time onboarding: repository `README.md` (AI Development Harness:
-  clone → prerequisites → verify → bootstrap → preferred agent → adopt)
+- First-time onboarding: `docs/getting-started.md` in the harness clone
+  (clone → doctor → bootstrap → verify). Public landing: repository
+  `README.md`. Adoption: `docs/adopting-projects.md`. LLM support seed:
+  `docs/llm-support-prompt.md`. Public documentation is a landing page
+  plus focused guides; `docs/README.md` remains the contract registry.
 - Multi-agent adapters: `AGENTS.md` / `CLAUDE.md` point at
   `core/agent-core.md`; Cursor `.cursor/rules/` remains canonical.
   Hermes (Nous Research) consumes `AGENTS.md` and does not get

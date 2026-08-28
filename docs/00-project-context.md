@@ -11,7 +11,9 @@ repository (`ai-platform`).
 AI-assisted software development. It standardizes architecture,
 development, documentation, review, design, and project setup across
 application repos. It owns reusable rules, skills, scripts, and
-templates — not project business logic.
+templates, not project business logic.
+
+Public landing page: `../README.md`. Install: `getting-started.md`.
 
 Internal scripts and clone paths still use `AI_PLATFORM` / `ai-platform`.
 
@@ -89,16 +91,20 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 
 | Need | Document |
 | --- | --- |
+| Public landing | `../README.md` |
+| First-time clone / onboarding | `getting-started.md` |
+| How the harness works | `how-it-works.md` |
+| Project adoption | `adopting-projects.md`, `../core/prompts/project-adoption.md` |
+| Updates / troubleshooting | `maintaining.md` |
+| LLM support seed | `llm-support-prompt.md` |
 | Documentation standard | `documentation-philosophy.md` |
 | ChatGPT export workflow | `chatgpt-projects.md` |
 | Cursor rules | `.cursor/rules/` |
-| First-time clone / onboarding | `../README.md`, `mcp/README.md` |
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, ADR 0004 |
 | Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
 | Fresh agent / resume | `working-mode.md`, `../core/prompts/resume.md` |
 | Multi-agent adapters | `core/adapters/README.md` |
-| New / existing project setup | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
-| Existing project adoption | `core/prompts/project-adoption.md` |
+| Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Issues / PRs / discovered work | `contracts/features/work-item-lifecycle.md` |
 | Browser QA | `contracts/features/browser-qa.md` |
 | Laravel Boost | `contracts/features/laravel-boost.md` |

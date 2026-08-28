@@ -7,8 +7,7 @@ Agents load only the contracts relevant to the task at hand.
 This philosophy replaces the assumption that every project shares the same
 four markdown files (`project.md`, `architecture.md`, `decisions.md`,
 `roadmap.md`). Small projects may still have only a handful of contracts.
-Large systems like QuoteBox may have dozens, split by domain, engine, or
-feature.
+Large platforms may have dozens, split by domain, engine, or feature.
 
 ## Core Principles
 
@@ -57,7 +56,9 @@ purpose, stack, constraints, and pointers to key contracts.
 It is not a second context document and not a progress log.
 
 The project root `README.md` may summarize the project and link to
-`docs/README.md`, but the documentation index lives under `docs/`.
+`docs/README.md`. Adopted applications keep the contract registry under
+`docs/`. This harness repository also uses the root README as the public
+landing page; `docs/README.md` remains the agent contract registry.
 
 ### 6. Required metadata
 

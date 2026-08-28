@@ -3,11 +3,16 @@
 This file is the dependency graph and contract registry for the
 AI Development Harness repository (`ai-platform`).
 
+Public landing page: [`../README.md`](../README.md).
+First-time install: [`getting-started.md`](getting-started.md).
+
 ## Overview
 
-The AI Platform repository documents its own standards under `docs/`. Individual
-development projects maintain their own `docs/` directory using the same
-contract model and templates from `templates/docs/`.
+The AI Platform repository documents its own standards under `docs/`.
+Public guides (getting started, how it works, adoption, maintenance, LLM
+support) sit alongside internal contracts. Individual development
+projects maintain their own `docs/` directory using the same contract
+model and templates from `templates/docs/`.
 
 ## Contract Registry
 
@@ -16,6 +21,11 @@ contract model and templates from `templates/docs/`.
 | `00-project-context.md` | foundational | active | Harness summary for ChatGPT and agents |
 | `working-mode.md` | continuation | active | Current working mode and agent continuation |
 | `99-project-status.md` | status | active | Implementation status and validation |
+| `getting-started.md` | foundational | active | First-time clone, doctor, bootstrap, verification |
+| `how-it-works.md` | foundational | active | Conceptual model; global vs project files |
+| `adopting-projects.md` | foundational | active | New vs existing adoption (human overview) |
+| `maintaining.md` | foundational | active | Updates, skills, doctor, troubleshooting, removal |
+| `llm-support-prompt.md` | foundational | active | Model-neutral LLM support seed |
 | `documentation-philosophy.md` | foundational | active | Documentation contract standard |
 | `chatgpt-projects.md` | foundational | active | ChatGPT Projects export workflow |
 | `contracts/adrs/0001-two-layer-browser-qa.md` | adr | accepted | Decision to use Mode A/B browser QA |
@@ -36,6 +46,11 @@ flowchart TD
   context[00-project-context.md]
   workingMode[working-mode.md]
   status[99-project-status.md]
+  gettingStarted[getting-started.md]
+  howItWorks[how-it-works.md]
+  adopting[adopting-projects.md]
+  maintaining[maintaining.md]
+  llmSupport[llm-support-prompt.md]
   philosophy[documentation-philosophy.md]
   chatgpt[chatgpt-projects.md]
   browserAdr[contracts/adrs/0001-two-layer-browser-qa.md]
@@ -55,6 +70,15 @@ flowchart TD
   workingMode --> context
   workingMode --> status
   status --> context
+  gettingStarted --> howItWorks
+  gettingStarted --> context
+  howItWorks --> context
+  adopting --> gettingStarted
+  adopting --> howItWorks
+  maintaining --> gettingStarted
+  maintaining --> adopting
+  llmSupport --> gettingStarted
+  llmSupport --> howItWorks
   continuationAdr --> philosophy
   browserAdr --> browserQa
   boostAdr --> boost
@@ -72,16 +96,20 @@ flowchart TD
 
 | Task type | Start with |
 | --- | --- |
+| Public overview | `../README.md` |
 | ChatGPT / platform overview | `00-project-context.md` |
 | Fresh agent / resume | `working-mode.md`, `../core/prompts/resume.md` |
+| First-time clone / onboarding | `getting-started.md` |
+| How the harness works | `how-it-works.md` |
+| New or existing project adoption | `adopting-projects.md`, `../core/prompts/project-adoption.md` |
+| Updates / troubleshooting / removal | `maintaining.md` |
+| LLM support seed | `llm-support-prompt.md` |
 | Documentation standard | `documentation-philosophy.md` |
 | ChatGPT export setup | `chatgpt-projects.md` |
-| First-time clone / onboarding | `../README.md`, `mcp/README.md` |
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` |
 | Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
 | Multi-agent adapters | `core/adapters/README.md` |
-| New or existing project bootstrap | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
-| Existing project adoption | `core/prompts/project-adoption.md` |
+| Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Browser QA / Playwright | `contracts/features/browser-qa.md` |
 | Laravel Boost / MCP | `contracts/features/laravel-boost.md`, `mcp/README.md` |
 | Issues, PRs, discovered work | `contracts/features/work-item-lifecycle.md` |

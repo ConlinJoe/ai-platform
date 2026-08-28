@@ -28,7 +28,9 @@ and ChatGPT export support.
     - Fallback: run `scripts/bootstrap-project.sh` from the AI Platform
       repository with no argument and supply the target path when
       prompted.
-    Onboarding for a first-time clone is in the repository `README.md`.
+    Onboarding for a first-time clone lives in the harness clone:
+    `docs/getting-started.md` (linked from that repository's README).
+    Do not look for that file in the target project's `docs/`.
 3.  Establish project-specific documentation contracts **before** substantive
     feature development. Bootstrap installs templates and shared
     infrastructure only; it does not populate project truth.

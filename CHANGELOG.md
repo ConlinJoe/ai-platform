@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+Public documentation for broader adoption. The root README is a landing
+page. Canonical procedures live in `docs/getting-started.md`,
+`docs/how-it-works.md`, `docs/adopting-projects.md`,
+`docs/maintaining.md`, and `docs/llm-support-prompt.md`.
+
 Mechanical copy and Tailwind guardrails. Generated public-facing copy
 must not use em dashes (`—`, `&mdash;`, equivalent entities). Tailwind
 implementations must prefer the standard utility scale and project
