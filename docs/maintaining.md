@@ -58,6 +58,15 @@ Re-bootstrap is not Project Adoption. It does not rewrite application
 code. Skill copies that are already installed are not refreshed unless
 they are missing or you restore from the linked lockfile (below).
 
+**Known limitation.** New versus existing is the presence of
+`docs/README.md`. After the first bootstrap of a new project that file
+exists, so a later re-run classifies the project as existing. It may
+add a draft `docs/contracts/foundational/platform-reconciliation.md`
+and print the existing-project adoption prompt. It still does not
+overwrite project docs. A greenfield project can ignore that prompt and
+omit or delete the unused reconciliation draft. Do not treat this as a
+signal to run Project Adoption on an app you just scaffolded.
+
 If you **moved** the harness clone, re-run bootstrap in every adopted
 project so symlink targets match the new absolute path.
 
@@ -83,7 +92,8 @@ npx skills experimental_install
 ```
 
 The same restore command is used in the harness clone if
-`.agents/skills/hallmark` is missing after clone.
+`.agents/skills/hallmark` is missing after clone. It requires network
+access; see [Getting started](getting-started.md#2-configure-the-harness-clone).
 
 ## Validate
 
@@ -114,14 +124,15 @@ ran.
 | Symptom | What to check |
 | --- | --- |
 | Doctor fails on the clone | Missing rules, Hallmark skill, or non-executable scripts. Re-run `chmod +x scripts/*.sh scripts/lib/*.sh`. Restore skills if `.agents/skills/hallmark` is missing. |
-| Doctor fails on a project | Bootstrap has not been run, or the clone moved and symlinks are stale. Re-run bootstrap with the current `$AI_PLATFORM`. |
+| Doctor fails on a project | First confirm `ls -l project/.cursor/rules` shows symlinks into `$AI_PLATFORM`. If those links are missing or stale, re-run bootstrap. If the links are correct and the project is Laravel, a FAIL for missing Boost is expected until `laravel/boost` is declared, installed, and MCP-configured. |
 | Rules in the project are real files, not symlinks | Bootstrap prompts before replacing a real file. Shared `00`–`70` rules should be symlinks into the clone. |
 | Agent ignores detailed `.mdc` rules | Expected on some non-Cursor clients. Read [core/adapters/README.md](../core/adapters/README.md). The portable core still applies via `AGENTS.md`. |
 | Laravel agent files lack the portable core | Boost may own `AGENTS.md` / `CLAUDE.md`. Confirm `.ai/guidelines/ai-platform.md` is linked, then run `php artisan boost:install` or `boost:update`. |
 | Skills missing in a project | `npx skills experimental_install` from the project root (lockfile must be the symlink). Bootstrap skips restore when you decline the prompt. |
 | `npx skills` mutates the clone lockfile | Bootstrap snapshots and restores `skills-lock.json` for that reason. Prefer bootstrap's restore path. |
 | Browser automation ran unexpectedly | Availability is not authorization. Policy: [60-browser-qa](../.cursor/rules/60-browser-qa.mdc). |
-| Unsure whether install worked | Doctor pass on the clone, then `ls -l project/.cursor/rules` showing links into `$AI_PLATFORM/.cursor/rules/`. |
+| Unsure whether install worked | Doctor pass on the clone, then `ls -l project/.cursor/rules` showing links into `$AI_PLATFORM/.cursor/rules/`. Project doctor may still FAIL on Laravel until Boost is present. |
+| Claude or Grok skills missing after bootstrap | Confirm `.agents/skills/hallmark` exists, then re-run bootstrap so `.claude/skills/` and `.grok/skills/` adapter links are created. |
 
 If documentation and scripts disagree, treat the scripts and
 `.cursor/rules/` as implementation truth and report the docs conflict.

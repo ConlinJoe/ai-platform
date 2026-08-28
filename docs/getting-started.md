@@ -117,6 +117,11 @@ cd "$AI_PLATFORM"
 npx skills experimental_install
 ```
 
+First-time skill restore requires **network access**. That command
+currently retrieves the locked skill from GitHub/upstream. It does not
+copy Hallmark from this clone. Bootstrap uses the same restore when a
+project is missing locked skills.
+
 `scripts/update-skills.sh` is later maintenance. It runs
 `npx skills update -p -y` in this clone. Review the git diff before
 committing. It is not linked into target projects.
@@ -212,7 +217,7 @@ prompts for a target path.
 | `.claude/skills/`, `.grok/skills/` | Symlinks to `.agents/skills/` |
 | `scripts/doctor.sh`, `scripts/export-chatgpt-context.sh`, `scripts/check-guardrails.sh` | Symlink into the project |
 | `skills-lock.json` | Symlink to this clone |
-| Locked skills | Copied into `.agents/skills/` (`npx skills experimental_install`) when missing |
+| Locked skills | Copied into `.agents/skills/` (`npx skills experimental_install`) when missing; requires network |
 | `docs/` | Copied from templates if `docs/README.md` is missing; existing docs are not overwritten |
 | `.github/` Issue/PR templates | Not copied; existing GitHub files are not overwritten |
 | Existing projects | May add missing drafts: `working-mode.md`, `99-project-status.md`, `platform-reconciliation.md`, Laravel `browser-qa.md` |
@@ -223,7 +228,10 @@ Bootstrap is safe to re-run. Shared Cursor rules update immediately
 through those symlinks. A re-run also prunes retired managed skills,
 refreshes Claude/Grok skill adapter links, applies current
 bootstrap-managed project configuration, and adds current ignore entries
-such as `.hallmark/`.
+such as `.hallmark/`. A later re-run of a newly bootstrapped project is
+classified as existing because `docs/README.md` is now present; that is
+a known limitation, not an overwrite of project docs. Details:
+[Maintaining the harness](maintaining.md#re-run-bootstrap-on-a-project).
 
 Agent-facing bootstrap checklist:
 [.cursor/rules/50-workflows.mdc](../.cursor/rules/50-workflows.mdc).
@@ -246,8 +254,17 @@ you are not sure the symlink exists.
 
 Linked rules should resolve into `$AI_PLATFORM/.cursor/rules/`.
 
-Doctor passing on the clone plus linked `00`–`70` rules in the project
-is the installation success check.
+Installation success is:
+
+1. Doctor passing on the **clone**.
+2. Shared `00`–`70` rules in the project as **symlinks** into
+   `$AI_PLATFORM/.cursor/rules/`.
+
+Project doctor also diagnoses profile capabilities. On a Laravel app it
+**fails** until Laravel Boost is declared, installed, and MCP-configured.
+Treat that as a Laravel profile gap, not a failed harness link. Missing
+Playwright on Laravel is a warning. Generic and Roots/Radicle projects
+should get a clean project-doctor pass after bootstrap.
 
 ## 7. Next steps
 

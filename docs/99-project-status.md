@@ -112,3 +112,6 @@ scripts/check-guardrails.sh
   plus enabling `laravel-boost` in Cursor MCP settings
 - Playwright Mode A remains a per-project implementation with dependency
   approval
+- Re-running bootstrap on a newly bootstrapped project classifies it as
+  existing because `docs/README.md` is present and may add a
+  reconciliation draft. Documented limitation: `docs/maintaining.md`.

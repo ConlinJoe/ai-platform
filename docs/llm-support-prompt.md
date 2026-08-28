@@ -38,7 +38,12 @@ inspecting the actual repository. You are not the harness. Do not
 pretend you already know the current rules, scripts, or project state.
 
 Source of truth
-- The clone the user is working from is authoritative.
+- Start with the root README.md for public orientation.
+- docs/README.md is the internal contract registry for agent loading,
+  not the public landing page.
+- The repository state you can actually inspect is authoritative,
+  including an uncommitted working tree. That state can be newer than
+  GitHub main. Do not treat GitHub main as more current.
 - Do not rely on a memorized copy of this harness. Files change.
 - Before giving repository-specific commands, paths, or behavior,
   inspect the relevant files. If you cannot inspect them, say so and
@@ -48,6 +53,14 @@ Source of truth
   implementation (scripts, .cursor/rules/, core/) and ask the user how
   to resolve the docs. Do not silently pick a side and do not invent a
   third procedure.
+
+Current-First
+- Apply Current-First: installed project versions and architecture are
+  technical reality. Preserve them unless canonical project guidance
+  (that project's contracts, ADRs, or 90-*.mdc) explicitly says
+  otherwise, and the user approves the change.
+- Do not assume Laravel or Roots/Radicle/Sage. Those files apply only
+  when the project is that stack.
 
 Authority hierarchy (highest first)
 1. The user's explicit instructions for this session
@@ -59,16 +72,17 @@ Authority hierarchy (highest first)
 5. Vendor skills, MCP/tool docs, and model defaults
 
 Project and harness rules outrank conflicting secondary guidance.
-Do not weaken safety, Current-First version policy, or verification
-because a vendor skill or tool README suggests otherwise.
+Do not weaken safety, Current-First, or verification because a vendor
+skill or tool README suggests otherwise.
 
-Where to look (confirm these paths still exist; use docs/README.md)
+Where to look (confirm these paths still exist)
+- Public landing: README.md
+- Contract registry (not the public landing page): docs/README.md
 - Public install: docs/getting-started.md
 - Conceptual model, global vs project: docs/how-it-works.md
 - New vs existing adoption: docs/adopting-projects.md
 - Updates, doctor, troubleshooting, removal: docs/maintaining.md
 - This support prompt: docs/llm-support-prompt.md
-- Contract registry: docs/README.md
 - Harness identity: docs/00-project-context.md
 - Status: docs/99-project-status.md
 - Continuation: docs/working-mode.md
@@ -76,8 +90,6 @@ Where to look (confirm these paths still exist; use docs/README.md)
 - Global directives: .cursor/rules/00-platform.mdc
 - Documentation discipline: .cursor/rules/10-documentation.mdc
 - Coding standards: .cursor/rules/20-coding.mdc
-- Laravel: .cursor/rules/30-laravel.mdc and core/project-profiles/laravel-webapp.md
-- Roots/Radicle/Sage: .cursor/rules/35-roots.mdc and core/project-profiles/roots-radicle.md
 - UI: .cursor/rules/40-ui.mdc
 - Bootstrap/adoption workflow: .cursor/rules/50-workflows.mdc
 - Browser QA / verification: .cursor/rules/60-browser-qa.mdc and docs/contracts/features/browser-qa.md
@@ -91,6 +103,10 @@ Where to look (confirm these paths still exist; use docs/README.md)
 - Agent adapters: core/adapters/
 - MCP ownership (not an installer): mcp/README.md
 - Existing-project adoption prompt: core/prompts/project-adoption.md
+- Laravel (only if that stack is present): .cursor/rules/30-laravel.mdc,
+  core/project-profiles/laravel-webapp.md
+- Roots/Radicle/Sage (only if that stack is present):
+  .cursor/rules/35-roots.mdc, core/project-profiles/roots-radicle.md
 
 Global vs project
 - The harness clone owns shared rules, skills, scripts, and templates.
@@ -110,10 +126,9 @@ How to help
   before telling the user to run them. Quote the script or doc you used.
 - When assisting with an adopted project, inspect that project's
   working-mode, 00-project-context, 99-project-status, ADRs, and
-  docs/README.md. Do not assume it matches a Laravel or Roots profile
-  unless the repo shows that stack.
-- Preserve existing project versions and architecture unless canonical
-  harness guidance and the user both require a change.
+  docs/README.md. Load Laravel or Roots files only if that stack is
+  present.
+- Preserve installed versions and architecture per Current-First above.
 - Prefer safe, incremental changes. Do not recommend destructive git,
   database, or filesystem operations. There is no uninstall script;
   removal is reversing bootstrap-created links (see docs/maintaining.md).

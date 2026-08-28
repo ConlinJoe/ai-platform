@@ -195,6 +195,22 @@ assert_grep 'AI_PLATFORM=' "${AI_REPO}/docs/getting-started.md" \
   "getting-started defines an AI_PLATFORM path convention"
 assert_grep 'npx skills experimental_install' "${AI_REPO}/docs/getting-started.md" \
   "getting-started documents skill restore from skills-lock.json"
+assert_grep 'First-time skill restore requires' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started states first-time skill restore requires network access"
+assert_grep 'GitHub/upstream' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started states skill restore retrieves the skill from GitHub/upstream"
+assert_grep 'Start with the root README.md' "${AI_REPO}/docs/llm-support-prompt.md" \
+  "LLM support seed starts at the root README for public orientation"
+assert_grep 'not the public landing page' "${AI_REPO}/docs/llm-support-prompt.md" \
+  "LLM support seed treats docs/README.md as the contract registry"
+assert_grep 'Apply Current-First' "${AI_REPO}/docs/llm-support-prompt.md" \
+  "LLM support seed names Current-First"
+assert_grep 'newer than' "${AI_REPO}/docs/llm-support-prompt.md" \
+  "LLM support seed treats the inspected working tree as newer than GitHub main"
+assert_grep 'only if that stack is present' "${AI_REPO}/docs/llm-support-prompt.md" \
+  "LLM support seed does not assume Laravel or Roots"
+assert_grep 'Known limitation' "${AI_REPO}/docs/maintaining.md" \
+  "maintaining documents re-bootstrap classification as a known limitation"
 assert_grep 'npx skills update' "${AI_REPO}/scripts/update-skills.sh" \
   "update-skills.sh is the skill-update command"
 assert_grep 'npx -y @playwright/mcp@latest' "${AI_REPO}/mcp/playwright/README.md" \
@@ -229,6 +245,12 @@ assert_grep 'Hermes Agent' "${AI_REPO}/README.md" \
   "README names Hermes Agent as a supported client"
 assert_grep 'You do not choose an agent during bootstrap' "${AI_REPO}/README.md" \
   "README states bootstrap does not require choosing an agent"
+assert_grep 'ls -l /path/to/your-project/.cursor/rules' "${AI_REPO}/README.md" \
+  "README uses linked rules as the harness install check"
+assert_grep 'profile gap, not a failed' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started distinguishes Laravel doctor FAIL from a failed harness link"
+assert_grep 'until Laravel Boost is declared' "${AI_REPO}/docs/getting-started.md" \
+  "getting-started says Laravel project doctor fails until Boost is present"
 
 echo ""
 echo "--- Agent continuation ---"
@@ -1047,6 +1069,10 @@ else
 fi
 assert_grep '@AGENTS.md' "${GENERIC}/CLAUDE.md" \
   "generic CLAUDE.md imports AGENTS.md"
+assert_grep 'Added CLAUDE.md' ${LOGDIR}/boot-generic.log \
+  "bootstrap reports CLAUDE.md as added, not as a fill-in draft"
+assert_not_grep 'Fill from this project' ${LOGDIR}/boot-generic.log \
+  "first-run CLAUDE.md copy does not ask the user to fill a documentation draft"
 assert_missing "${GENERIC}/.hermes.md" "generic did not receive .hermes.md"
 assert_missing "${GENERIC}/HERMES.md" "generic did not receive HERMES.md"
 assert_missing "${GENERIC}/.ai/guidelines/ai-platform.md" \
@@ -1131,6 +1157,41 @@ assert_grep "Boost not applicable" ${LOGDIR}/doctor-generic.log \
   "doctor does not require Boost on generic projects"
 assert_grep "Guardrail check script linked" ${LOGDIR}/doctor-generic.log \
   "doctor reports the guardrail script is linked"
+
+echo ""
+echo "--- Skill adapter links (bootstrap from harness cwd) ---"
+mkdir -p "${GENERIC}/.agents/skills/hallmark"
+printf '# Hallmark\n' > "${GENERIC}/.agents/skills/hallmark/SKILL.md"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${GENERIC}" \
+  >"${LOGDIR}/boot-generic-adapters.log" 2>&1
+if [[ -L "${GENERIC}/.claude/skills/hallmark" ]] \
+  && [[ "$(readlink "${GENERIC}/.claude/skills/hallmark")" == "../../.agents/skills/hallmark" ]]; then
+  pass "generic Claude skill adapter links to .agents/skills/hallmark"
+else
+  fail "generic Claude skill adapter links to .agents/skills/hallmark"
+fi
+if [[ -L "${GENERIC}/.grok/skills/hallmark" ]] \
+  && [[ "$(readlink "${GENERIC}/.grok/skills/hallmark")" == "../../.agents/skills/hallmark" ]]; then
+  pass "generic Grok skill adapter links to .agents/skills/hallmark"
+else
+  fail "generic Grok skill adapter links to .agents/skills/hallmark"
+fi
+assert_not_grep 'missing source for Claude skill' \
+  "${LOGDIR}/boot-generic-adapters.log" \
+  "bootstrap does not warn that the Claude skill source is missing"
+if "${AI_REPO}/scripts/doctor.sh" "${GENERIC}" \
+  >"${LOGDIR}/doctor-generic-adapters.log" 2>&1; then
+  pass "doctor on generic project with skill adapters exits 0"
+else
+  fail "doctor on generic project with skill adapters exits 0"
+  cat "${LOGDIR}/doctor-generic-adapters.log"
+fi
+assert_grep "Claude skill adapter linked: hallmark" \
+  "${LOGDIR}/doctor-generic-adapters.log" \
+  "doctor reports the Claude skill adapter is linked"
+assert_grep "Grok skill adapter linked: hallmark" \
+  "${LOGDIR}/doctor-generic-adapters.log" \
+  "doctor reports the Grok skill adapter is linked"
 
 echo ""
 echo "--- New Roots/Radicle project ---"
@@ -1341,6 +1402,8 @@ assert_grep "core/prompts/project-adoption.md" ${LOGDIR}/boot-existing.log \
   "bootstrap points at project adoption prompt"
 assert_grep "did not adopt the project" ${LOGDIR}/boot-existing.log \
   "bootstrap states it did not adopt the project"
+assert_grep 'Fill from this project' ${LOGDIR}/boot-existing.log \
+  "existing-project drafts still tell the user to fill from project reality"
 
 echo ""
 echo "--- Existing project GitHub conventions ---"
@@ -1376,6 +1439,12 @@ if [[ "${build_count}" -eq 1 ]]; then
 else
   fail "re-run does not duplicate .build/ gitignore (count=${build_count})"
 fi
+assert_file "${GENERIC}/docs/contracts/foundational/platform-reconciliation.md" \
+  "re-bootstrap of a new project adds reconciliation (known limitation: docs index present)"
+assert_grep "Existing project" ${LOGDIR}/boot-generic-2.log \
+  "re-bootstrap of a new project is classified as existing (known limitation)"
+assert_grep "core/prompts/project-adoption.md" ${LOGDIR}/boot-generic-2.log \
+  "re-bootstrap of a new project prints the existing-project adoption prompt (known limitation)"
 
 echo ""
 echo "--- ChatGPT context export ---"

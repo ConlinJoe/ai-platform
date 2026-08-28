@@ -233,6 +233,7 @@ copy_if_missing() {
   local source="$1"
   local dest="$2"
   local label="$3"
+  local fill_hint="${4:-}"
 
   if [[ ! -f "${source}" ]]; then
     echo "Warning: template missing: ${source}" >&2
@@ -246,33 +247,43 @@ copy_if_missing() {
 
   mkdir -p "$(dirname "${dest}")"
   cp "${source}" "${dest}"
-  echo "Added draft ${label}: ${dest}"
-  echo "Fill from this project's reality. Do not treat the draft as approval."
+  if [[ -n "${fill_hint}" ]]; then
+    echo "Added draft ${label}: ${dest}"
+    echo "${fill_hint}"
+  else
+    echo "Added ${label}: ${dest}"
+  fi
 }
 
 add_missing_profile_templates() {
   local target_docs="${TARGET_PROJECT}/docs"
 
+  local fill_hint="Fill from this project's reality. Do not treat the draft as approval."
+
   copy_if_missing \
     "${AI_REPO}/templates/docs/99-project-status.md" \
     "${target_docs}/99-project-status.md" \
-    "project status"
+    "project status" \
+    "${fill_hint}"
 
   copy_if_missing \
     "${AI_REPO}/templates/docs/working-mode.md" \
     "${target_docs}/working-mode.md" \
-    "working mode"
+    "working mode" \
+    "${fill_hint}"
 
   copy_if_missing \
     "${RECONCILIATION_TEMPLATE}" \
     "${target_docs}/contracts/foundational/platform-reconciliation.md" \
-    "platform reconciliation"
+    "platform reconciliation" \
+    "${fill_hint}"
 
   if project_is_laravel_webapp "${TARGET_PROJECT}"; then
     copy_if_missing \
       "${BROWSER_QA_TEMPLATE}" \
       "${target_docs}/contracts/features/browser-qa.md" \
-      "browser QA contract"
+      "browser QA contract" \
+      "${fill_hint}"
   fi
 }
 
@@ -566,8 +577,23 @@ link_if_missing_symlink() {
   local source="$1"
   local dest="$2"
   local label="$3"
+  local source_exists=0
 
-  if [[ ! -e "${source}" && ! -L "${source}" ]]; then
+  # `source` is the symlink target string. Relative targets are resolved
+  # from the destination directory, not from $PWD (bootstrap is often
+  # invoked from the harness clone with an explicit project path).
+  if [[ "${source}" == /* ]]; then
+    if [[ -e "${source}" || -L "${source}" ]]; then
+      source_exists=1
+    fi
+  else
+    mkdir -p "$(dirname "${dest}")"
+    if [[ -e "$(dirname "${dest}")/${source}" || -L "$(dirname "${dest}")/${source}" ]]; then
+      source_exists=1
+    fi
+  fi
+
+  if [[ "${source_exists}" -eq 0 ]]; then
     echo "Warning: missing source for ${label}: ${source}" >&2
     return 0
   fi

@@ -268,6 +268,36 @@ check_project_links() {
     warn "CLAUDE.md missing"
   fi
 
+  local skill_name skill_dir claude_skill grok_skill
+  if [[ -f "${SKILLS_LOCK}" ]]; then
+    while IFS= read -r skill_name; do
+      [[ -n "${skill_name}" ]] || continue
+      skill_dir="${target}/.agents/skills/${skill_name}"
+      [[ -d "${skill_dir}" ]] || continue
+      claude_skill="${target}/.claude/skills/${skill_name}"
+      grok_skill="${target}/.grok/skills/${skill_name}"
+      if [[ -L "${claude_skill}" ]]; then
+        ok "Claude skill adapter linked: ${skill_name}"
+      else
+        warn "Claude skill adapter not linked: ${claude_skill}"
+      fi
+      if [[ -L "${grok_skill}" ]]; then
+        ok "Grok skill adapter linked: ${skill_name}"
+      else
+        warn "Grok skill adapter not linked: ${grok_skill}"
+      fi
+    done < <(python3 - "${SKILLS_LOCK}" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    data = json.load(handle)
+for name in sorted(data.get("skills", {})):
+    print(name)
+PY
+)
+  fi
+
   echo ""
   return 0
 }

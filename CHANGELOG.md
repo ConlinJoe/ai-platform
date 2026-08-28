@@ -7,6 +7,20 @@ page. Canonical procedures live in `docs/getting-started.md`,
 `docs/how-it-works.md`, `docs/adopting-projects.md`,
 `docs/maintaining.md`, and `docs/llm-support-prompt.md`.
 
+Bootstrap creates Claude and Grok skill adapter links when locked
+skills are present, even if the script is invoked from the harness
+clone with an explicit project path. Project doctor treats a Laravel
+Boost gap as a profile failure, not as a failed rule link. The install
+success check is clone doctor plus symlink'd `00`–`70` rules.
+
+LLM support seed starts at the root README, names Current-First, and
+treats the inspected working tree as authoritative over GitHub `main`.
+First-time `npx skills experimental_install` is documented as requiring
+network access. Re-bootstrap of a newly bootstrapped project remains
+classified as existing (`docs/README.md` present); that is a documented
+known limitation. Copying `CLAUDE.md` no longer tells the user to fill
+a documentation draft.
+
 Mechanical copy and Tailwind guardrails. Generated public-facing copy
 must not use em dashes (`—`, `&mdash;`, equivalent entities). Tailwind
 implementations must prefer the standard utility scale and project

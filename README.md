@@ -100,8 +100,14 @@ Bootstrap a project and verify:
 
 ```bash
 "$AI_PLATFORM/scripts/bootstrap-project.sh" /path/to/your-project
+ls -l /path/to/your-project/.cursor/rules
 "$AI_PLATFORM/scripts/doctor.sh" /path/to/your-project
 ```
+
+Linked `00`–`70` rules should point into `$AI_PLATFORM/.cursor/rules/`.
+That is the harness install check. On Laravel apps, project doctor also
+diagnoses Boost and may exit non-zero until Boost is installed. That is
+a profile gap, not a failed rule link.
 
 Complete prerequisites, optional agents/MCP, skill restore, and
 greenfield vs existing next steps:
