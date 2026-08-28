@@ -86,6 +86,8 @@ check_platform() {
   echo ""
 
   check_file "${RULES_DIR}/00-platform.mdc" "Rule 00-platform.mdc"
+  check_file "${RULES_DIR}/10-documentation.mdc" "Rule 10-documentation.mdc"
+  check_file "${RULES_DIR}/20-coding.mdc" "Rule 20-coding.mdc"
   check_file "${RULES_DIR}/30-laravel.mdc" "Rule 30-laravel.mdc"
   check_file "${RULES_DIR}/35-roots.mdc" "Rule 35-roots.mdc"
   check_file "${RULES_DIR}/50-workflows.mdc" "Rule 50-workflows.mdc"
@@ -141,6 +143,8 @@ PY
   check_file "${AI_REPO}/docs/contracts/features/work-item-lifecycle.md" "Work-item lifecycle contract"
   check_file "${AI_REPO}/docs/contracts/adrs/0003-work-item-lifecycle.md" "Work-item lifecycle ADR"
   check_file "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" "Design-stack ADR"
+  check_file "${AI_REPO}/docs/contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md" "Guardrail ADR"
+  check_file "${AI_REPO}/docs/contracts/features/copy-and-tailwind-guardrails.md" "Copy and Tailwind guardrails contract"
   check_file "${AI_REPO}/.github/PULL_REQUEST_TEMPLATE.md" "PR template"
   check_file "${AI_REPO}/templates/github/PULL_REQUEST_TEMPLATE.md" "Optional project PR template"
   check_file "${AI_REPO}/mcp/README.md" "MCP guidance index"
@@ -172,6 +176,7 @@ PY
   for script in \
     "${AI_REPO}/scripts/bootstrap-project.sh" \
     "${AI_REPO}/scripts/doctor.sh" \
+    "${AI_REPO}/scripts/check-guardrails.sh" \
     "${AI_REPO}/scripts/link-rules.sh" \
     "${AI_REPO}/scripts/export-chatgpt-context.sh" \
     "${AI_REPO}/scripts/update-skills.sh" \
@@ -183,6 +188,8 @@ PY
       check_bash_syntax "${script}"
     fi
   done
+
+  check_file "${AI_REPO}/scripts/lib/check_guardrails.py" "Guardrail scanner"
 
   if [[ ! -s "${AI_REPO}/scripts/doctor.sh" ]]; then
     fail "doctor.sh is empty"
@@ -235,6 +242,13 @@ check_project_links() {
     ok "Doctor script linked"
   else
     warn "Doctor script not linked to AI Platform"
+  fi
+
+  local guardrails_link="${target}/scripts/check-guardrails.sh"
+  if [[ -L "${guardrails_link}" ]] && [[ "$(readlink "${guardrails_link}")" == "${AI_REPO}/scripts/check-guardrails.sh" ]]; then
+    ok "Guardrail check script linked"
+  else
+    warn "Guardrail check script not linked to AI Platform"
   fi
 
   if [[ -e "${target}/AGENTS.md" || -L "${target}/AGENTS.md" ]]; then

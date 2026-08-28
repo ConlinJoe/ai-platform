@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+Mechanical copy and Tailwind guardrails. Generated public-facing copy
+must not use em dashes (`—`, `&mdash;`, equivalent entities). Tailwind
+implementations must prefer the standard utility scale and project
+tokens over arbitrary values. Project and platform rules outrank
+conflicting secondary skill, MCP, plugin, vendor, and tool guidance;
+clear conflicts follow the higher-authority rule without asking, and
+genuine ambiguity stops for clarification. Consuming projects and
+agents run `scripts/check-guardrails.sh` on changed application sources
+before reporting DONE. Lint, tests, and build passing do not imply
+that check ran. Hallmark is not forked. See ADR 0006.
+
 Fresh agent threads resume from `docs/working-mode.md` instead of a
 large kickoff prompt. That file stores current working mode and
 continuation instructions only; project context, status, ADRs, and

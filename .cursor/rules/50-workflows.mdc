@@ -56,7 +56,8 @@ Running bootstrap on a target project:
     to `.agents/skills/`; does not create `.hermes.md` (Hermes uses
     `AGENTS.md`); on Laravel apps, links `.ai/guidelines/ai-platform.md`
     to `core/agent-core.md`
--   Links `scripts/export-chatgpt-context.sh` and `scripts/doctor.sh`
+-   Links `scripts/export-chatgpt-context.sh`, `scripts/doctor.sh`, and
+    `scripts/check-guardrails.sh`
 -   Copies documentation templates when `docs/README.md` does not exist
 -   For existing projects (docs index already present): does not overwrite
     docs; may add missing draft templates (working mode, status, browser QA,
@@ -286,7 +287,8 @@ documentation, Cursor rules, agent skills, or AI metadata change.
 Re-check a bootstrapped project with
 `/path/to/ai-platform/scripts/doctor.sh /path/to/project`. After
 bootstrap, `scripts/doctor.sh` in the project is the same script via
-symlink.
+symlink. For applicable frontend or public-facing work, run
+`scripts/check-guardrails.sh` before reporting DONE.
 
 ## Maintenance
 

@@ -248,6 +248,10 @@ A task is not complete until:
    Playwright/browser QA as required unless `60-browser-qa` authorizes it
    (explicit request, or the bounded significant-UI Mode B visual pass in
    `40-ui`). Significant UI visual verification is not a Mode A suite.
+   For work that writes or modifies public-facing copy or Tailwind
+   markup, `scripts/check-guardrails.sh` is part of that validation.
+   Lint, tests, and build passing do not imply the guardrail check ran.
+   A failed guardrail check is not a green completion.
 3. Relevant contracts have been loaded and followed.
 4. Documentation outcome is resolved (update, explicit no-update, or conflict
    reported).

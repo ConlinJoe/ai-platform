@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-08-26
+last_reviewed: 2026-08-28
 source_of_truth_for:
   - Decision that Hallmark is the only managed design skill
   - Decision that 40-ui is the UI router and always-on design floor
@@ -13,6 +13,7 @@ depends_on:
   - ../features/browser-qa.md
 referenced_by:
   - ../features/browser-qa.md
+  - 0006-instruction-precedence-and-mechanical-guardrails.md
   - ../../../.cursor/rules/40-ui.mdc
   - ../../../.cursor/rules/60-browser-qa.mdc
 type: adr
@@ -75,7 +76,10 @@ Do not install `ux-ui-agent-skills` or restore the removed skills.
 
 Developer design constraints are owned by `40-ui`, not by Hallmark.
 They outrank Hallmark. Do not fork Hallmark vendor content to encode
-them.
+them. Mechanical checks for generated-copy em dashes and unnecessary
+Tailwind arbitrary values live in
+`../features/copy-and-tailwind-guardrails.md` (ADR 0006). Hallmark
+typography or CSS recipes do not authorize reversing those rules.
 
 Design philosophy: product-specific, spacious, hierarchy-driven design.
 Avoid recognizable AI/template conventions.

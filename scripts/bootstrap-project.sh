@@ -59,6 +59,7 @@ TARGET_SKILLS_LOCK="${TARGET_PROJECT}/skills-lock.json"
 TARGET_SCRIPTS_DIR="${TARGET_PROJECT}/scripts"
 EXPORT_SCRIPT="${AI_REPO}/scripts/export-chatgpt-context.sh"
 DOCTOR_SCRIPT="${AI_REPO}/scripts/doctor.sh"
+GUARDRAILS_SCRIPT="${AI_REPO}/scripts/check-guardrails.sh"
 DOCS_TEMPLATES_DIR="${AI_REPO}/templates/docs"
 BROWSER_QA_TEMPLATE="${AI_REPO}/templates/docs/contracts/features/browser-qa.md"
 RECONCILIATION_TEMPLATE="${AI_REPO}/templates/existing-project/platform-reconciliation.md"
@@ -182,6 +183,12 @@ link_doctor_script() {
   echo ""
   echo "--- Linking Doctor Script ---"
   link_platform_script "${DOCTOR_SCRIPT}" "doctor.sh"
+}
+
+link_guardrails_script() {
+  echo ""
+  echo "--- Linking Guardrail Check Script ---"
+  link_platform_script "${GUARDRAILS_SCRIPT}" "check-guardrails.sh"
 }
 
 # ---------------------------------------------------------------------------
@@ -729,6 +736,10 @@ verify_doctor_script() {
   verify_linked_script "${DOCTOR_SCRIPT}" "doctor.sh"
 }
 
+verify_guardrails_script() {
+  verify_linked_script "${GUARDRAILS_SCRIPT}" "check-guardrails.sh"
+}
+
 verify_linked_script() {
   local source_script="$1"
   local name="$2"
@@ -864,6 +875,7 @@ run_verification() {
   script_failures=0
   verify_export_script || script_failures=$((script_failures + $?))
   verify_doctor_script || script_failures=$((script_failures + $?))
+  verify_guardrails_script || script_failures=$((script_failures + $?))
 
   if verify_agent_adapters; then
     adapter_failures=0
@@ -992,6 +1004,7 @@ BOOTSTRAP_MODE="$(project_bootstrap_mode "${TARGET_PROJECT}")"
 link_rules
 link_export_script
 link_doctor_script
+link_guardrails_script
 bootstrap_docs_templates
 ensure_gitignore_build
 ensure_playwright_gitignore

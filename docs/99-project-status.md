@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-26
+last_reviewed: 2026-08-28
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -29,6 +29,13 @@ architecture, not a new release.
 - Current-First Engineering and Framework-Native First: platform-wide in
   `00-platform.mdc`; Tailwind composition is the CSS specialization in
   `20-coding.mdc`
+- Copy and Tailwind guardrails: generated public-facing copy must not
+  use em dashes; Tailwind standard utilities/tokens are preferred over
+  arbitrary values; project/platform rules outrank conflicting
+  secondary skill/tool guidance. `scripts/check-guardrails.sh` is the
+  mechanical DONE check for newly written or modified application
+  sources (ADR 0006). Hallmark is not forked; its typography and CSS
+  recipes do not reverse those rules.
 - Roots/Radicle/Sage profile: Navi is the preferred navigation integration
   after Current-First verification. Greenfield baseline after Current-First
   verification: ACF Pro (structured fields, not a page builder), Keen
@@ -93,6 +100,7 @@ Run from the AI Platform repository:
 ```bash
 scripts/doctor.sh
 scripts/test-platform.sh
+scripts/check-guardrails.sh
 ```
 
 ## Production readiness

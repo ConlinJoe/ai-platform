@@ -4,7 +4,8 @@ What changed and why.
 
 ## Verification
 
-Tests or checks run.
+Tests or checks run. For frontend or public-facing copy, include
+`scripts/check-guardrails.sh`.
 
 ## Documentation
 

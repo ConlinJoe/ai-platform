@@ -128,6 +128,7 @@ echo "--- Syntax ---"
 for script in \
   "${AI_REPO}/scripts/bootstrap-project.sh" \
   "${AI_REPO}/scripts/doctor.sh" \
+  "${AI_REPO}/scripts/check-guardrails.sh" \
   "${AI_REPO}/scripts/link-rules.sh" \
   "${AI_REPO}/scripts/export-chatgpt-context.sh" \
   "${AI_REPO}/scripts/update-skills.sh" \
@@ -140,6 +141,11 @@ do
     fail "bash -n $(basename "${script}")"
   fi
 done
+if python3 -m py_compile "${AI_REPO}/scripts/lib/check_guardrails.py"; then
+  pass "python3 -m py_compile check_guardrails.py"
+else
+  fail "python3 -m py_compile check_guardrails.py"
+fi
 
 echo ""
 echo "--- Onboarding docs ---"
@@ -651,6 +657,246 @@ assert_grep 'inherit harness UI design preferences' \
   "workflows inherit harness UI design preferences on adoption"
 
 echo ""
+echo "--- Copy and Tailwind guardrails ---"
+assert_file "${AI_REPO}/scripts/check-guardrails.sh" \
+  "check-guardrails.sh exists"
+assert_file "${AI_REPO}/scripts/lib/check_guardrails.py" \
+  "guardrail scanner exists"
+assert_file "${AI_REPO}/docs/contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md" \
+  "guardrail ADR exists"
+assert_file "${AI_REPO}/docs/contracts/features/copy-and-tailwind-guardrails.md" \
+  "guardrail feature contract exists"
+assert_grep 'standard utility scale when an equivalent exists' \
+  "${AI_REPO}/.cursor/rules/20-coding.mdc" \
+  "20-coding requires Tailwind standard-scale first"
+assert_grep 'Arbitrary values remain valid when genuinely necessary' \
+  "${AI_REPO}/.cursor/rules/20-coding.mdc" \
+  "20-coding keeps an arbitrary-value exception"
+assert_grep 'guardrail-allow-arbitrary' \
+  "${AI_REPO}/.cursor/rules/20-coding.mdc" \
+  "20-coding documents the arbitrary-value exception marker"
+assert_grep 'text-\[1\.2rem\]' \
+  "${AI_REPO}/.cursor/rules/20-coding.mdc" \
+  "20-coding names text-[1.2rem] as undesirable default behavior"
+assert_grep '&mdash;' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui prohibits &mdash; as well as the em dash character"
+assert_grep 'page metadata' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui applies the em-dash rule to page metadata"
+assert_grep 'Hallmark copy and typography guidance may recommend' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui overrides Hallmark em-dash guidance without forking Hallmark"
+assert_grep 'Em-dash for interruption' \
+  "${AI_REPO}/.agents/skills/hallmark/references/copy.md" \
+  "Hallmark vendor copy still recommends em dashes"
+assert_grep 'Secondary implementation guidance' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform names secondary implementation guidance"
+assert_grep 'weaken or override an applicable project' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform forbids secondary sources silently overriding project rules"
+assert_grep 'Do not ask the user to resolve a conflict whose precedence is' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform does not ask when precedence is already clear"
+assert_grep 'before implementing the conflicting decision' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform requires clarification for genuine instruction conflicts"
+assert_grep 'Do not make an arbitrary choice' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform forbids arbitrary resolution of genuine conflicts"
+assert_grep 'Secondary implementation guidance' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core names secondary implementation guidance"
+assert_grep 'conflicting secondary guidance' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core states project/platform rules outrank secondary guidance"
+assert_grep 'stop before implementing the conflicting decision' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core requires clarification for genuine instruction conflicts"
+assert_grep 'standard utility scale' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core prefers Tailwind standard utilities over arbitrary values"
+assert_grep '&mdash;' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core includes &mdash; in the em-dash rule"
+assert_grep 'scripts/check-guardrails.sh' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "always-on platform rule requires the guardrail check for applicable work"
+assert_grep 'Lint, tests, and build passing do not' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "always-on platform rule says lint/tests/build do not imply guardrails ran"
+assert_grep 'scripts/check-guardrails.sh' \
+  "${AI_REPO}/.cursor/rules/10-documentation.mdc" \
+  "completion criteria include the guardrail check"
+assert_grep 'A failed guardrail check is not a green completion' \
+  "${AI_REPO}/.cursor/rules/10-documentation.mdc" \
+  "completion criteria reject a green report after a failed guardrail check"
+assert_grep 'scripts/check-guardrails.sh' \
+  "${AI_REPO}/.cursor/rules/20-coding.mdc" \
+  "coding quality requires the guardrail check for copy/Tailwind work"
+assert_grep 'scripts/check-guardrails.sh' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires the guardrail check for copy and Tailwind work"
+assert_grep 'small UI and copy-only work' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "em-dash enforcement is not limited to significant UI"
+assert_grep 'check-guardrails.sh' \
+  "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
+  "bootstrap links the guardrail check script"
+assert_grep 'Do not fork Hallmark' \
+  "${AI_REPO}/docs/contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md" \
+  "ADR 0006 keeps Hallmark unforked"
+assert_grep 'git-changed files versus' \
+  "${AI_REPO}/docs/contracts/features/copy-and-tailwind-guardrails.md" \
+  "guardrail contract defaults to git-changed files"
+
+GUARD_FIXTURES="${WORKDIR}/guardrail-fixtures"
+mkdir -p "${GUARD_FIXTURES}/resources/views" "${GUARD_FIXTURES}/resources/css"
+
+cat > "${GUARD_FIXTURES}/resources/views/em-dash.blade.php" <<'EOF'
+<p>Quality salt — harvested by hand.</p>
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/mdash.blade.php" <<'EOF'
+<p>Quality salt &mdash; harvested by hand.</p>
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/entity-numeric.blade.php" <<'EOF'
+<p>Quality salt &#8212; harvested by hand.</p>
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/text-arbitrary.blade.php" <<'EOF'
+<h1 class="text-[1.2rem]">Headline</h1>
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/many-text-arbitrary.blade.php" <<'EOF'
+<h1 class="text-[2.35rem]">Display</h1>
+<p class="text-[1.2rem]">Lead</p>
+<span class="text-[0.95rem]">Meta</span>
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/spacing-arbitrary.blade.php" <<'EOF'
+<section class="mt-[17px] px-[22px]">Content</section>
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/source-quote.blade.php" <<'EOF'
+{{-- guardrail-allow-em-dash: original publication title --}}
+<blockquote>Quality salt — harvested by hand.</blockquote>
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/necessary-arbitrary.blade.php" <<'EOF'
+{{-- guardrail-allow-arbitrary: clip to the physical brand-mark box --}}
+<div class="max-w-[1173px]">Mark</div>
+EOF
+cat > "${GUARD_FIXTURES}/resources/css/theme.css" <<'EOF'
+@theme {
+  --text-display: 2.35rem;
+  --spacing-section: 4.5rem;
+}
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/theme-tokens.blade.php" <<'EOF'
+<h1 class="text-display mt-section">Headline</h1>
+EOF
+cat > "${GUARD_FIXTURES}/resources/views/file-allow.blade.php" <<'EOF'
+{{-- guardrail-allow-file: em-dash --}}
+<p>Quoted source title — 1998 reprint.</p>
+EOF
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/em-dash.blade.php >"${LOGDIR}/guard-em-dash.log" 2>&1; then
+  fail "em dash in generated copy fails the guardrail check"
+else
+  pass "em dash in generated copy fails the guardrail check"
+fi
+assert_grep 'em dash' "${LOGDIR}/guard-em-dash.log" \
+  "em dash failure names the em dash"
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/mdash.blade.php >"${LOGDIR}/guard-mdash.log" 2>&1; then
+  fail "&mdash; in generated copy fails the guardrail check"
+else
+  pass "&mdash; in generated copy fails the guardrail check"
+fi
+assert_grep '&mdash;' "${LOGDIR}/guard-mdash.log" \
+  "&mdash; failure names the entity"
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/entity-numeric.blade.php >"${LOGDIR}/guard-entity.log" 2>&1; then
+  fail "numeric em-dash entity fails the guardrail check"
+else
+  pass "numeric em-dash entity fails the guardrail check"
+fi
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/text-arbitrary.blade.php >"${LOGDIR}/guard-text.log" 2>&1; then
+  fail "text-[1.2rem] fails the guardrail check"
+else
+  pass "text-[1.2rem] fails the guardrail check"
+fi
+assert_grep 'text-\[1\.2rem\]' "${LOGDIR}/guard-text.log" \
+  "arbitrary text-size failure names the class"
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/many-text-arbitrary.blade.php >"${LOGDIR}/guard-many-text.log" 2>&1; then
+  fail "several arbitrary font sizes fail the guardrail check"
+else
+  pass "several arbitrary font sizes fail the guardrail check"
+fi
+many_count="$(grep -c 'arbitrary Tailwind utility' "${LOGDIR}/guard-many-text.log" || true)"
+if [[ "${many_count}" -ge 3 ]]; then
+  pass "several arbitrary font sizes are each reported (${many_count})"
+else
+  fail "several arbitrary font sizes are each reported (${many_count})"
+fi
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/spacing-arbitrary.blade.php >"${LOGDIR}/guard-spacing.log" 2>&1; then
+  fail "arbitrary spacing fails the guardrail check"
+else
+  pass "arbitrary spacing fails the guardrail check"
+fi
+assert_grep 'mt-\[17px\]' "${LOGDIR}/guard-spacing.log" \
+  "arbitrary spacing failure names mt-[17px]"
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/source-quote.blade.php >"${LOGDIR}/guard-source.log" 2>&1; then
+  pass "source material with em-dash exception marker passes"
+else
+  fail "source material with em-dash exception marker passes"
+  cat "${LOGDIR}/guard-source.log"
+fi
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/necessary-arbitrary.blade.php >"${LOGDIR}/guard-allow-arb.log" 2>&1; then
+  pass "genuine one-off arbitrary value with exception marker passes"
+else
+  fail "genuine one-off arbitrary value with exception marker passes"
+  cat "${LOGDIR}/guard-allow-arb.log"
+fi
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/css/theme.css resources/views/theme-tokens.blade.php \
+  >"${LOGDIR}/guard-theme.log" 2>&1; then
+  pass "project theme tokens are not flagged as arbitrary utilities"
+else
+  fail "project theme tokens are not flagged as arbitrary utilities"
+  cat "${LOGDIR}/guard-theme.log"
+fi
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${GUARD_FIXTURES}" --files \
+  resources/views/file-allow.blade.php >"${LOGDIR}/guard-file-allow.log" 2>&1; then
+  pass "file-level em-dash exception marker passes"
+else
+  fail "file-level em-dash exception marker passes"
+  cat "${LOGDIR}/guard-file-allow.log"
+fi
+
+HALLMARK_COPY="${WORKDIR}/hallmark-cannot-pass.blade.php"
+cat > "${HALLMARK_COPY}" <<'EOF'
+<p>A studio for what is next — printed matter included.</p>
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${WORKDIR}" --files \
+  hallmark-cannot-pass.blade.php >"${LOGDIR}/guard-hallmark.log" 2>&1; then
+  fail "Hallmark-style em dash copy cannot pass the guardrail check"
+else
+  pass "Hallmark-style em dash copy cannot pass the guardrail check"
+fi
+
+echo ""
 echo "--- Capability-on-demand and motion ---"
 assert_grep 'capability-on-demand, not capability-by-default' \
   "${AI_REPO}/.cursor/rules/00-platform.mdc" \
@@ -846,6 +1092,12 @@ else
   fail "generic received 70-work-items rule link"
 fi
 
+if [[ -L "${GENERIC}/scripts/check-guardrails.sh" ]] && [[ "$(readlink "${GENERIC}/scripts/check-guardrails.sh")" == "${AI_REPO}/scripts/check-guardrails.sh" ]]; then
+  pass "generic received check-guardrails.sh link"
+else
+  fail "generic received check-guardrails.sh link"
+fi
+
 if "${AI_REPO}/scripts/doctor.sh" "${GENERIC}" >${LOGDIR}/doctor-generic.log 2>&1; then
   pass "doctor on generic project exits 0"
 else
@@ -856,6 +1108,8 @@ assert_grep "Playwright Mode A not required" ${LOGDIR}/doctor-generic.log \
   "doctor does not force Playwright on generic projects"
 assert_grep "Boost not applicable" ${LOGDIR}/doctor-generic.log \
   "doctor does not require Boost on generic projects"
+assert_grep "Guardrail check script linked" ${LOGDIR}/doctor-generic.log \
+  "doctor reports the guardrail script is linked"
 
 echo ""
 echo "--- New Roots/Radicle project ---"

@@ -241,7 +241,7 @@ From the **harness** clone:
 | `.hermes.md` | **Not** created. Hermes uses `AGENTS.md` |
 | `.ai/guidelines/ai-platform.md` | Laravel only: symlink to `core/agent-core.md` for Boost composition |
 | `.claude/skills/`, `.grok/skills/` | Symlinks to `.agents/skills/` |
-| `scripts/doctor.sh`, `scripts/export-chatgpt-context.sh` | Symlink into the project |
+| `scripts/doctor.sh`, `scripts/export-chatgpt-context.sh`, `scripts/check-guardrails.sh` | Symlink into the project |
 | `skills-lock.json` | Symlink to this clone |
 | Locked skills | Copied into `.agents/skills/` (`npx skills experimental_install`) |
 | `docs/` | Copied from templates if `docs/README.md` is missing; existing docs are not overwritten |
@@ -283,6 +283,7 @@ Re-run bootstrap in the project to reconcile managed files:
 - refresh Claude/Grok skill adapter links
 - apply current bootstrap-managed project configuration
 - add current ignore entries such as `.hallmark/`
+- link current platform scripts such as `scripts/check-guardrails.sh`
 
 Re-bootstrap is not Project Adoption. It does not rewrite application
 code. Skill copies that are already installed are not refreshed unless
@@ -426,7 +427,7 @@ Edit shared rules in `$AI_PLATFORM`, not through project symlinks.
 - `core/` — profiles, prompts (`core/prompts/project-adoption.md`,
   `core/prompts/resume.md`)
 - `scripts/` — `bootstrap-project.sh`, `doctor.sh`, `update-skills.sh`,
-  `export-chatgpt-context.sh`, `test-platform.sh`
+  `export-chatgpt-context.sh`, `check-guardrails.sh`, `test-platform.sh`
 - `mcp/` — MCP **ownership** (not an installer)
 - `templates/` — docs copied into new projects
 - `docs/` — this harness's contracts

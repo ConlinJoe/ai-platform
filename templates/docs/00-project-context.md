@@ -32,6 +32,9 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   not decoration. Adjacent semantic sections must remain visually
   distinguishable without mechanically alternating backgrounds
   (see `.cursor/rules/40-ui.mdc`).
+- Generated public-facing copy must not use em dashes. Prefer standard
+  Tailwind utilities and project tokens over arbitrary values
+  (see `.cursor/rules/20-coding.mdc`, `.cursor/rules/40-ui.mdc`).
 
 <!-- Additional non-negotiable technical, business, or operational constraints. -->
 

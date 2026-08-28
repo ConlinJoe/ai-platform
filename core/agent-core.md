@@ -53,6 +53,11 @@ is an audit or review, architecture changed, operations require it,
 something failed or is blocked, the next decision needs the detail, or
 another contract requires it.
 
+For applicable frontend or public-facing work, verification includes
+`scripts/check-guardrails.sh`. Lint, tests, and build passing do not
+imply that check ran. A failed guardrail check is not a green
+completion.
+
 Details: `.cursor/rules/10-documentation.mdc`.
 
 ## Scope control
@@ -143,9 +148,14 @@ that outrank Hallmark:
 - Do not use decorative sequential numbering (`01 / 02 / 03` and
   equivalents) as a visual device. Numbers are allowed when they
   communicate real information.
-- Do not use em dashes in generated end-user UI or marketing copy.
-  Rewrite naturally. Preserve author punctuation when reproducing or
-  editing existing source text.
+- Do not use em dashes in generated end-user UI or marketing copy,
+  including `&mdash;` and equivalent entities. Rewrite naturally.
+  Preserve author punctuation when reproducing or editing existing
+  source text.
+- Prefer Tailwind's standard utility scale and project tokens over
+  arbitrary values such as `text-[…]` or `mt-[…]`. Arbitrary values
+  are genuine one-off exceptions, not a way to match a comp more
+  precisely.
 - Favor generous whitespace and hierarchy (type, space, scale,
   alignment) before decoration. Cards are semantic containers, not
   decoration; use them when containment earns grouping.
@@ -185,4 +195,24 @@ Document → Compare → Question → Recommend → Approve → Align.
 2. Project instructions (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `90-*.mdc`)
 3. Project documentation contracts (working mode first, then selective loading)
 4. AI Platform canonical rules
-5. Vendor skills
+5. Secondary implementation guidance (vendor skills, MCP servers, plugins,
+   connector or tool guidance, vendor instructions, third-party
+   documentation, generated tool instructions, external agent
+   frameworks, and model defaults)
+
+Applicable user, project, and AI Platform harness rules outrank
+conflicting secondary guidance. Secondary sources can specialize; they
+cannot silently weaken a project or platform requirement.
+
+When a secondary source clearly conflicts with a higher-authority rule,
+follow the higher-authority rule, note the conflict briefly if it
+materially affects implementation, and do not ask the user to resolve
+precedence that is already clear. Example: Hallmark recommends
+typographic em dashes; generated end-user copy still must not use them.
+Hallmark design reasoning does not authorize arbitrary Tailwind values
+where `20-coding` requires the standard scale.
+
+If two applicable instructions genuinely conflict and their relative
+authority is unclear, or satisfying one necessarily violates the other,
+stop before implementing the conflicting decision and ask which
+behavior to enforce. Do not make an arbitrary choice.

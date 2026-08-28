@@ -23,7 +23,9 @@ contract model and templates from `templates/docs/`.
 | `contracts/adrs/0003-work-item-lifecycle.md` | adr | accepted | Decision to use a provider-neutral work-item lifecycle with GitHub as reference |
 | `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` | adr | accepted | Decision that Hallmark is the only managed design skill and significant UI authorizes bounded Mode B visual verification |
 | `contracts/adrs/0005-agent-continuation-and-concise-reporting.md` | adr | accepted | Decision to store agent continuation in working-mode.md and default to concise completion reporting |
+| `contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md` | adr | accepted | Decision that project/platform rules outrank secondary guidance and that em-dash/Tailwind arbitrary values are mechanically checked |
 | `contracts/features/browser-qa.md` | feature | active | Browser QA policy, invocation, capability-aware visual verification, Playwright vs interactive distinction, applicability, isolation |
+| `contracts/features/copy-and-tailwind-guardrails.md` | feature | active | Mechanical em-dash and Tailwind arbitrary-value check, exceptions, DONE gating |
 | `contracts/features/laravel-boost.md` | feature | active | Boost capability, detection, bootstrap/doctor |
 | `contracts/features/work-item-lifecycle.md` | feature | active | Capture-don't-expand, Issues/PRs, approval boundaries, optional gh |
 
@@ -41,9 +43,11 @@ flowchart TD
   workAdr[contracts/adrs/0003-work-item-lifecycle.md]
   designAdr[contracts/adrs/0004-design-stack-and-ui-visual-verification.md]
   continuationAdr[contracts/adrs/0005-agent-continuation-and-concise-reporting.md]
+  guardrailAdr[contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md]
   browserQa[contracts/features/browser-qa.md]
   boost[contracts/features/laravel-boost.md]
   workItems[contracts/features/work-item-lifecycle.md]
+  guardrails[contracts/features/copy-and-tailwind-guardrails.md]
 
   chatgpt --> philosophy
   chatgpt --> context
@@ -56,9 +60,12 @@ flowchart TD
   boostAdr --> boost
   workAdr --> workItems
   designAdr --> browserQa
+  guardrailAdr --> guardrails
+  guardrailAdr --> designAdr
   browserQa --> browserAdr
   boost --> boostAdr
   workItems --> workAdr
+  guardrails --> guardrailAdr
 ```
 
 ## Loading Guide
@@ -71,6 +78,7 @@ flowchart TD
 | ChatGPT export setup | `chatgpt-projects.md` |
 | First-time clone / onboarding | `../README.md`, `mcp/README.md` |
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` |
+| Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
 | Multi-agent adapters | `core/adapters/README.md` |
 | New or existing project bootstrap | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Existing project adoption | `core/prompts/project-adoption.md` |

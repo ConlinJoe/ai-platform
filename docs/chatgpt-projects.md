@@ -77,7 +77,8 @@ change.
 New projects bootstrapped via `scripts/bootstrap-project.sh` receive:
 
 - Documentation contract templates under `docs/`
-- Symlinks to `scripts/export-chatgpt-context.sh` and `scripts/doctor.sh`
+- Symlinks to `scripts/export-chatgpt-context.sh`, `scripts/doctor.sh`,
+  and `scripts/check-guardrails.sh`
 
 Existing projects keep their docs. Bootstrap adds only missing drafts
 (working mode, status, reconciliation, Laravel browser QA) and

@@ -39,13 +39,52 @@ Tailwind behavior by hand, and do not invent a parallel CSS abstraction
 layer on top of Tailwind.
 
 This standard takes precedence over vendor-skill Tailwind/CSS shortcuts
-(Instruction Priority in `00-platform`).
+(Instruction Priority in `00-platform`). Hallmark may provide design
+reasoning, token recipes, or CSS examples. Translate those into this
+order of preference; do not copy them as one-off arbitrary utilities
+merely to match a recipe or comp.
 
 Current-First Engineering in `00-platform` chooses the mechanism: inspect
 the installed Tailwind version, then use that version's current official
 configuration. On v4, that is CSS-first architecture (`@theme`, and other
 current v4 APIs). On v3, that is the v3 config/theme conventions. Do not
 upgrade Tailwind merely to satisfy this standard.
+
+Use Tailwind's standard utility scale when an equivalent exists.
+Arbitrary values are reserved for genuine design requirements that
+cannot reasonably be expressed with the existing standard utilities or
+project tokens.
+
+This applies especially to typography, spacing, sizing, gaps,
+padding/margins, and widths/heights where standard utilities are
+appropriate.
+
+Preferred decision path:
+
+1. Existing project token or existing utility
+2. Standard Tailwind utility
+3. Project-level Tailwind theme token (`@theme` or version-appropriate
+   configuration) when the value is repeated or represents a
+   design-system decision
+4. Arbitrary value only for a genuine one-off exception
+
+Do not use an arbitrary value merely because it matches a design comp
+more precisely. Reasonable visual approximation using the standard
+Tailwind scale is preferred unless exact sizing is materially necessary.
+
+Undesirable default behavior:
+
+- `text-[1.2rem]` when `text-xl` is appropriate
+- `text-[2.35rem]` chosen simply to approximate a comp
+- `mt-[17px]` when the standard spacing scale is reasonably equivalent
+- repeated arbitrary values that should instead become a project token
+
+Arbitrary values remain valid when genuinely necessary. There is no
+absolute ban. When an arbitrary value remains in newly written or
+materially modified code, explain why the standard scale or project
+tokens were insufficient. Use `guardrail-allow-arbitrary` on that line
+or the previous line (see `docs/contracts/features/copy-and-tailwind-guardrails.md`).
+Do not create extra documentation for every legitimate exception.
 
 - Start with the most appropriate native utility or primitive: `container`,
   spacing scale, colors, typography, font families, radii, shadows,
@@ -55,9 +94,6 @@ upgrade Tailwind merely to satisfy this standard.
 - Configure repeated site-wide design decisions once, using that Tailwind
   version's theme/configuration — not by scattering reconstructed class
   strings through templates.
-- Arbitrary values are valid for genuine design exceptions
-  (`container max-w-[1200px]`), not as a substitute for native utilities
-  or central theme configuration.
 - Do not add custom CSS or a semantic class merely because several
   utilities appear together. Prefer `container max-w-5xl` over a one-off
   `.narrow-wrap` class for that combination.
@@ -88,6 +124,11 @@ Before considering a task complete:
     escalate visual or frontend changes into Playwright or browser
     automation unless `60-browser-qa` authorizes it (explicit request, or
     the bounded significant-UI Mode B visual pass in `40-ui`).
+-   For work that writes or modifies public-facing copy or Tailwind
+    markup, run `scripts/check-guardrails.sh` before reporting DONE.
+    Lint, tests, and build passing do not imply that check ran. A
+    failed check is not a green completion: fix the violation, or use
+    the documented exception marker and explain why.
 -   Load relevant documentation contracts via `docs/README.md` (not the full
     documentation tree).
 -   Resolve the documentation outcome: update affected contracts, explicitly

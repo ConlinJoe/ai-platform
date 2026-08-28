@@ -101,9 +101,13 @@ treatments unless numbering materially improves comprehension.
 
 ### Em dashes in generated product copy
 
-Do not use em dashes (`—`) in UI copy, headings, subheadings, marketing
-copy, calls to action, explanatory website copy, or other generated
+Do not use em dashes in UI copy, headings, subheadings, marketing copy,
+calls to action, form copy, explanatory website copy, page metadata
+intended for users, search, or social presentation, or other generated
 end-user copy.
+
+This includes `—`, `&mdash;`, and equivalent HTML numeric entities
+(`&#8212;`, `&#x2014;`).
 
 Prefer natural sentence structure, periods, commas, colons, or
 parentheses where appropriate. Do not merely replace every em dash
@@ -113,9 +117,25 @@ naturally.
 Preserve em dashes when reproducing user-provided or source text
 exactly, when required by an external content source, when editing
 content where changing the author's punctuation is outside scope, or
-when technically required in a literal value.
+when technically required in a literal value. Do not rewrite vendor
+files, third-party content, source fixtures, documentation examples, or
+quoted material solely because they contain an em dash.
 
-This is a generated-copy rule.
+When a legitimate source-fidelity exception remains in newly written or
+modified application sources, mark it with `guardrail-allow-em-dash` on
+that line or the previous line, or `guardrail-allow-file: em-dash` at
+the top of a source-fidelity file. See
+`docs/contracts/features/copy-and-tailwind-guardrails.md`.
+
+This is a generated-copy rule. Hallmark typography, copy, anti-pattern,
+and slop-test guidance that encourages typographic em dashes does not
+override it. Do not treat a Hallmark audit or slop-test result as a
+pass condition that reverses this rule.
+
+Before reporting DONE on work that writes or modifies public-facing
+copy or Tailwind markup, run `scripts/check-guardrails.sh`. This applies
+to small UI and copy-only work, not only significant UI. Lint, tests,
+and build passing do not replace it.
 
 ### Generic AI/template decoration
 
@@ -409,6 +429,17 @@ Project design systems, contracts, tokens, framework-native rules, and
 the hard prohibitions in this file remain authoritative over Hallmark
 recommendations.
 
+Hallmark copy and typography guidance may recommend typographic em
+dashes. Ignore that for generated end-user copy. Hallmark slop-test
+or audit treating `--` as a defect to convert into an em dash is not a
+pass condition.
+
+Hallmark CSS or token recipes (custom `font-size` clamps, spacing
+tokens, and similar) are design reasoning. Implementation must still
+follow `20-coding`: standard Tailwind utilities and project theme
+tokens first. Do not translate a recipe into one-off `text-[…]`,
+`mt-[…]`, or similar arbitrary classes merely to match it.
+
 ## Reference-driven design
 
 When given a screenshot, URL, live site, internal product, named
@@ -445,7 +476,10 @@ Internal review floor (do not dump this as a giant checklist in normal
 agent output):
 
 - Is any decorative numbering being used?
-- Does generated end-user copy contain em dashes?
+- Does generated end-user copy contain em dashes? Confirm with
+  `scripts/check-guardrails.sh`; this is not a visual-only check.
+- Do new or modified Tailwind classes use arbitrary values where a
+  standard utility or project token would suffice?
 - Are there obvious generic AI/template patterns?
 - Are cards, pills, badges, icons, dividers, or gradients being used
   without a real structural purpose?
