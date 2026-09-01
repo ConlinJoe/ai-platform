@@ -28,7 +28,10 @@ Sequence: **Understand → Document → Compare → Question → Recommend → A
 
 Do **not**: apply platform conventions blindly; migrate or refactor
 application code because the project differs from platform defaults; or
-treat bootstrap as if it already understood the project.
+treat bootstrap as if it already understood the project. Do **not**
+treat an optional Deployer install as adoption or as authorization to
+deploy. That capability is separate:
+`docs/contracts/features/deployer.md` in the harness clone.
 
 During adoption, the usual "do not load all documentation" rule does
 **not** apply. Read the existing docs set before changing anything.

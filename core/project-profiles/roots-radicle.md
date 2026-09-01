@@ -507,3 +507,10 @@ contracts should record, concisely:
 - WPForms Lite is the default basic forms layer
 - upgrades or alternatives require actual project need
 - credentials and secrets are never committed
+
+## Optional Deployer
+
+This profile may receive the harness-managed Deployer stack when the
+developer selects it at bootstrap or runs `scripts/install-deployer.sh`.
+That install is not a deploy. See
+`docs/contracts/features/deployer.md` in the harness clone.

@@ -9,6 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AI_REPO="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 export AI_BOOTSTRAP_SKIP_SKILLS=1
+export AI_BOOTSTRAP_NONINTERACTIVE=1
 
 PASSES=0
 FAILURES=0
@@ -57,7 +58,7 @@ assert_grep() {
   local pattern="$1"
   local file="$2"
   local label="$3"
-  if grep -qE "${pattern}" "${file}"; then
+  if grep -qE -- "${pattern}" "${file}"; then
     pass "${label}"
   else
     fail "${label}"
@@ -68,7 +69,7 @@ assert_not_grep() {
   local pattern="$1"
   local file="$2"
   local label="$3"
-  if grep -qE "${pattern}" "${file}"; then
+  if grep -qE -- "${pattern}" "${file}"; then
     fail "${label}"
   else
     pass "${label}"
@@ -115,6 +116,26 @@ write_radicle_composer() {
 EOF
 }
 
+write_wordpress_root() {
+  local dir="$1"
+  mkdir -p "${dir}/wp-content/uploads"
+  printf "<?php\n// sample\n" > "${dir}/wp-config-sample.php"
+}
+
+write_bedrock_composer() {
+  local dir="$1"
+  mkdir -p "${dir}/web/app"
+  printf "<?php\n" > "${dir}/web/wp-config.php"
+  cat > "${dir}/composer.json" <<'EOF'
+{
+  "require": {
+    "php": "^8.2",
+    "roots/wordpress": "^6.8"
+  }
+}
+EOF
+}
+
 WORKDIR="${AI_REPO}/.build/platform-tests"
 LOGDIR="${WORKDIR}/logs"
 rm -rf "${WORKDIR}"
@@ -127,12 +148,14 @@ echo ""
 echo "--- Syntax ---"
 for script in \
   "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "${AI_REPO}/scripts/install-deployer.sh" \
   "${AI_REPO}/scripts/doctor.sh" \
   "${AI_REPO}/scripts/check-guardrails.sh" \
   "${AI_REPO}/scripts/link-rules.sh" \
   "${AI_REPO}/scripts/export-chatgpt-context.sh" \
   "${AI_REPO}/scripts/update-skills.sh" \
   "${AI_REPO}/scripts/lib/project-capabilities.sh" \
+  "${AI_REPO}/scripts/lib/deployer.sh" \
   "${AI_REPO}/scripts/test-platform.sh"
 do
   if bash -n "${script}"; then
@@ -154,15 +177,17 @@ assert_file "${AI_REPO}/core/prompts/project-adoption.md" \
 assert_file "${AI_REPO}/README.md" "README exists"
 assert_grep '^# AI Development Harness' "${AI_REPO}/README.md" \
   "README uses the public product title"
-assert_grep '^Version 1\.2\.0$' "${AI_REPO}/README.md" \
-  "README reports harness version 1.2.0"
+assert_grep '^Version 1\.3\.0$' "${AI_REPO}/README.md" \
+  "README reports harness version 1.3.0"
 assert_file "${AI_REPO}/CHANGELOG.md" "CHANGELOG exists"
+assert_grep '^## 1\.3\.0' "${AI_REPO}/CHANGELOG.md" \
+  "CHANGELOG has a 1.3.0 entry"
 assert_grep '^## 1\.2\.0' "${AI_REPO}/CHANGELOG.md" \
-  "CHANGELOG has a 1.2.0 entry"
-assert_grep 'Version 1\.2\.0' "${AI_REPO}/docs/99-project-status.md" \
-  "status document reports version 1.2.0"
-assert_grep '^Version 1\.2\.0$' "${AI_REPO}/docs/00-project-context.md" \
-  "project context reports version 1.2.0"
+  "CHANGELOG preserves the 1.2.0 entry"
+assert_grep 'Version 1\.3\.0' "${AI_REPO}/docs/99-project-status.md" \
+  "status document reports version 1.3.0"
+assert_grep '^Version 1\.3\.0$' "${AI_REPO}/docs/00-project-context.md" \
+  "project context reports version 1.3.0"
 assert_file "${AI_REPO}/LICENSE" "LICENSE exists"
 assert_grep 'MIT License' "${AI_REPO}/LICENSE" \
   "LICENSE is MIT"
@@ -251,6 +276,41 @@ assert_grep 'profile gap, not a failed' "${AI_REPO}/docs/getting-started.md" \
   "getting-started distinguishes Laravel doctor FAIL from a failed harness link"
 assert_grep 'until Laravel Boost is declared' "${AI_REPO}/docs/getting-started.md" \
   "getting-started says Laravel project doctor fails until Boost is present"
+assert_grep 'does \*\*not\*\* implement the deferred project-local' \
+  "${AI_REPO}/CHANGELOG.md" \
+  "v1.3.0 changelog states the deferred portability architecture was not implemented"
+assert_grep 'Installing or configuring deployment tooling does not authorize' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform states installing Deployer does not authorize deployment"
+assert_grep 'Installing or configuring deployment tooling does not authorize' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core states installing Deployer does not authorize deployment"
+assert_grep 'restorable production backup' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform keeps the production backup requirement"
+assert_grep 'restorable production backup' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core keeps the production backup requirement"
+assert_grep 'catastrophic operations' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform keeps the catastrophic-operation guardrail"
+assert_grep 'catastrophic operations' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core keeps the catastrophic-operation guardrail"
+assert_file "${AI_REPO}/scripts/install-deployer.sh" \
+  "standalone Deployer installer exists"
+assert_file "${AI_REPO}/docs/contracts/features/deployer.md" \
+  "canonical Deployer contract exists"
+assert_file "${AI_REPO}/docs/contracts/adrs/0007-optional-deployer-capability.md" \
+  "Deployer ADR exists"
+assert_missing "${AI_REPO}/templates/docs/contracts/features/deployment.md" \
+  "docs templates do not auto-copy Deployer notes into every new project"
+assert_not_grep 'vendor/bin/dep deploy' "${AI_REPO}/scripts/lib/deployer.sh" \
+  "deployer helpers do not invoke dep deploy"
+assert_not_grep 'vendor/bin/dep deploy' "${AI_REPO}/scripts/install-deployer.sh" \
+  "standalone installer does not invoke dep deploy"
+assert_not_grep 'vendor/bin/dep deploy' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap does not invoke dep deploy"
 
 echo ""
 echo "--- Agent continuation ---"
@@ -847,14 +907,12 @@ assert_grep 'Canonical detailed rules live in `.cursor/rules/`' \
 assert_grep 'symlinked from the' \
   "${AI_REPO}/core/agent-core.md" \
   "portable core still describes current rule symlink architecture"
-assert_not_grep 'v1\.3\.0' "${AI_REPO}/README.md" \
-  "README does not begin v1.3.0"
-assert_not_grep 'v1\.3\.0' "${AI_REPO}/docs/00-project-context.md" \
-  "project context does not begin v1.3.0"
-assert_grep '^Version 1\.2\.0$' "${AI_REPO}/README.md" \
-  "README version remains 1.2.0"
-assert_grep '^Version 1\.2\.0$' "${AI_REPO}/docs/00-project-context.md" \
-  "project context version remains 1.2.0"
+assert_not_grep 'v1\.4\.0' "${AI_REPO}/README.md" \
+  "README does not begin a later unreleased version"
+assert_grep '^Version 1\.3\.0$' "${AI_REPO}/README.md" \
+  "README version is 1.3.0"
+assert_grep '^Version 1\.3\.0$' "${AI_REPO}/docs/00-project-context.md" \
+  "project context version is 1.3.0"
 assert_grep '\.DS_Store' "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
   "workflows document macOS gitignore entries"
 assert_grep '`\.ai/`' "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
@@ -1209,6 +1267,8 @@ assert_grep "Playwright and Laravel Boost are not required" "${LOGDIR}/doctor-pl
   "doctor does not require Playwright/Boost of the platform repo"
 assert_grep "GitHub CLI is not required" "${LOGDIR}/doctor-platform.log" \
   "doctor does not require GitHub CLI of the platform repo"
+assert_grep "Deployer is not required of the harness clone" "${LOGDIR}/doctor-platform.log" \
+  "doctor does not require Deployer of the platform repo"
 
 echo ""
 echo "--- Generic new project ---"
@@ -1328,6 +1388,10 @@ assert_grep "Boost not applicable" ${LOGDIR}/doctor-generic.log \
   "doctor does not require Boost on generic projects"
 assert_grep "Guardrail check script linked" ${LOGDIR}/doctor-generic.log \
   "doctor reports the guardrail script is linked"
+assert_grep "Deployer not installed" ${LOGDIR}/doctor-generic.log \
+  "doctor treats Deployer absence as valid on generic projects"
+assert_missing "${GENERIC}/deploy.php" \
+  "non-interactive generic bootstrap does not install Deployer"
 
 echo ""
 echo "--- Skill adapter links (bootstrap from harness cwd) ---"
@@ -1483,6 +1547,8 @@ assert_grep '^\.ai/?$' "${LARAVEL_NEW}/.gitignore" \
   "new Laravel gitignore ignores .ai/"
 assert_grep "Detected profile: laravel-webapp" ${LOGDIR}/boot-laravel-new.log \
   "bootstrap detects laravel-webapp profile"
+assert_missing "${LARAVEL_NEW}/deploy.php" \
+  "non-interactive Laravel bootstrap does not install Deployer by default"
 assert_not_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-laravel-new.log \
   "bootstrap does not treat Laravel as roots-radicle"
 assert_grep "missing_package" ${LOGDIR}/boot-laravel-new.log \
@@ -1657,6 +1723,283 @@ assert_grep "core/prompts/project-adoption.md" ${LOGDIR}/boot-generic-2.log \
   "re-bootstrap of a new project prints the existing-project adoption prompt (known limitation)"
 
 echo ""
+echo "--- Deployer capability ---"
+assert_file "${AI_REPO}/templates/deployer/laravel/deploy.php" \
+  "Laravel Deployer recipe template exists"
+assert_file "${AI_REPO}/templates/deployer/roots/deploy.php" \
+  "Roots Deployer recipe template exists"
+assert_file "${AI_REPO}/templates/deployer/bedrock/deploy.php" \
+  "Bedrock Deployer recipe template exists"
+assert_file "${AI_REPO}/templates/deployer/wordpress/deploy.php" \
+  "WordPress Deployer recipe template exists"
+assert_grep 'AI_PLATFORM_DEPLOYER_STACK=laravel' \
+  "${AI_REPO}/templates/deployer/laravel/deploy.php" \
+  "Laravel recipe is marked harness-managed"
+assert_not_grep 'password' "${AI_REPO}/templates/deployer/hosts.yaml.example" \
+  "hosts example does not contain password"
+assert_not_grep 'BEGIN OPENSSH' "${AI_REPO}/templates/deployer/hosts.yaml.example" \
+  "hosts example does not contain a private key"
+assert_grep 'CHANGE_ME' "${AI_REPO}/templates/deployer/hosts.yaml.example" \
+  "hosts example uses placeholders"
+assert_grep 'with-deployer' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap documents --with-deployer"
+assert_grep 'without-deployer' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap documents --without-deployer"
+assert_grep 'capability-on-demand' \
+  "${AI_REPO}/docs/contracts/features/deployer.md" \
+  "Deployer contract states capability-on-demand"
+assert_grep 'does not authorize deployment' \
+  "${AI_REPO}/docs/contracts/features/deployer.md" \
+  "Deployer contract repeats the authorization boundary"
+assert_grep 'restorable production backup' \
+  "${AI_REPO}/docs/contracts/features/deployer.md" \
+  "Deployer contract preserves the production backup requirement"
+assert_grep 'keep_releases' \
+  "${AI_REPO}/docs/contracts/features/deployer.md" \
+  "Deployer contract documents release retention"
+
+DEP_PROMPT="${WORKDIR}/deployer-prompt"
+mkdir -p "${DEP_PROMPT}"
+write_laravel_composer "${DEP_PROMPT}" 0
+unset AI_BOOTSTRAP_NONINTERACTIVE
+printf '\n' | "${AI_REPO}/scripts/bootstrap-project.sh" "${DEP_PROMPT}" \
+  >"${LOGDIR}/boot-deployer-prompt-n.log" 2>&1
+export AI_BOOTSTRAP_NONINTERACTIVE=1
+assert_grep 'Install Deployer deployment stack\? \[y/N\]' \
+  "${LOGDIR}/boot-deployer-prompt-n.log" \
+  "interactive bootstrap offers Deployer when appropriate"
+assert_missing "${DEP_PROMPT}/deploy.php" \
+  "default answer does not install Deployer"
+assert_grep 'Skipping Deployer' "${LOGDIR}/boot-deployer-prompt-n.log" \
+  "default N skips Deployer"
+
+DEP_YES="${WORKDIR}/deployer-prompt-yes"
+mkdir -p "${DEP_YES}"
+write_laravel_composer "${DEP_YES}" 0
+unset AI_BOOTSTRAP_NONINTERACTIVE
+printf 'y\n' | "${AI_REPO}/scripts/bootstrap-project.sh" "${DEP_YES}" \
+  >"${LOGDIR}/boot-deployer-prompt-y.log" 2>&1
+export AI_BOOTSTRAP_NONINTERACTIVE=1
+assert_file "${DEP_YES}/deploy.php" \
+  "answering yes installs the Laravel Deployer recipe"
+assert_grep 'AI_PLATFORM_DEPLOYER_STACK=laravel' "${DEP_YES}/deploy.php" \
+  "yes-install uses the Laravel harness marker"
+assert_grep 'Installing Deployer does not authorize deployment' \
+  "${LOGDIR}/boot-deployer-prompt-y.log" \
+  "yes-install reports that deployment is not authorized"
+
+DEP_WITH="${WORKDIR}/deployer-with-flag"
+mkdir -p "${DEP_WITH}"
+write_laravel_composer "${DEP_WITH}" 0
+"${AI_REPO}/scripts/bootstrap-project.sh" --with-deployer "${DEP_WITH}" \
+  >"${LOGDIR}/boot-deployer-with.log" 2>&1
+assert_file "${DEP_WITH}/deploy.php" \
+  "--with-deployer installs Deployer"
+assert_not_grep 'Install Deployer deployment stack' \
+  "${LOGDIR}/boot-deployer-with.log" \
+  "--with-deployer does not prompt"
+assert_file "${DEP_WITH}/deploy/hosts.yaml.example" \
+  "--with-deployer writes the hosts example"
+assert_file "${DEP_WITH}/deploy/hosts.yaml" \
+  "--with-deployer writes a local hosts file from the example"
+assert_file "${DEP_WITH}/docs/contracts/features/deployment.md" \
+  "--with-deployer writes project-local deployment notes"
+assert_grep 'deployer/deployer' "${DEP_WITH}/composer.json" \
+  "--with-deployer declares deployer/deployer"
+assert_grep '/\.dep/' "${DEP_WITH}/.gitignore" \
+  "--with-deployer gitignores .dep/"
+assert_grep 'deploy/hosts\.yaml' "${DEP_WITH}/.gitignore" \
+  "--with-deployer gitignores deploy/hosts.yaml"
+assert_grep 'CHANGE_ME' "${DEP_WITH}/deploy/hosts.yaml" \
+  "generated hosts file uses placeholders"
+assert_not_grep 'password' "${DEP_WITH}/deploy.php" \
+  "generated recipe contains no password"
+assert_not_grep 'password' "${DEP_WITH}/deploy/hosts.yaml" \
+  "generated hosts file contains no password"
+assert_not_grep 'BEGIN ' "${DEP_WITH}/deploy/hosts.yaml" \
+  "generated hosts file contains no key material"
+assert_grep 'does not deploy' "${LOGDIR}/boot-deployer-with.log" \
+  "--with-deployer reports that it does not deploy"
+assert_not_grep 'vendor/bin/dep ' "${LOGDIR}/boot-deployer-with.log" \
+  "--with-deployer does not execute Deployer"
+
+DEP_WITH_TRAIL="${WORKDIR}/deployer-with-flag-trail"
+mkdir -p "${DEP_WITH_TRAIL}"
+write_laravel_composer "${DEP_WITH_TRAIL}" 0
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DEP_WITH_TRAIL}" --with-deployer \
+  >"${LOGDIR}/boot-deployer-with-trail.log" 2>&1
+assert_file "${DEP_WITH_TRAIL}/deploy.php" \
+  "path then --with-deployer still installs"
+
+DEP_WITHOUT="${WORKDIR}/deployer-without-flag"
+mkdir -p "${DEP_WITHOUT}"
+write_laravel_composer "${DEP_WITHOUT}" 0
+"${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer "${DEP_WITHOUT}" \
+  >"${LOGDIR}/boot-deployer-without.log" 2>&1
+assert_missing "${DEP_WITHOUT}/deploy.php" \
+  "--without-deployer skips Deployer"
+assert_not_grep 'Install Deployer deployment stack' \
+  "${LOGDIR}/boot-deployer-without.log" \
+  "--without-deployer does not prompt"
+assert_grep 'Skipping Deployer' \
+  "${LOGDIR}/boot-deployer-without.log" \
+  "--without-deployer reports the skip"
+
+printf 'UNIQUE_RECIPE_MARKER\n' >> "${DEP_WITH}/deploy.php"
+"${AI_REPO}/scripts/bootstrap-project.sh" --with-deployer "${DEP_WITH}" \
+  >"${LOGDIR}/boot-deployer-idempotent.log" 2>&1
+assert_grep 'UNIQUE_RECIPE_MARKER' "${DEP_WITH}/deploy.php" \
+  "repeated installation does not overwrite an existing harness recipe"
+assert_grep 'already present' "${LOGDIR}/boot-deployer-idempotent.log" \
+  "repeated installation reports the stack is already present"
+
+if "${AI_REPO}/scripts/doctor.sh" "${DEP_WITH}" \
+  >"${LOGDIR}/doctor-deployer-ok.log" 2>&1; then
+  : # Boost missing will fail doctor on Laravel; Deployer lines still matter
+fi
+assert_grep 'Harness-managed Deployer stack is present' \
+  "${LOGDIR}/doctor-deployer-ok.log" \
+  "doctor recognizes a healthy harness-managed Deployer install"
+assert_grep 'Deployer profile: laravel' \
+  "${LOGDIR}/doctor-deployer-ok.log" \
+  "doctor reports the Laravel Deployer profile"
+
+DEP_ROOTS="${WORKDIR}/deployer-roots"
+mkdir -p "${DEP_ROOTS}/web/app/themes/sage"
+write_radicle_composer "${DEP_ROOTS}"
+printf '{"name":"sage"}\n' > "${DEP_ROOTS}/web/app/themes/sage/package.json"
+"${AI_REPO}/scripts/bootstrap-project.sh" --with-deployer "${DEP_ROOTS}" \
+  >"${LOGDIR}/boot-deployer-roots.log" 2>&1
+assert_grep 'AI_PLATFORM_DEPLOYER_STACK=roots' "${DEP_ROOTS}/deploy.php" \
+  "Roots profile installs the roots Deployer recipe"
+assert_grep 'web/app/themes/sage' "${DEP_ROOTS}/deploy.php" \
+  "Roots installer detects the Sage theme path"
+assert_grep 'sage:build' "${DEP_ROOTS}/deploy.php" \
+  "Roots recipe includes a Sage build task"
+
+DEP_BEDROCK="${WORKDIR}/deployer-bedrock"
+mkdir -p "${DEP_BEDROCK}"
+write_bedrock_composer "${DEP_BEDROCK}"
+"${AI_REPO}/scripts/bootstrap-project.sh" --with-deployer "${DEP_BEDROCK}" \
+  >"${LOGDIR}/boot-deployer-bedrock.log" 2>&1
+assert_grep 'AI_PLATFORM_DEPLOYER_STACK=bedrock' "${DEP_BEDROCK}/deploy.php" \
+  "Bedrock without Sage installs the bedrock Deployer recipe"
+assert_not_grep 'sage:build' "${DEP_BEDROCK}/deploy.php" \
+  "Bedrock-only recipe does not include a Sage build"
+
+DEP_WP="${WORKDIR}/deployer-wordpress"
+mkdir -p "${DEP_WP}"
+write_wordpress_root "${DEP_WP}"
+"${AI_REPO}/scripts/bootstrap-project.sh" --with-deployer "${DEP_WP}" \
+  >"${LOGDIR}/boot-deployer-wp.log" 2>&1
+assert_grep 'AI_PLATFORM_DEPLOYER_STACK=wordpress' "${DEP_WP}/deploy.php" \
+  "conventional WordPress installs the wordpress Deployer recipe"
+assert_grep 'recipe/wordpress.php' "${DEP_WP}/deploy.php" \
+  "WordPress recipe uses Deployer's native wordpress recipe"
+assert_grep 'deployer/deployer' "${DEP_WP}/composer.json" \
+  "WordPress install creates a Composer require-dev for Deployer"
+
+DEP_FOREIGN="${WORKDIR}/deployer-foreign"
+mkdir -p "${DEP_FOREIGN}"
+write_laravel_composer "${DEP_FOREIGN}" 0
+printf '<?php\n// CUSTOM_FOREIGN_DEPLOYER\n' > "${DEP_FOREIGN}/deploy.php"
+"${AI_REPO}/scripts/bootstrap-project.sh" --with-deployer "${DEP_FOREIGN}" \
+  >"${LOGDIR}/boot-deployer-foreign.log" 2>&1
+assert_grep 'CUSTOM_FOREIGN_DEPLOYER' "${DEP_FOREIGN}/deploy.php" \
+  "existing Deployer configuration is preserved"
+assert_grep 'Existing Deployer configuration detected' \
+  "${LOGDIR}/boot-deployer-foreign.log" \
+  "bootstrap reports an existing non-harness Deployer strategy"
+assert_not_grep 'AI_PLATFORM_DEPLOYER_STACK' "${DEP_FOREIGN}/deploy.php" \
+  "existing non-harness recipe is not rewritten with the harness marker"
+
+if "${AI_REPO}/scripts/doctor.sh" "${DEP_FOREIGN}" \
+  >"${LOGDIR}/doctor-deployer-foreign.log" 2>&1; then
+  :
+fi
+assert_grep 'Existing non-harness Deployer configuration preserved' \
+  "${LOGDIR}/doctor-deployer-foreign.log" \
+  "doctor handles existing non-harness Deployer appropriately"
+
+DEP_CONFLICT="${WORKDIR}/deployer-conflict"
+mkdir -p "${DEP_CONFLICT}"
+write_laravel_composer "${DEP_CONFLICT}" 0
+printf 'hosts: {}\n' > "${DEP_CONFLICT}/deploy.yaml"
+"${AI_REPO}/scripts/bootstrap-project.sh" --with-deployer "${DEP_CONFLICT}" \
+  >"${LOGDIR}/boot-deployer-conflict.log" 2>&1
+assert_missing "${DEP_CONFLICT}/deploy.php" \
+  "conflicting deploy.yaml is not overwritten with a harness recipe"
+assert_grep 'Existing Deployer configuration detected' \
+  "${LOGDIR}/boot-deployer-conflict.log" \
+  "conflicting deployment configuration stops the install path"
+
+DEP_DOCS="${WORKDIR}/deployer-docs"
+mkdir -p "${DEP_DOCS}/docs/contracts/features"
+write_laravel_composer "${DEP_DOCS}" 0
+printf 'UNIQUE_DEPLOYMENT_DOC\n' > "${DEP_DOCS}/docs/contracts/features/deployment.md"
+"${AI_REPO}/scripts/install-deployer.sh" "${DEP_DOCS}" \
+  >"${LOGDIR}/install-deployer-docs.log" 2>&1
+assert_grep 'UNIQUE_DEPLOYMENT_DOC' \
+  "${DEP_DOCS}/docs/contracts/features/deployment.md" \
+  "project-owned deployment docs are preserved"
+assert_grep 'already present' "${LOGDIR}/install-deployer-docs.log" \
+  "standalone installer reports the existing deployment document"
+
+DEP_STANDALONE="${WORKDIR}/deployer-standalone"
+mkdir -p "${DEP_STANDALONE}"
+write_laravel_composer "${DEP_STANDALONE}" 0
+"${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer "${DEP_STANDALONE}" \
+  >"${LOGDIR}/boot-deployer-standalone-prep.log" 2>&1
+"${AI_REPO}/scripts/install-deployer.sh" "${DEP_STANDALONE}" \
+  >"${LOGDIR}/install-deployer-standalone.log" 2>&1
+assert_file "${DEP_STANDALONE}/deploy.php" \
+  "standalone installer works against a bootstrapped Laravel fixture"
+assert_grep 'AI_PLATFORM_DEPLOYER_STACK=laravel' "${DEP_STANDALONE}/deploy.php" \
+  "standalone installer uses the Laravel profile"
+assert_grep 'does not deploy' "${LOGDIR}/install-deployer-standalone.log" \
+  "standalone installer reports that it does not deploy"
+
+if "${AI_REPO}/scripts/install-deployer.sh" "${AI_REPO}" \
+  >"${LOGDIR}/install-deployer-self.log" 2>&1; then
+  fail "standalone installer refuses the harness clone"
+else
+  pass "standalone installer refuses the harness clone"
+fi
+
+DEP_PARTIAL="${WORKDIR}/deployer-partial"
+mkdir -p "${DEP_PARTIAL}"
+write_laravel_composer "${DEP_PARTIAL}" 0
+"${AI_REPO}/scripts/install-deployer.sh" "${DEP_PARTIAL}" \
+  >"${LOGDIR}/install-deployer-partial-prep.log" 2>&1
+rm -f "${DEP_PARTIAL}/deploy/hosts.yaml.example"
+if "${AI_REPO}/scripts/doctor.sh" "${DEP_PARTIAL}" \
+  >"${LOGDIR}/doctor-deployer-partial.log" 2>&1; then
+  :
+fi
+assert_grep 'Harness-managed Deployer stack is incomplete' \
+  "${LOGDIR}/doctor-deployer-partial.log" \
+  "doctor fails a partial harness-managed Deployer install"
+
+DEP_GENERIC_WITH="${WORKDIR}/deployer-generic-with"
+mkdir -p "${DEP_GENERIC_WITH}"
+printf 'hello\n' > "${DEP_GENERIC_WITH}/README.md"
+"${AI_REPO}/scripts/bootstrap-project.sh" --with-deployer "${DEP_GENERIC_WITH}" \
+  >"${LOGDIR}/boot-deployer-generic-with.log" 2>&1
+assert_missing "${DEP_GENERIC_WITH}/deploy.php" \
+  "--with-deployer on an unsupported profile does not invent a recipe"
+assert_grep 'No supported Deployer profile' \
+  "${LOGDIR}/boot-deployer-generic-with.log" \
+  "unsupported profile is reported instead of guessed"
+
+if "${AI_REPO}/scripts/doctor.sh" "${GENERIC}" \
+  >"${LOGDIR}/doctor-generic-deployer.log" 2>&1; then
+  pass "doctor on generic project without Deployer still exits 0"
+else
+  fail "doctor on generic project without Deployer still exits 0"
+  cat "${LOGDIR}/doctor-generic-deployer.log"
+fi
+
+echo ""
 echo "--- ChatGPT context export ---"
 if "${AI_REPO}/scripts/export-chatgpt-context.sh" >"${LOGDIR}/export-chatgpt.log" 2>&1; then
   pass "export-chatgpt-context.sh exits 0"
@@ -1678,16 +2021,18 @@ assert_file "${AI_REPO}/.build/chatgpt-context/.cursor/rules/60-browser-qa.mdc" 
   "export includes 60-browser-qa"
 assert_dir "${AI_REPO}/.build/chatgpt-context/.agents/skills/hallmark" \
   "export includes Hallmark"
-assert_grep '^Version 1\.2\.0$' \
+assert_grep '^Version 1\.3\.0$' \
   "${AI_REPO}/.build/chatgpt-context/docs/00-project-context.md" \
-  "export project context is v1.2.0"
+  "export project context is v1.3.0"
 assert_file "${AI_REPO}/.build/chatgpt-context/CHANGELOG.md" \
   "export includes changelog"
 assert_file "${AI_REPO}/.build/chatgpt-context/README.md" \
   "export includes README"
-assert_grep '^Version 1\.2\.0$' \
+assert_grep '^Version 1\.3\.0$' \
   "${AI_REPO}/.build/chatgpt-context/README.md" \
-  "export README is v1.2.0"
+  "export README is v1.3.0"
+assert_file "${AI_REPO}/.build/chatgpt-context/docs/contracts/features/deployer.md" \
+  "export includes the Deployer contract"
 assert_missing "${AI_REPO}/.build/chatgpt-context/.agents/skills/frontend-design" \
   "export does not bundle frontend-design"
 assert_missing "${AI_REPO}/.build/chatgpt-context/.agents/skills/ui-ux-pro-max" \

@@ -82,7 +82,23 @@ branch, or review request (Pull Request) unless the developer
 authorizes it. Never merge a review request. Never auto-merge. Never
 delete a branch unless explicitly instructed. Never perform
 destructive database operations without approval. Never modify
-project dependencies or configuration without approval.
+project dependencies or configuration without approval. Never deploy
+to any environment unless explicitly instructed. Installing or configuring deployment tooling does not authorize deployment to any environment.
+Never perform catastrophic operations (destroying
+servers, modifying DNS, destroying or resetting databases, wiping
+application data, or removing previous releases beyond established
+safe Deployer `keep_releases` cleanup) unless explicitly instructed.
+
+Before an authorized production deployment, verify a restorable production backup
+exists. If it cannot be verified, stop. Deployer availability is
+not a substitute for that backup. Generic
+instructions such as "set up Deployer", "bootstrap this project",
+"install the deployment stack", or "configure deployment" do not
+authorize production or staging deployment, infrastructure changes,
+DNS changes, or destructive data operations. The catastrophic-operation
+guardrail applies to deployment scripts the same way it applies to
+commands executed directly. Details:
+`docs/contracts/features/deployer.md` in the AI Platform clone.
 
 ## Current-First and Framework-Native
 
@@ -129,6 +145,7 @@ up front):
 | Bootstrap / adoption | `.cursor/rules/50-workflows.mdc` |
 | Browser QA | `.cursor/rules/60-browser-qa.mdc` |
 | Issues, PRs, discovered work | `.cursor/rules/70-work-items.mdc` |
+| Deployment / Deployer | `docs/contracts/features/deployer.md` in the AI Platform clone; project `docs/contracts/features/deployment.md` when the optional stack is installed |
 | Project-specific | `.cursor/rules/90-*.mdc` if present |
 
 Do not apply a framework profile to a project that is not that stack.

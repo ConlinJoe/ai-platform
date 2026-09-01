@@ -17,15 +17,18 @@ Working mode and agent continuation live in `docs/working-mode.md`.
 
 ## Current phase
 
-Design-stack simplification: Hallmark-only UI intelligence, `40-ui` scope
-routing, and bounded significant-UI Mode B visual verification.
-Version 1.2.0. Capability-on-demand, significant-motion review, and
-capability-aware browser verification are refinements of this
-architecture, not a new release.
+Optional Deployer capability on the existing v1.2.x symlink/bootstrap
+architecture. Version 1.3.0.
 
 ## Progress
 
 - Shared Cursor rules, documentation contracts, and project bootstrap: in use
+- Optional Deployer: capability-on-demand SSH/PHP deployment foundation
+  for Laravel, Bedrock/Sage, Bedrock, and conventional WordPress.
+  Bootstrap may prompt or honor `--with-deployer` / `--without-deployer`.
+  Standalone installer: `scripts/install-deployer.sh`. Installing the
+  stack does not deploy and does not authorize deployment. Canonical:
+  `docs/contracts/features/deployer.md`, ADR 0007.
 - Current-First Engineering and Framework-Native First: platform-wide in
   `00-platform.mdc`; Tailwind composition is the CSS specialization in
   `20-coding.mdc`
@@ -73,6 +76,7 @@ architecture, not a new release.
   Bootstrap does not install MCP servers or make additional MCPs
   required dependencies. Client-specific MCP configuration remains
   client-specific. Capability parity across agents is not the goal.
+  Deployer follows the same principle: available, not required.
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented
 - Existing-project reconciliation: bootstrap copies a draft
@@ -98,6 +102,8 @@ architecture, not a new release.
   mode for fresh threads. Concise completion reporting is the default
   (`00-platform`, ADR 0005). Working mode is updated on mode
   transitions, not after every bounded task.
+- Symlink architecture: unchanged in v1.3.0. Project-local `.ai/`
+  portability remains deferred.
 
 ## Validation
 
@@ -115,6 +121,8 @@ scripts/check-guardrails.sh
   plus enabling `laravel-boost` in Cursor MCP settings
 - Playwright Mode A remains a per-project implementation with dependency
   approval
+- Optional Deployer remains unconfigured until the developer fills
+  `deploy/hosts.yaml` and explicitly authorizes a deploy
 - Re-running bootstrap on a newly bootstrapped project classifies it as
   existing because `docs/README.md` is present and may add a
   reconciliation draft. Documented limitation: `docs/maintaining.md`.

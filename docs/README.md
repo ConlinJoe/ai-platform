@@ -34,8 +34,10 @@ model and templates from `templates/docs/`.
 | `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` | adr | accepted | Decision that Hallmark is the only managed design skill, significant UI authorizes bounded Mode B visual verification, and generated design images are exploration/reference artifacts |
 | `contracts/adrs/0005-agent-continuation-and-concise-reporting.md` | adr | accepted | Decision to store agent continuation in working-mode.md and default to concise completion reporting |
 | `contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md` | adr | accepted | Decision that project/platform rules outrank secondary guidance and that em-dash/Tailwind arbitrary values are mechanically checked |
+| `contracts/adrs/0007-optional-deployer-capability.md` | adr | accepted | Decision that Deployer is the standardized optional deployment foundation |
 | `contracts/features/browser-qa.md` | feature | active | Browser QA policy, invocation, capability-aware visual verification, Playwright vs interactive distinction, applicability, isolation |
 | `contracts/features/copy-and-tailwind-guardrails.md` | feature | active | Mechanical em-dash and Tailwind arbitrary-value check, exceptions, DONE gating |
+| `contracts/features/deployer.md` | feature | active | Optional Deployer capability, installer, server configuration, deploy authorization |
 | `contracts/features/laravel-boost.md` | feature | active | Boost capability, detection, bootstrap/doctor |
 | `contracts/features/work-item-lifecycle.md` | feature | active | Capture-don't-expand, Issues/PRs, approval boundaries, optional gh |
 
@@ -59,10 +61,12 @@ flowchart TD
   designAdr[contracts/adrs/0004-design-stack-and-ui-visual-verification.md]
   continuationAdr[contracts/adrs/0005-agent-continuation-and-concise-reporting.md]
   guardrailAdr[contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md]
+  deployerAdr[contracts/adrs/0007-optional-deployer-capability.md]
   browserQa[contracts/features/browser-qa.md]
   boost[contracts/features/laravel-boost.md]
   workItems[contracts/features/work-item-lifecycle.md]
   guardrails[contracts/features/copy-and-tailwind-guardrails.md]
+  deployer[contracts/features/deployer.md]
 
   chatgpt --> philosophy
   chatgpt --> context
@@ -86,10 +90,12 @@ flowchart TD
   designAdr --> browserQa
   guardrailAdr --> guardrails
   guardrailAdr --> designAdr
+  deployerAdr --> deployer
   browserQa --> browserAdr
   boost --> boostAdr
   workItems --> workAdr
   guardrails --> guardrailAdr
+  deployer --> deployerAdr
 ```
 
 ## Loading Guide
@@ -110,6 +116,7 @@ flowchart TD
 | Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
 | Multi-agent adapters | `core/adapters/README.md` |
 | Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
+| Optional Deployer | `contracts/features/deployer.md`, ADR 0007 |
 | Browser QA / Playwright | `contracts/features/browser-qa.md` |
 | Laravel Boost / MCP | `contracts/features/laravel-boost.md`, `mcp/README.md` |
 | Issues, PRs, discovered work | `contracts/features/work-item-lifecycle.md` |

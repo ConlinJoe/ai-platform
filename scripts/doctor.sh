@@ -11,6 +11,8 @@ AI_REPO="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 # shellcheck source=lib/project-capabilities.sh
 source "${SCRIPT_DIR}/lib/project-capabilities.sh"
+# shellcheck source=lib/deployer.sh
+source "${SCRIPT_DIR}/lib/deployer.sh"
 
 RULES_DIR="${AI_REPO}/.cursor/rules"
 SKILLS_LOCK="${AI_REPO}/skills-lock.json"
@@ -145,6 +147,14 @@ PY
   check_file "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" "Design-stack ADR"
   check_file "${AI_REPO}/docs/contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md" "Guardrail ADR"
   check_file "${AI_REPO}/docs/contracts/features/copy-and-tailwind-guardrails.md" "Copy and Tailwind guardrails contract"
+  check_file "${AI_REPO}/docs/contracts/features/deployer.md" "Deployer capability contract"
+  check_file "${AI_REPO}/docs/contracts/adrs/0007-optional-deployer-capability.md" "Deployer ADR"
+  check_file "${AI_REPO}/templates/deployer/laravel/deploy.php" "Laravel Deployer recipe"
+  check_file "${AI_REPO}/templates/deployer/roots/deploy.php" "Roots Deployer recipe"
+  check_file "${AI_REPO}/templates/deployer/bedrock/deploy.php" "Bedrock Deployer recipe"
+  check_file "${AI_REPO}/templates/deployer/wordpress/deploy.php" "WordPress Deployer recipe"
+  check_file "${AI_REPO}/templates/deployer/hosts.yaml.example" "Deployer hosts example"
+  check_file "${AI_REPO}/templates/deployer/deployment.md" "Project Deployer docs template"
   check_file "${AI_REPO}/.github/PULL_REQUEST_TEMPLATE.md" "PR template"
   check_file "${AI_REPO}/templates/github/PULL_REQUEST_TEMPLATE.md" "Optional project PR template"
   check_file "${AI_REPO}/mcp/README.md" "MCP guidance index"
@@ -180,12 +190,14 @@ PY
   local script
   for script in \
     "${AI_REPO}/scripts/bootstrap-project.sh" \
+    "${AI_REPO}/scripts/install-deployer.sh" \
     "${AI_REPO}/scripts/doctor.sh" \
     "${AI_REPO}/scripts/check-guardrails.sh" \
     "${AI_REPO}/scripts/link-rules.sh" \
     "${AI_REPO}/scripts/export-chatgpt-context.sh" \
     "${AI_REPO}/scripts/update-skills.sh" \
-    "${AI_REPO}/scripts/lib/project-capabilities.sh"
+    "${AI_REPO}/scripts/lib/project-capabilities.sh" \
+    "${AI_REPO}/scripts/lib/deployer.sh"
   do
     check_file "${script}" "Script $(basename "${script}")"
     if [[ -f "${script}" ]]; then
@@ -446,10 +458,12 @@ if [[ "${TARGET}" != "${AI_REPO}" ]]; then
   check_docs "${TARGET}"
   check_laravel_boost "${TARGET}"
   check_browser_qa "${TARGET}"
+  deployer_doctor_report "${TARGET}"
 else
   echo "Target is the AI Platform repository. Skipping project-profile checks."
   echo "Playwright and Laravel Boost are not required here."
   echo "GitHub CLI is not required."
+  echo "Deployer is not required of the harness clone."
   echo ""
 fi
 

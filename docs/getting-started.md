@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-28
+last_reviewed: 2026-09-01
 source_of_truth_for:
   - First-time clone and harness setup
   - Prerequisites, doctor, bootstrap, and bootstrap verification
@@ -61,6 +61,8 @@ Optional. This repository does **not** install them:
 - `@playwright/test` (project-owned Mode A; expected on the Laravel
   profile, not installed here)
 - GitHub CLI (`gh`) for Issues and Pull Requests
+- Optional Deployer stack (offered at bootstrap or installed later;
+  [Deployer capability](contracts/features/deployer.md))
 - Hermes Agent, Codex, Claude Code, or Grok Build if you already use
   another supported client
 
@@ -202,6 +204,26 @@ From the **harness** clone:
 "$AI_PLATFORM/scripts/bootstrap-project.sh" /path/to/your-project
 ```
 
+Optional Deployer flags (skip the prompt; neither flag deploys):
+
+```bash
+"$AI_PLATFORM/scripts/bootstrap-project.sh" --with-deployer /path/to/your-project
+"$AI_PLATFORM/scripts/bootstrap-project.sh" --without-deployer /path/to/your-project
+```
+
+Interactive bootstrap may ask `Install Deployer deployment stack? [y/N]`
+(default N) when the harness-managed stack is absent and the project
+matches a supported profile. Add Deployer later without re-running
+adoption:
+
+```bash
+"$AI_PLATFORM/scripts/install-deployer.sh" /path/to/your-project
+```
+
+Installing Deployer does not deploy anything, does not configure a
+server, and does not authorize deployment. Supported profiles and
+server setup: [Deployer capability](contracts/features/deployer.md).
+
 If you run the script from the harness clone with no argument, it
 prompts for a target path.
 
@@ -222,7 +244,8 @@ prompts for a target path.
 | `.github/` Issue/PR templates | Not copied; existing GitHub files are not overwritten |
 | Existing projects | May add missing drafts: `working-mode.md`, `99-project-status.md`, `platform-reconciliation.md`, Laravel `browser-qa.md` |
 | `.cursor/rules/90-*.mdc` | Not created; project-owned if you add them later |
-| Application code, Composer, npm, WordPress plugins | Not modified / not installed |
+| Application code, Composer, npm, WordPress plugins | Not modified / not installed, except optional Deployer may declare `deployer/deployer` in `require-dev` without running Composer |
+| Optional Deployer | Prompt or `--with-deployer` / `--without-deployer`. Does not deploy. |
 
 Bootstrap is safe to re-run. Shared Cursor rules update immediately
 through those symlinks. A re-run also prunes retired managed skills,

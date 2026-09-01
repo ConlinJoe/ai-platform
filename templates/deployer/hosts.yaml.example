@@ -1,0 +1,17 @@
+# Copy to deploy/hosts.yaml and replace every CHANGE_ME value.
+# deploy/hosts.yaml is gitignored. Do not commit secrets.
+#
+# Use SSH public-key authentication. Do not put secrets, tokens,
+# private keys, or production credentials in this file.
+#
+# Installing or configuring Deployer does not authorize deployment.
+
+hosts:
+  production:
+    hostname: CHANGE_ME
+    remote_user: CHANGE_ME
+    deploy_path: /var/www/CHANGE_ME
+    repository: git@github.com:CHANGE_ME/CHANGE_ME.git
+    branch: main
+    # identity_file: ~/.ssh/id_ed25519
+    # bin/php: /usr/bin/php8.3

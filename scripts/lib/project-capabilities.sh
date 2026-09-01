@@ -99,6 +99,26 @@ project_is_roots_radicle() {
   return 1
 }
 
+# Roots Bedrock without Sage/Acorn/Radicle. Used by the optional Deployer
+# capability; bootstrap profile detection still reports "none".
+project_is_bedrock() {
+  composer_has_package "$1" "roots/wordpress" && return 0
+  composer_has_package "$1" "roots/bedrock-autoloader" && return 0
+  if [[ -f "$1/web/wp-config.php" && -d "$1/web/app" ]]; then
+    return 0
+  fi
+  return 1
+}
+
+# Conventional WordPress at the project root. Not Bedrock, not Sage.
+project_is_conventional_wordpress() {
+  if project_is_laravel "$1" || project_is_roots_radicle "$1" || project_is_bedrock "$1"; then
+    return 1
+  fi
+  [[ -d "$1/wp-content" ]] || return 1
+  [[ -f "$1/wp-config.php" || -f "$1/wp-config-sample.php" ]]
+}
+
 project_uses_livewire() {
   composer_has_package "$1" "livewire/livewire"
 }

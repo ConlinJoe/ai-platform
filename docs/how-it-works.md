@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-28
+last_reviewed: 2026-09-01
 source_of_truth_for:
   - Public conceptual model of the harness
   - Global versus project-owned files
@@ -60,7 +60,8 @@ canonical project context and shared standards.
 | Shared rules `.cursor/rules/00-*.mdc` through `70-*.mdc` | Project rules `.cursor/rules/90-*.mdc` |
 | `core/agent-core.md` (portable always-on core) | Project `docs/` contracts, ADRs, status, working mode |
 | Locked skills in `.agents/skills/` (Hallmark) | Application source, dependencies, and architecture |
-| Bootstrap, doctor, export, guardrail scripts | Project-native tooling (Laravel Boost, Playwright, CI) |
+| Bootstrap, doctor, export, guardrail, Deployer-installer scripts | Project-native tooling (Laravel Boost, Playwright, CI) |
+| Optional Deployer templates (`templates/deployer/`) | `deploy.php` / `deploy/hosts.yaml` when the developer installs the capability |
 | Templates copied **once** into new projects | Anything already present; bootstrap does not overwrite docs |
 
 Projects inherit global rules through **symlinks** into this clone.
@@ -88,6 +89,10 @@ Other supported agents get the portable core via `AGENTS.md` /
 | Issues, PRs, discovered work | `70-work-items.mdc` |
 | This project only | `90-*.mdc` if present |
 
+Optional Deployer behavior lives in
+[docs/contracts/features/deployer.md](contracts/features/deployer.md).
+It is not a Cursor-only rule file.
+
 Framework-specific rules attach only when that stack is present. The
 harness is not Laravel-only.
 
@@ -101,7 +106,8 @@ weaken a project or harness requirement. ADR 0006.
 
 **Bootstrap** is deterministic provisioning. It links shared rules,
 portable agent entrypoints, skills, and documentation templates. It
-does not analyze or rewrite the application.
+does not analyze or rewrite the application. It may offer an optional
+Deployer stack; that offer is not adoption and is not a deployment.
 
 **Project Adoption** is agent-driven reasoning after bootstrap:
 
@@ -164,9 +170,11 @@ Skill restore and update: [Getting started](getting-started.md) and
 ## Verification and safety
 
 Safety defaults live in `00-platform.mdc` and `core/agent-core.md`: no
-commit, push, Issue, branch, PR, merge, dependency change, or
-destructive database operation without explicit approval. Agents must
-stop if a prompt appears to belong to a different repository.
+commit, push, Issue, branch, PR, merge, dependency change, deployment,
+catastrophic operation, or destructive database operation without
+explicit approval. Installing Deployer does not authorize deployment.
+Agents must stop if a prompt appears to belong to a different
+repository.
 
 Verification is layered:
 

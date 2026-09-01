@@ -25,6 +25,9 @@ and ChatGPT export support.
       repository).
     - Alternative: from the AI Platform repository, run
       `scripts/bootstrap-project.sh /path/to/project`.
+    - Optional Deployer flags: `--with-deployer` or `--without-deployer`.
+      Interactive bootstrap may ask `Install Deployer deployment stack? [y/N]`
+      (default N). See `docs/contracts/features/deployer.md`.
     - Fallback: run `scripts/bootstrap-project.sh` from the AI Platform
       repository with no argument and supply the target path when
       prompted.
@@ -72,6 +75,13 @@ Running bootstrap on a target project:
     exists; diagnoses the preferred greenfield stack (ACF Pro, Keen
     Slider, WPForms Lite) without installing npm packages or WordPress
     plugins
+-   Optionally installs the harness-managed Deployer stack when the
+    developer answers yes to `Install Deployer deployment stack? [y/N]`
+    or passes `--with-deployer`. That selection authorizes only the
+    `deployer/deployer` Composer declaration and harness-managed
+    Deployer files. It does not run `composer install`, does not
+    deploy, and does not authorize deployment. `--without-deployer`
+    skips the prompt. Absence is valid.
 -   Restores required project skills
 
 Bootstrap is safe to re-run on an already-bootstrapped project.
@@ -82,7 +92,9 @@ current ignore entries such as `.hallmark/`, `.DS_Store`, and `.ai/`.
 Developers do not need to edit those managed files by hand.
 
 It does not run Composer, `boost:install`, add Playwright, or install
-WordPress plugins or npm packages.
+WordPress plugins or npm packages, except the optional Deployer path
+which may declare `deployer/deployer` in `composer.json` require-dev
+without running Composer.
 It does not install MCP servers or make additional MCPs required
 bootstrap dependencies. Client-specific MCP configuration remains
 client-specific.
@@ -91,6 +103,7 @@ It does not copy `.github/` templates or overwrite existing GitHub
 Issue/PR/Actions files.
 It does not analyze the repository or adopt it into the platform.
 That work belongs to Project Adoption.
+It does not deploy to any environment.
 
 Shared Cursor rules in the target project are **symlinks** into this
 repository. Project `docs/` and `.cursor/rules/90-*.mdc` are owned by
@@ -292,6 +305,18 @@ Re-check a bootstrapped project with
 bootstrap, `scripts/doctor.sh` in the project is the same script via
 symlink. For applicable frontend or public-facing work, run
 `scripts/check-guardrails.sh` before reporting DONE.
+
+## Optional Deployer stack
+
+Canonical contract: `docs/contracts/features/deployer.md`.
+
+Standalone installer (does not re-run bootstrap or adoption):
+
+```bash
+/path/to/ai-platform/scripts/install-deployer.sh /path/to/project
+```
+
+Installing or configuring Deployer does not authorize deployment.
 
 ## Maintenance
 

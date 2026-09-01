@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-28
+last_reviewed: 2026-09-01
 source_of_truth_for:
   - Human overview of new versus existing project adoption
   - What bootstrap changes in a project
@@ -37,12 +37,14 @@ Bootstrap adds and links files. It does **not**:
 
 - rewrite application code
 - upgrade or change installed framework or library versions
-- install Composer, npm, or WordPress packages
+- install Composer, npm, or WordPress packages (optional Deployer may
+  declare `deployer/deployer` in `require-dev` without running Composer)
 - install MCP servers
 - copy or overwrite `.github/` templates
 - overwrite existing `docs/` when `docs/README.md` already exists
 - overwrite existing `AGENTS.md` or `CLAUDE.md`
 - create `.hermes.md`
+- install or run a deployment
 
 It does:
 
@@ -55,6 +57,10 @@ It does:
   reconciliation, Laravel browser QA)
 - ensure ignore entries such as `.build/`, `.hallmark/`, `.DS_Store`,
   and `.ai/`
+- optionally offer the Deployer stack (`Install Deployer deployment
+  stack? [y/N]`, `--with-deployer`, `--without-deployer`). That is not
+  adoption and does not deploy. Canonical:
+  [Deployer capability](contracts/features/deployer.md).
 
 You can adopt incrementally: bootstrap so agents load shared rules, then
 run Project Adoption when you are ready to document and reconcile.

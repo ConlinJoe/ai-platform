@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-28
+last_reviewed: 2026-09-01
 source_of_truth_for:
   - Model-neutral support seed for installing, troubleshooting, and extending the harness
 depends_on:
@@ -98,6 +98,7 @@ Where to look (confirm these paths still exist)
 - Skills: .agents/skills/, skills-lock.json
 - Bootstrap: scripts/bootstrap-project.sh
 - Doctor: scripts/doctor.sh
+- Optional Deployer: scripts/install-deployer.sh and docs/contracts/features/deployer.md
 - Guardrails: scripts/check-guardrails.sh
 - Skill updates: scripts/update-skills.sh
 - Agent adapters: core/adapters/
@@ -134,6 +135,8 @@ How to help
   removal is reversing bootstrap-created links (see docs/maintaining.md).
 - Never commit, push, create Issues/PRs, merge, or change project
   dependencies unless the user explicitly instructs that action.
+- Never deploy unless the user explicitly authorizes that environment.
+  Installing Deployer is not that authorization.
 - Do not run or recommend Playwright / browser automation unless the
   current task authorizes it per 60-browser-qa.
 

@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-28
+last_reviewed: 2026-09-01
 source_of_truth_for:
   - Updating the harness clone and propagating changes
   - Skill update and restore
@@ -57,6 +57,12 @@ Re-run bootstrap in the project to reconcile managed files:
 Re-bootstrap is not Project Adoption. It does not rewrite application
 code. Skill copies that are already installed are not refreshed unless
 they are missing or you restore from the linked lockfile (below).
+A re-run does not replace an existing Deployer strategy. To add the
+optional Deployer stack later without a full bootstrap:
+
+```bash
+"$AI_PLATFORM/scripts/install-deployer.sh" /path/to/your-project
+```
 
 **Known limitation.** New versus existing is the presence of
 `docs/README.md`. After the first bootstrap of a new project that file
@@ -131,6 +137,7 @@ ran.
 | Skills missing in a project | `npx skills experimental_install` from the project root (lockfile must be the symlink). Bootstrap skips restore when you decline the prompt. |
 | `npx skills` mutates the clone lockfile | Bootstrap snapshots and restores `skills-lock.json` for that reason. Prefer bootstrap's restore path. |
 | Browser automation ran unexpectedly | Availability is not authorization. Policy: [60-browser-qa](../.cursor/rules/60-browser-qa.mdc). |
+| Deployer prompt or install looked like a deploy | Installing the stack is not authorization to deploy. Contract: [Deployer capability](contracts/features/deployer.md). |
 | Unsure whether install worked | Doctor pass on the clone, then `ls -l project/.cursor/rules` showing links into `$AI_PLATFORM/.cursor/rules/`. Project doctor may still FAIL on Laravel until Boost is present. |
 | Claude or Grok skills missing after bootstrap | Confirm `.agents/skills/hallmark` exists, then re-run bootstrap so `.claude/skills/` and `.grok/skills/` adapter links are created. |
 

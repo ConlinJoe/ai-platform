@@ -109,3 +109,10 @@ Follow the `10-documentation` project rule.
 Use contract-based documentation with `docs/README.md` as the dependency
 graph. Maintain `docs/00-project-context.md` for ChatGPT context. Export
 project AI context via `scripts/export-chatgpt-context.sh`.
+
+## Optional Deployer
+
+This profile may receive the harness-managed Deployer stack when the
+developer selects it at bootstrap or runs `scripts/install-deployer.sh`.
+That install is not a deploy. See
+`docs/contracts/features/deployer.md` in the harness clone.

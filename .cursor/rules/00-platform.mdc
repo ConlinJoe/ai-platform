@@ -333,6 +333,29 @@ Never:
 -   Delete a branch unless explicitly instructed.
 -   Perform destructive database operations without approval.
 -   Modify project dependencies or configuration without approval.
+-   Deploy to any environment unless explicitly instructed.
+    Installing or configuring deployment tooling does not authorize
+    deployment to any environment.
+-   Perform catastrophic operations unless explicitly instructed.
+    That includes destroying servers, modifying DNS, destroying or
+    resetting databases, wiping application data, and removing
+    previous releases beyond established safe Deployer
+    `keep_releases` cleanup.
+
+Before an authorized production deployment, verify a restorable production backup
+exists. If it cannot be verified, stop. Deployer availability is
+not a substitute for that backup.
+
+Generic instructions such as "set up Deployer", "bootstrap this
+project", "install the deployment stack", or "configure deployment"
+do not authorize production deployment, staging deployment unless
+specifically requested, infrastructure changes, DNS changes, or
+destructive data operations.
+
+The catastrophic-operation guardrail applies to deployment scripts
+the same way it applies to commands executed directly.
+
+Details: `docs/contracts/features/deployer.md`.
 
 ## Browser automation
 

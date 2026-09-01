@@ -113,6 +113,7 @@ Never:
 -   Commit code unless explicitly instructed.
 -   Modify dependencies without approval.
 -   Perform destructive database operations without approval.
+-   Deploy to any environment unless explicitly instructed.
 
 ## Quality
 

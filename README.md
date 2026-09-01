@@ -1,6 +1,6 @@
 # AI Development Harness
 
-Version 1.2.0
+Version 1.3.0
 
 A centralized AI development harness for consistent, reliable agent
 behavior across projects.
@@ -48,6 +48,7 @@ of done.
 | Framework profiles | Laravel and Roots/Radicle/Sage rules that attach only when that stack is present |
 | UI / design | Product-specific design constraints; Hallmark for significant UI (`40-ui`) |
 | Workflows | Bootstrap, adoption, documentation contracts (`50-workflows`) |
+| Optional Deployer | Optional SSH/PHP deployment foundation; install does not deploy (`docs/contracts/features/deployer.md`) |
 | Project context | Working mode, status, ADRs, selective contract loading |
 | Skills | Locked Hallmark skill, restored into projects |
 | Verification | Doctor, copy/Tailwind guardrails, authorized browser QA |
@@ -104,6 +105,13 @@ ls -l /path/to/your-project/.cursor/rules
 "$AI_PLATFORM/scripts/doctor.sh" /path/to/your-project
 ```
 
+Interactive bootstrap may ask `Install Deployer deployment stack? [y/N]`
+(default N). Pass `--with-deployer` or `--without-deployer` to skip the
+prompt. Installing Deployer does not deploy anything and does not
+authorize deployment. Add it later with
+`"$AI_PLATFORM/scripts/install-deployer.sh" /path/to/your-project`.
+Canonical reference: [Deployer capability](docs/contracts/features/deployer.md).
+
 Linked `00`–`70` rules should point into `$AI_PLATFORM/.cursor/rules/`.
 That is the harness install check. On Laravel apps, project doctor also
 diagnoses Boost and may exit non-zero until Boost is installed. That is
@@ -126,6 +134,7 @@ greenfield vs existing next steps:
 | Project context and documentation | [Documentation philosophy](docs/documentation-philosophy.md) · [contract registry](docs/README.md) |
 | UI standards | [.cursor/rules/40-ui.mdc](.cursor/rules/40-ui.mdc) |
 | Safety guardrails | [How the harness works](docs/how-it-works.md#verification-and-safety) |
+| Optional Deployer | [Deployer capability](docs/contracts/features/deployer.md) |
 | Verification / QA | [Browser QA](docs/contracts/features/browser-qa.md) · `scripts/doctor.sh` · `scripts/check-guardrails.sh` |
 | Updating / maintaining | [Maintaining the harness](docs/maintaining.md) |
 | Troubleshooting | [Maintaining the harness](docs/maintaining.md#troubleshooting) |
@@ -156,8 +165,8 @@ core/agent-core.md portable always-on core (AGENTS.md / CLAUDE.md)
 core/adapters/     per-agent setup and capability matrix
 core/prompts/      adoption and resume prompts
 .agents/skills/    locked skills (Hallmark)
-scripts/           bootstrap, doctor, update-skills, export, guardrails
-templates/         docs copied into new projects
+scripts/           bootstrap, doctor, Deployer installer, update-skills, export, guardrails
+templates/         docs copied into new projects; optional Deployer recipes
 docs/              this harness's contracts and public guides
 mcp/               MCP ownership notes (not an installer)
 ```
@@ -170,7 +179,7 @@ mcp/               MCP ownership notes (not an installer)
 - Bounded tasks and capture-don't-expand
 - Verification over trust
 - Current-First and Framework-Native First
-- Safe defaults (no commit, push, or dependency change unless asked)
+- Safe defaults (no commit, push, dependency change, or deploy unless asked)
 - Documentation and ADRs as part of the system
 - Incremental adoption without silent migrations
 

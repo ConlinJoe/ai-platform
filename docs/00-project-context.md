@@ -1,6 +1,6 @@
 # AI Development Harness
 
-Version 1.2.0
+Version 1.3.0
 
 Concise context for ChatGPT Projects and AI agents working on this
 repository (`ai-platform`).
@@ -46,6 +46,9 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   reliably accomplish the current work (`00-platform`, `mcp/README.md`).
 - Never commit unless explicitly instructed.
 - Do not modify dependencies without approval.
+- Do not deploy unless explicitly instructed. Installing or configuring
+  Deployer does not authorize deployment
+  (`contracts/features/deployer.md`).
 - Discovered work outside the current task is captured, not used to
   expand scope. GitHub Issues are the backlog; PRs represent
   implementation; merge requires developer approval. See
@@ -108,6 +111,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Fresh agent / resume | `working-mode.md`, `../core/prompts/resume.md` |
 | Multi-agent adapters | `core/adapters/README.md` |
 | Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
+| Optional Deployer | `contracts/features/deployer.md`, ADR 0007 |
 | Issues / PRs / discovered work | `contracts/features/work-item-lifecycle.md` |
 | Browser QA | `contracts/features/browser-qa.md` |
 | Laravel Boost | `contracts/features/laravel-boost.md` |

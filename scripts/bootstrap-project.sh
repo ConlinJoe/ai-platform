@@ -9,10 +9,13 @@ SKILLS_LOCK="${AI_REPO}/skills-lock.json"
 
 # shellcheck source=lib/project-capabilities.sh
 source "${SCRIPT_DIR}/lib/project-capabilities.sh"
+# shellcheck source=lib/deployer.sh
+source "${SCRIPT_DIR}/lib/deployer.sh"
 
 REQUIRED_SKILLS=()
 MISSING_SKILLS=()
 PRESENT_SKILLS=()
+DEPLOYER_MODE=""
 
 if [[ ! -d "${RULES_DIR}" ]] || [[ ! -f "${RULES_DIR}/00-platform.mdc" ]]; then
   echo "Error: AI Platform rules not found." >&2
@@ -21,21 +24,73 @@ if [[ ! -d "${RULES_DIR}" ]] || [[ ! -f "${RULES_DIR}/00-platform.mdc" ]]; then
   exit 1
 fi
 
+usage() {
+  cat <<EOF
+Usage: $0 [--with-deployer|--without-deployer] [project-path]
+
+Installs AI Development Harness infrastructure into a project.
+Does not deploy. Installing Deployer does not authorize deployment.
+
+  --with-deployer       Install the optional Deployer stack (no prompt)
+  --without-deployer    Skip the optional Deployer stack (no prompt)
+
+Without either flag, interactive bootstrap prompts:
+  ${DEPLOYER_PROMPT}
+Default is N. Non-interactive runs skip Deployer unless --with-deployer
+is set (AI_BOOTSTRAP_NONINTERACTIVE=1 also skips).
+EOF
+}
+
 # Target resolution priority:
 # 1. Explicit path argument
 # 2. Current working directory when invoked outside the AI Platform repo
 # 3. Interactive prompt (fallback)
 TARGET_INPUT=""
-if [[ $# -ge 1 && -n "${1:-}" ]]; then
-  TARGET_INPUT="$1"
-elif [[ "${PWD}" != "${AI_REPO}" ]]; then
-  TARGET_INPUT="${PWD}"
-  echo "No target path supplied; using current directory: ${TARGET_INPUT}"
-else
-  read -r -p "Enter target project path: " TARGET_INPUT
-  if [[ -z "${TARGET_INPUT}" ]]; then
-    echo "Error: Target project path is required." >&2
-    exit 1
+for arg in "$@"; do
+  case "${arg}" in
+    --with-deployer)
+      if [[ "${DEPLOYER_MODE}" == "without" ]]; then
+        echo "Error: --with-deployer and --without-deployer cannot be combined." >&2
+        exit 1
+      fi
+      DEPLOYER_MODE="with"
+      ;;
+    --without-deployer)
+      if [[ "${DEPLOYER_MODE}" == "with" ]]; then
+        echo "Error: --with-deployer and --without-deployer cannot be combined." >&2
+        exit 1
+      fi
+      DEPLOYER_MODE="without"
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "Error: unknown option: ${arg}" >&2
+      usage >&2
+      exit 1
+      ;;
+    *)
+      if [[ -n "${TARGET_INPUT}" ]]; then
+        echo "Error: unexpected argument: ${arg}" >&2
+        exit 1
+      fi
+      TARGET_INPUT="${arg}"
+      ;;
+  esac
+done
+
+if [[ -z "${TARGET_INPUT}" ]]; then
+  if [[ "${PWD}" != "${AI_REPO}" ]]; then
+    TARGET_INPUT="${PWD}"
+    echo "No target path supplied; using current directory: ${TARGET_INPUT}"
+  else
+    read -r -p "Enter target project path: " TARGET_INPUT
+    if [[ -z "${TARGET_INPUT}" ]]; then
+      echo "Error: Target project path is required." >&2
+      exit 1
+    fi
   fi
 fi
 
@@ -1062,6 +1117,7 @@ report_capabilities() {
   echo ""
   echo "GitHub CLI (gh) is optional. Bootstrap does not install or authenticate it."
   echo "Bootstrap does not copy or overwrite .github/ Issue or PR templates."
+  echo "Deployer is an optional capability. Installing it does not authorize deployment."
 
   echo ""
   if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
@@ -1089,5 +1145,6 @@ ensure_local_artifact_gitignore
 ensure_roots_resources_images
 restore_skills
 provision_agent_adapters
+deployer_offer_or_install "${TARGET_PROJECT}" "${DEPLOYER_MODE}"
 report_capabilities
 run_verification

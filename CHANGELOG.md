@@ -2,94 +2,43 @@
 
 ## Unreleased
 
-Public documentation for broader adoption. The root README is a landing
-page. Canonical procedures live in `docs/getting-started.md`,
-`docs/how-it-works.md`, `docs/adopting-projects.md`,
-`docs/maintaining.md`, and `docs/llm-support-prompt.md`.
+## 1.3.0 — 2026-09-01
 
-Bootstrap creates Claude and Grok skill adapter links when locked
-skills are present, even if the script is invoked from the harness
-clone with an explicit project path. Project doctor treats a Laravel
-Boost gap as a profile failure, not as a failed rule link. The install
-success check is clone doctor plus symlink'd `00`–`70` rules.
+Optional Deployer capability. The harness can install a standardized
+SSH/PHP deployment foundation for Laravel, Bedrock/Sage, Bedrock, and
+conventional WordPress. It remains capability-on-demand: absent without
+doctor warnings when not selected, independently installable later.
 
-LLM support seed starts at the root README, names Current-First, and
-treats the inspected working tree as authoritative over GitHub `main`.
-First-time `npx skills experimental_install` is documented as requiring
-network access. Re-bootstrap of a newly bootstrapped project remains
-classified as existing (`docs/README.md` present); that is a documented
-known limitation. Copying `CLAUDE.md` no longer tells the user to fill
-a documentation draft.
+Interactive bootstrap may ask `Install Deployer deployment stack? [y/N]`
+(default N) when the harness-managed stack is absent. `--with-deployer`
+installs it without prompting. `--without-deployer` skips it. Automated
+and agent-driven bootstrap should pass an explicit flag.
+`scripts/install-deployer.sh` adds the stack to an already-bootstrapped
+project without rerunning adoption.
 
-Mechanical copy and Tailwind guardrails. Generated public-facing copy
-must not use em dashes (`—`, `&mdash;`, equivalent entities). Tailwind
-implementations must prefer the standard utility scale and project
-tokens over arbitrary values. Project and platform rules outrank
-conflicting secondary skill, MCP, plugin, vendor, and tool guidance;
-clear conflicts follow the higher-authority rule without asking, and
-genuine ambiguity stops for clarification. Consuming projects and
-agents run `scripts/check-guardrails.sh` on changed application sources
-before reporting DONE. Lint, tests, and build passing do not imply
-that check ran. Hallmark is not forked. See ADR 0006.
+Each supported profile gets its own recipe. Host, repository, and SSH
+values live in gitignored `deploy/hosts.yaml`. Secrets are not
+generated or committed. Selecting install authorizes only the
+`deployer/deployer` Composer declaration and harness-managed files. It
+does not run `composer install` and does not deploy.
 
-Fresh agent threads resume from `docs/working-mode.md` instead of a
-large kickoff prompt. That file stores current working mode and
-continuation instructions only; project context, status, ADRs, and
-contracts remain authoritative. Working mode is updated on mode
-transitions, not after every bounded task. Concise completion
-reporting is the default. Orientation-only sessions can follow
-`core/prompts/resume.md`. See ADR 0005.
+Canonical reference: `docs/contracts/features/deployer.md`. ADR 0007.
+Project-local notes land at `docs/contracts/features/deployment.md` when
+the installer creates that file. Existing Deployer configuration is
+preserved (Current-First). Conflicting files stop that installation
+path. Installing or configuring Deployer does not authorize deployment.
+Production deploys still require a restorable backup. The
+catastrophic-operation guardrail applies to deployment scripts.
 
-Browser verification is capability-aware. Significant-UI Mode B visual
-verification uses the best available real-browser capability in the
-current environment, including an IDE-integrated browser when it can
-render, navigate, interact, and inspect responsive layouts. That pass
-is not Playwright execution. Playwright remains Mode A for repeatable
-automation, existing specs, regression, CI, and explicitly required
-Playwright runs. If Playwright is installed but its browser binary is
-unavailable, agents must not silently install large browser
-dependencies or silently downgrade the verification claim; they should
-use an available real-browser capability for visual checks when
-appropriate and report which level actually ran. Do not encode opening
-an external Chrome window as the fallback.
+This release does **not** implement the deferred project-local `.ai/`
+portability architecture. Absolute rule symlinks remain the bootstrap
+model.
 
-Formalized two refinements of the current v1.2.0 architecture.
-External tools are capability-on-demand, not capability-by-default:
-tool availability is not authorization, and availability is also not
-justification for using a tool. MCP servers keep a small default
-footprint with a defined responsibility; additional MCPs are not
-bootstrap dependencies, and client-specific MCP configuration is not
-forced to parity across agents.
-Significant motion is a specialized significant-UI concern with
-proportionate motion and performance review. It does not add a motion
-skill or animation dependency, does not trigger expanded QA for trivial
-transitions, and does not by itself authorize Mode A tests or formal
-performance profiling.
-
-Refined `40-ui` card, imagery, responsive-composition, and section-separation
-guidance.
-Cards remain allowed as semantic containers; unearned decorative cards
-and generic AI/SaaS card grids remain prohibited. Agents should consider
-purposeful, art-directed imagery and mobile visual pacing rather than
-defaulting to stacked text-only UI.
-Adjacent semantic sections must remain visually distinguishable.
-Semantic section boundaries should also be perceptible visual
-boundaries. This is not a mechanical alternating-background rule:
-whitespace or other compositional delineation can suffice, and agents
-must not manufacture separation with unearned boxes, bands, or cards.
-
-Image generation for UI and product-design exploration is owned by
-`40-ui`. Agents must choose model, quality, resolution, aspect ratio,
-and option count intentionally and adapt those settings to the
-artifact. Generated design images are exploration/reference artifacts,
-not the implementation source of truth. Availability of an
-image-generation tool does not authorize or justify its use. This is a
-refinement of the current v1.2.0 design stack, not a new release.
-
-Bootstrap adds `.DS_Store`, `**/.DS_Store`, and `.ai/` to each
-project `.gitignore` when missing so local macOS and harness artifacts
-are not committed. This does not change the current symlink architecture
-or begin project-local `.ai/` portability work.
+Also included from the previous unreleased working tree: public
+documentation landing page and focused guides; copy/Tailwind
+guardrails (ADR 0006); working-mode continuation (ADR 0005);
+capability-on-demand and capability-aware browser verification;
+bootstrap `.gitignore` hygiene for `.DS_Store` and `.ai/`.
 
 ## 1.2.0 — 2026-08-23
 
