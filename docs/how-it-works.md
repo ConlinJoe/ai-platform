@@ -152,6 +152,10 @@ lockfile pins **Hallmark** for significant UI, redesign, audit, and
 visual-direction work. `40-ui` decides when Hallmark loads. Skills do
 not authorize general browser automation.
 
+Image generation for design exploration is optional and owned by
+`40-ui`. Generated images are references, not implementation truth.
+Availability of an image-generation tool does not authorize its use.
+
 Bootstrap copies locked skills into the project and links adapter
 directories (`.claude/skills/`, `.grok/skills/`) at `.agents/skills/`.
 Skill restore and update: [Getting started](getting-started.md) and

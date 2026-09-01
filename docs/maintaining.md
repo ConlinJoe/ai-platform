@@ -47,7 +47,7 @@ Re-run bootstrap in the project to reconcile managed files:
 - prune retired managed skills that are no longer in the lockfile
 - refresh Claude/Grok skill adapter links
 - apply current bootstrap-managed project configuration
-- add current ignore entries such as `.hallmark/`
+- add current ignore entries such as `.hallmark/`, `.DS_Store`, and `.ai/`
 - link current platform scripts such as `scripts/check-guardrails.sh`
 
 ```bash
@@ -158,7 +158,8 @@ Typical leftovers to remove if you no longer want the harness:
 - `AGENTS.md` / `CLAUDE.md` only if you added them via bootstrap and
   no longer want them (do not delete Boost-owned files without a plan)
 
-Ignore entries (`.build/`, `.hallmark/`, Playwright artifact paths)
+Ignore entries (`.build/`, `.hallmark/`, `.DS_Store`, `.ai/`,
+Playwright artifact paths)
 are ordinary `.gitignore` lines; remove them only if you want that.
 
 After removal, coding agents in that project no longer load harness

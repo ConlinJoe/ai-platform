@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-08-28
+last_reviewed: 2026-09-01
 source_of_truth_for:
   - Decision that Hallmark is the only managed design skill
   - Decision that 40-ui is the UI router and always-on design floor
@@ -8,6 +8,7 @@ source_of_truth_for:
   - Decision that Mode B visual verification uses the best available real-browser capability, not Playwright specifically
   - Decision that developer design constraints live in 40-ui and outrank Hallmark
   - Decision that significant motion is a specialized UI concern with proportionate review, not a separate skill or Mode A authorization
+  - Decision that generated design images are exploration/reference artifacts, not implementation truth
 depends_on:
   - 0001-two-layer-browser-qa.md
   - ../features/browser-qa.md
@@ -98,6 +99,18 @@ semantic section boundaries should also be perceptible visual
 boundaries. This is not a mechanical alternating-background rule.
 Significant motion follows the same product-specific philosophy as
 static UI; decorative AI/template motion is challenged in `40-ui`.
+
+Image generation for UI and product-design exploration is owned by
+`40-ui`. It is not a new skill, MCP, or dependency. Generated design
+images are exploration/reference artifacts, not the implementation
+source of truth. The rendered product and the project's design system
+remain authoritative. Image generation is capability-on-demand:
+availability does not authorize or justify use. When it is used,
+agents must choose settings intentionally and adapt them to the
+artifact rather than relying on generic model defaults. Project design
+decisions override generic image-model preferences. Image generation
+must not replace framework-native implementation or the bounded Mode B
+rendered-verification pass.
 
 ## Consequences
 

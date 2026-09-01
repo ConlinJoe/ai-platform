@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-28
+last_reviewed: 2026-09-01
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -65,7 +65,10 @@ architecture, not a new release.
   perceptible visual boundaries between adjacent semantic sections
   (not mechanical background alternation). Significant motion is a
   specialized UI concern, not a separate skill or harness animation
-  dependency.
+  dependency. Image generation for design exploration is owned by
+  `40-ui`: settings are intentional and artifact-adaptive; generated
+  images are references, not implementation truth; availability does
+  not authorize use.
 - Capability-on-demand: external tools are not capability-by-default.
   Bootstrap does not install MCP servers or make additional MCPs
   required dependencies. Client-specific MCP configuration remains

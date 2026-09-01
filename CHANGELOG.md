@@ -78,6 +78,19 @@ boundaries. This is not a mechanical alternating-background rule:
 whitespace or other compositional delineation can suffice, and agents
 must not manufacture separation with unearned boxes, bands, or cards.
 
+Image generation for UI and product-design exploration is owned by
+`40-ui`. Agents must choose model, quality, resolution, aspect ratio,
+and option count intentionally and adapt those settings to the
+artifact. Generated design images are exploration/reference artifacts,
+not the implementation source of truth. Availability of an
+image-generation tool does not authorize or justify its use. This is a
+refinement of the current v1.2.0 design stack, not a new release.
+
+Bootstrap adds `.DS_Store`, `**/.DS_Store`, and `.ai/` to each
+project `.gitignore` when missing so local macOS and harness artifacts
+are not committed. This does not change the current symlink architecture
+or begin project-local `.ai/` portability work.
+
 ## 1.2.0 — 2026-08-23
 
 Simplified the UI/UX design stack. Hallmark is the only managed design

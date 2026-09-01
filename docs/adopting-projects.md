@@ -53,7 +53,8 @@ It does:
   index
 - add missing draft files on existing projects (working mode, status,
   reconciliation, Laravel browser QA)
-- ensure ignore entries such as `.build/` and `.hallmark/`
+- ensure ignore entries such as `.build/`, `.hallmark/`, `.DS_Store`,
+  and `.ai/`
 
 You can adopt incrementally: bootstrap so agents load shared rules, then
 run Project Adoption when you are ready to document and reconcile.

@@ -345,6 +345,10 @@ However:
 - art-direct visual assets for their actual placement, crop, hierarchy,
   and responsive use
 
+When generating exploration images for UI or product design, follow
+Image generation / design exploration below. Do not treat product
+imagery guidance as authorization to invoke image generation.
+
 ## Responsive composition
 
 Visual assets can be important for preventing mobile pages from becoming
@@ -375,6 +379,7 @@ Default:
 2. Make the bounded change. Preserve existing tokens and patterns.
 3. Do **not** load Hallmark.
 4. Do **not** run Playwright.
+5. Do **not** invoke image generation by default.
 
 If a seemingly small change has uncertain visual, responsive, state, or
 interaction consequences, recommend or perform the smallest appropriate
@@ -389,11 +394,12 @@ change, UI the developer cannot reasonably verify immediately.
 
 1. Inspect the existing design system and product context.
 2. Invoke Hallmark when design intelligence is useful (see below).
-3. Implement framework-natively.
+3. Implement framework-natively. Generated exploration images are
+   references, not the implementation source of truth.
 4. Perform bounded Mode B visual verification when a real-browser
    capability is available (`60-browser-qa`). Use the best available
    real-browser capability; do not treat that pass as Playwright
-   execution.
+   execution. Image generation does not replace that pass.
 5. Review against the design-review and accessibility floors. When
    meaningful motion is involved, also apply the motion review floor.
 6. Iterate if the rendered result exposes real problems.
@@ -410,9 +416,10 @@ Use when visual direction is genuinely unresolved. Do not introduce a
 hosted canvas or extra design tool.
 
 Offer 2–3 meaningfully different directions in concise description and
-reference language. Ask the developer to choose before significant
-implementation when approval is actually needed. Skip ceremony when the
-direction is already clear.
+reference language. Image generation may be used when it materially
+helps; follow Image generation / design exploration below. Ask the
+developer to choose before significant implementation when approval is
+actually needed. Skip ceremony when the direction is already clear.
 
 ## Hallmark
 
@@ -458,6 +465,132 @@ for **this** product, adapted to the harness constraints above.
 
 Hallmark `study` may be used when that extraction needs the skill.
 References inspire language; they do not override product identity.
+
+## Image generation / design exploration
+
+Image generation is an optional exploration aid for UI and
+product-design work. It is not a managed skill, not a required
+dependency, and not a substitute for framework-native implementation
+or rendered QA.
+
+The existence of an image-generation tool does not authorize or
+justify its use. Keep this consistent with capability-on-demand
+(`00-platform`).
+
+Use image generation when it materially improves visual exploration,
+composition, concept development, layout direction, or art direction.
+
+Do not invoke it for routine UI edits that can be resolved directly
+from the existing product or design system. Small UI does not invoke
+image generation by default.
+
+### Intentional, adaptive settings
+
+When image generation is used for UI or product-design exploration:
+
+1. Explicitly choose the image model when the tool supports it.
+2. Explicitly choose quality, resolution, aspect ratio, and number of
+   options.
+3. Do not rely on generic model defaults for high-fidelity design work.
+4. Choose settings from the artifact being designed. Do not apply one
+   universal configuration.
+
+Use lower-cost or faster settings for rough ideation when that is
+enough. Use high-fidelity settings when the image will materially
+influence a design decision.
+
+#### Grok Imagine 2.0 high-fidelity baseline
+
+For high-fidelity design exploration with Grok Imagine 2.0, prefer:
+
+- model: `grok-imagine-image-2.0`
+- quality: `medium`
+- resolution: `2k`
+
+Choose aspect ratio according to the actual artifact. Do not make
+`16:9` a global default.
+
+Examples:
+
+- desktop dashboard or product surface: commonly `16:9`
+- website hero: the actual intended hero proportion
+- mobile UI: an appropriate portrait ratio
+- square component or concept: `1:1` when that is the artifact
+
+### Exploration workflow
+
+For meaningful design exploration:
+
+1. Inspect the existing product and design system first.
+2. Build a specific visual brief.
+3. Generate 2–3 meaningfully different directions, not trivial
+   variations.
+4. Have the developer select a direction when a choice is genuinely
+   required.
+5. Once selected, prefer editing the selected image in place rather
+   than regenerating the entire composition.
+6. Preserve unaffected areas during edits when the tool supports that.
+
+Skip ceremony when the direction is already clear.
+
+### Visual brief
+
+When generating exploration images, include relevant known details
+such as:
+
+- theme
+- product type
+- layout and composition
+- navigation and structural elements
+- intended density
+- whitespace expectations
+- exact required labels and copy
+- supplied references and design system
+- forbidden imagery and treatments
+- target aspect ratio
+
+If exact UI labels are supplied, preserve them exactly unless
+explicitly asked to rewrite them.
+
+Do not invent meaningful product metrics, customer data, testimonials,
+logos, or similar content merely to fill visual space unless clearly
+represented as placeholder content.
+
+Do not introduce fake stock photos of people unless requested or
+justified by supplied references.
+
+### Existing design rules remain authoritative
+
+Image generation must obey the existing harness UI and design
+standards in this file. Project design system, tokens, components,
+references, contracts, ADRs, architecture, and project-specific rules
+override generic image-model preferences.
+
+Preserve, among others: no decorative sequential numbering unless
+functionally justified; no em dashes in generated end-user UI or
+marketing copy; generous whitespace where appropriate; hierarchy
+before decoration; avoid generic AI-startup visual language; avoid
+unnecessary pills, cards, gradients, glows, and glass; avoid default
+equal-width marketing grids; avoid filler copy; avoid fake metrics;
+avoid generic stock imagery.
+
+### Generated images are not implementation truth
+
+Generated design images are exploration/reference artifacts, not the
+implementation source of truth.
+
+Once a direction is selected:
+
+- implement it using the project's actual framework, components,
+  tokens, and design system
+- do not recreate screenshots literally when doing so conflicts with
+  project conventions
+- significant UI still follows the bounded Mode B rendered-verification
+  workflow in this file and `60-browser-qa`
+- the real rendered product is authoritative
+
+Image generation must not replace framework-native implementation or
+rendered QA.
 
 ## Design-review floor (significant UI)
 

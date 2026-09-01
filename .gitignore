@@ -2,3 +2,10 @@ __pycache__/
 *.pyc
 .build/
 .hallmark/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# AI Development Harness
+.ai/

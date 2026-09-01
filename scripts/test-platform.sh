@@ -700,6 +700,167 @@ assert_grep 'inherit harness UI design preferences' \
   "workflows inherit harness UI design preferences on adoption"
 
 echo ""
+echo "--- Image generation protocol ---"
+assert_grep '## Image generation / design exploration' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui owns the image-generation protocol"
+assert_grep 'Do \*\*not\*\* invoke image generation by default' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "small UI does not invoke image generation by default"
+assert_grep 'Explicitly choose the image model' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image-generation model is chosen explicitly when supported"
+assert_grep 'Explicitly choose quality, resolution, aspect ratio, and number of' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image-generation quality, resolution, aspect ratio, and option count are chosen explicitly"
+assert_grep 'Do not rely on generic model defaults' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "high-fidelity design work does not rely on generic image-model defaults"
+assert_grep 'Choose settings from the artifact being designed' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image-generation settings are adaptive to the artifact"
+assert_grep 'Do not apply one' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image generation does not apply one universal configuration"
+assert_grep 'grok-imagine-image-2.0' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Grok Imagine 2.0 high-fidelity baseline names grok-imagine-image-2.0"
+assert_grep 'quality: `medium`' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Grok high-fidelity baseline uses medium quality"
+assert_grep 'resolution: `2k`' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Grok high-fidelity baseline uses 2k resolution"
+assert_grep 'Do not make' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui forbids making 16:9 a global image-generation default"
+assert_grep '`16:9` a global default' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "16:9 is documented as not a global default"
+assert_grep 'desktop dashboard or product surface: commonly `16:9`' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "16:9 is an artifact example, not a universal setting"
+assert_grep 'website hero: the actual intended hero proportion' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "hero aspect ratio follows the actual intended proportion"
+assert_grep 'mobile UI: an appropriate portrait ratio' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "mobile UI uses an appropriate portrait ratio"
+assert_grep 'Generate 2–3 meaningfully different directions' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "exploration prefers 2-3 meaningfully different directions"
+assert_grep 'not trivial' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "exploration directions must not be trivial variations"
+assert_grep 'prefer editing the selected image in place rather' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "selected concepts should be edited rather than unnecessarily regenerated"
+assert_grep 'Preserve unaffected areas during edits' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "edits preserve unaffected areas when supported"
+assert_grep 'exploration/reference artifacts, not the' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "generated images are references, not implementation truth"
+assert_grep 'the real rendered product is authoritative' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "the real rendered product remains authoritative after image generation"
+assert_grep 'must not replace framework-native implementation or' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image generation must not replace framework-native implementation or rendered QA"
+assert_grep 'override generic image-model preferences' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "project design decisions override generic image-model preferences"
+assert_grep 'does not authorize or' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image-generation tool availability does not authorize or justify use"
+assert_grep 'capability-on-demand' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image generation stays consistent with capability-on-demand"
+assert_grep 'Image generation does not replace that pass' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image generation does not replace significant-UI Mode B verification"
+assert_grep 'bounded Mode B visual verification' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "significant-UI Mode B visual verification remains intact"
+assert_grep 'It is \*\*not\*\* authorization for a Mode A suite' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "significant UI still does not authorize a Mode A suite"
+assert_grep 'creating or expanding a Playwright Mode A suite' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "browser-qa still withholds Mode A from the bounded visual pass"
+assert_grep 'capability-on-demand, not capability-by-default' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "capability-on-demand remains intact in the always-on platform rule"
+assert_grep 'exploration/reference artifacts, not the' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core states generated images are not implementation truth"
+assert_grep 'adapt those settings to the' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core requires adaptive image-generation settings"
+assert_not_grep 'grok-imagine-image-2.0' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core does not duplicate the Grok-specific baseline"
+assert_grep 'exploration/reference artifacts, not the implementation' \
+  "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" \
+  "design-stack ADR records generated images as not implementation truth"
+assert_grep 'Do not invent meaningful product metrics' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "visual briefs must not invent product metrics as filler"
+assert_grep 'fake stock photos of people' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "visual briefs must not introduce fake stock photos of people by default"
+assert_grep 'preserve them exactly unless' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "supplied UI labels are preserved exactly unless rewrite is requested"
+assert_not_grep 'npx.*imagine' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image-generation protocol does not add an external image-generation CLI"
+assert_not_grep 'mcpServers' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "image-generation protocol does not add MCP server config"
+
+echo ""
+echo "--- Current symlink/bootstrap architecture ---"
+assert_file "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap script remains the project-harness installer"
+assert_file "${AI_REPO}/scripts/link-rules.sh" \
+  "link-rules.sh remains a bootstrap alias"
+assert_missing "${AI_REPO}/scripts/update-project-harness.sh" \
+  "no project-harness update script was added"
+assert_missing "${AI_REPO}/scripts/update-harness.sh" \
+  "no generic harness update script was added"
+assert_grep '^\.ai/?$' "${AI_REPO}/.gitignore" \
+  "platform gitignore ignores .ai/"
+assert_grep '^\.DS_Store$' "${AI_REPO}/.gitignore" \
+  "platform gitignore ignores .DS_Store"
+assert_grep '^\*\*/\.DS_Store$' "${AI_REPO}/.gitignore" \
+  "platform gitignore ignores nested .DS_Store"
+assert_missing "${AI_REPO}/.ai/rules" \
+  "platform does not migrate rules into a project-local .ai/rules tree"
+assert_missing "${AI_REPO}/.ai/guidelines" \
+  "platform repo does not ship a project-local .ai/guidelines tree"
+assert_file "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "canonical UI rule remains in .cursor/rules"
+assert_grep 'Canonical detailed rules live in `.cursor/rules/`' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core still points at .cursor/rules as canonical"
+assert_grep 'symlinked from the' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core still describes current rule symlink architecture"
+assert_not_grep 'v1\.3\.0' "${AI_REPO}/README.md" \
+  "README does not begin v1.3.0"
+assert_not_grep 'v1\.3\.0' "${AI_REPO}/docs/00-project-context.md" \
+  "project context does not begin v1.3.0"
+assert_grep '^Version 1\.2\.0$' "${AI_REPO}/README.md" \
+  "README version remains 1.2.0"
+assert_grep '^Version 1\.2\.0$' "${AI_REPO}/docs/00-project-context.md" \
+  "project context version remains 1.2.0"
+assert_grep '\.DS_Store' "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
+  "workflows document macOS gitignore entries"
+assert_grep '`\.ai/`' "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
+  "workflows document ignoring .ai/"
+
+echo ""
 echo "--- Copy and Tailwind guardrails ---"
 assert_file "${AI_REPO}/scripts/check-guardrails.sh" \
   "check-guardrails.sh exists"
@@ -1105,6 +1266,16 @@ assert_grep '^\.hallmark/' "${GENERIC}/.gitignore" \
   "generic gitignore ignores Hallmark operational artifacts"
 assert_not_grep '^design\.md' "${GENERIC}/.gitignore" \
   "generic gitignore does not ignore design.md"
+assert_grep '^\.DS_Store$' "${GENERIC}/.gitignore" \
+  "generic gitignore ignores .DS_Store"
+assert_grep '^\*\*/\.DS_Store$' "${GENERIC}/.gitignore" \
+  "generic gitignore ignores nested .DS_Store"
+assert_grep '^\.ai/?$' "${GENERIC}/.gitignore" \
+  "generic gitignore ignores .ai/"
+assert_grep '^# macOS$' "${GENERIC}/.gitignore" \
+  "generic gitignore labels macOS ignore entries"
+assert_grep '^# AI Development Harness$' "${GENERIC}/.gitignore" \
+  "generic gitignore labels harness local ignore entries"
 
 mkdir -p \
   "${GENERIC}/.agents/skills/frontend-design" \
@@ -1210,6 +1381,12 @@ assert_file "${RADICLE_NEW}/resources/images/.gitkeep" \
   "new Radicle resources/images has .gitkeep"
 assert_not_grep 'playwright-report' "${RADICLE_NEW}/.gitignore" \
   "Radicle gitignore has no Playwright artifacts"
+assert_grep '^\.DS_Store$' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore ignores .DS_Store"
+assert_grep '^\*\*/\.DS_Store$' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore ignores nested .DS_Store"
+assert_grep '^\.ai/?$' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore ignores .ai/"
 assert_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-radicle-new.log \
   "bootstrap detects roots-radicle profile"
 assert_not_grep "Detected profile: laravel-webapp" ${LOGDIR}/boot-radicle-new.log \
@@ -1298,6 +1475,12 @@ assert_missing "${LARAVEL_NEW}/resources/images" \
   "Laravel project did not receive Roots resources/images"
 assert_grep 'playwright-report' "${LARAVEL_NEW}/.gitignore" \
   "new Laravel gitignore includes Playwright artifacts"
+assert_grep '^\.DS_Store$' "${LARAVEL_NEW}/.gitignore" \
+  "new Laravel gitignore ignores .DS_Store"
+assert_grep '^\*\*/\.DS_Store$' "${LARAVEL_NEW}/.gitignore" \
+  "new Laravel gitignore ignores nested .DS_Store"
+assert_grep '^\.ai/?$' "${LARAVEL_NEW}/.gitignore" \
+  "new Laravel gitignore ignores .ai/"
 assert_grep "Detected profile: laravel-webapp" ${LOGDIR}/boot-laravel-new.log \
   "bootstrap detects laravel-webapp profile"
 assert_not_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-laravel-new.log \
@@ -1416,6 +1599,7 @@ EOF
 printf 'UNIQUE_PR_TEMPLATE_MARKER\n' > "${EXISTING_GH}/.github/PULL_REQUEST_TEMPLATE.md"
 printf 'UNIQUE_ISSUE_TEMPLATE_MARKER\n' > "${EXISTING_GH}/.github/ISSUE_TEMPLATE/bug.md"
 printf 'UNIQUE_WORKING_MODE_MARKER\n' > "${EXISTING_GH}/docs/working-mode.md"
+printf 'UNIQUE_GITIGNORE_MARKER\n' > "${EXISTING_GH}/.gitignore"
 
 "${AI_REPO}/scripts/bootstrap-project.sh" "${EXISTING_GH}" >${LOGDIR}/boot-existing-github.log 2>&1
 
@@ -1425,6 +1609,14 @@ assert_grep "UNIQUE_ISSUE_TEMPLATE_MARKER" "${EXISTING_GH}/.github/ISSUE_TEMPLAT
   "existing Issue template was not overwritten"
 assert_grep "UNIQUE_WORKING_MODE_MARKER" "${EXISTING_GH}/docs/working-mode.md" \
   "existing working-mode was not overwritten"
+assert_grep "UNIQUE_GITIGNORE_MARKER" "${EXISTING_GH}/.gitignore" \
+  "existing gitignore contents were preserved"
+assert_grep '^\.DS_Store$' "${EXISTING_GH}/.gitignore" \
+  "existing-project gitignore gained .DS_Store"
+assert_grep '^\*\*/\.DS_Store$' "${EXISTING_GH}/.gitignore" \
+  "existing-project gitignore gained nested .DS_Store"
+assert_grep '^\.ai/?$' "${EXISTING_GH}/.gitignore" \
+  "existing-project gitignore gained .ai/"
 assert_grep "does not copy or overwrite .github/" ${LOGDIR}/boot-existing-github.log \
   "existing-project bootstrap states it does not overwrite GitHub templates"
 assert_not_grep 'gh auth' ${LOGDIR}/boot-existing-github.log \
@@ -1438,6 +1630,24 @@ if [[ "${build_count}" -eq 1 ]]; then
   pass "re-run does not duplicate .build/ gitignore"
 else
   fail "re-run does not duplicate .build/ gitignore (count=${build_count})"
+fi
+ds_count="$(grep -cE '^\.DS_Store$' "${GENERIC}/.gitignore" || true)"
+if [[ "${ds_count}" -eq 1 ]]; then
+  pass "re-run does not duplicate .DS_Store gitignore"
+else
+  fail "re-run does not duplicate .DS_Store gitignore (count=${ds_count})"
+fi
+nested_ds_count="$(grep -cE '^\*\*/\.DS_Store$' "${GENERIC}/.gitignore" || true)"
+if [[ "${nested_ds_count}" -eq 1 ]]; then
+  pass "re-run does not duplicate nested .DS_Store gitignore"
+else
+  fail "re-run does not duplicate nested .DS_Store gitignore (count=${nested_ds_count})"
+fi
+ai_count="$(grep -cE '^\.ai/?$' "${GENERIC}/.gitignore" || true)"
+if [[ "${ai_count}" -eq 1 ]]; then
+  pass "re-run does not duplicate .ai/ gitignore"
+else
+  fail "re-run does not duplicate .ai/ gitignore (count=${ai_count})"
 fi
 assert_file "${GENERIC}/docs/contracts/foundational/platform-reconciliation.md" \
   "re-bootstrap of a new project adds reconciliation (known limitation: docs index present)"

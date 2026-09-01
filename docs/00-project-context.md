@@ -72,7 +72,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   backgrounds. Meaningful motion is a specialized significant-UI
   concern, not a separate skill. Hard constraints (no decorative
   sequential numbering; no em dashes in generated end-user copy) live
-  in `.cursor/rules/40-ui.mdc` and outrank Hallmark.
+  in `.cursor/rules/40-ui.mdc` and outrank Hallmark. Generated design
+  images are exploration/reference artifacts, not implementation truth.
+  Image generation is capability-on-demand and must not replace
+  framework-native implementation or bounded Mode B verification.
 - Tailwind: use the standard utility scale when an equivalent exists.
   Arbitrary values are last-resort exceptions, not a way to match a
   comp (`20-coding`).

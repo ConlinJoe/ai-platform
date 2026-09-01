@@ -384,6 +384,56 @@ ensure_hallmark_gitignore() {
   echo "Added .hallmark/ to ${gitignore}"
 }
 
+ensure_local_artifact_gitignore() {
+  local gitignore="${TARGET_PROJECT}/.gitignore"
+
+  echo "--- Local artifact gitignore ---"
+
+  if [[ ! -f "${gitignore}" ]]; then
+    touch "${gitignore}"
+  fi
+
+  local added=0
+  local has_ds=0
+  local has_nested_ds=0
+  local has_ai=0
+
+  if grep -qE '^\.DS_Store$' "${gitignore}"; then
+    has_ds=1
+  fi
+  if grep -qE '^\*\*/\.DS_Store$' "${gitignore}"; then
+    has_nested_ds=1
+  fi
+  if grep -qE '^\.ai/?$' "${gitignore}"; then
+    has_ai=1
+  fi
+
+  if [[ "${has_ds}" -eq 0 || "${has_nested_ds}" -eq 0 ]]; then
+    if [[ "${has_ds}" -eq 0 && "${has_nested_ds}" -eq 0 ]]; then
+      printf '\n# macOS\n.DS_Store\n**/.DS_Store\n' >> "${gitignore}"
+    else
+      if [[ "${has_ds}" -eq 0 ]]; then
+        printf '\n.DS_Store\n' >> "${gitignore}"
+      fi
+      if [[ "${has_nested_ds}" -eq 0 ]]; then
+        printf '\n**/.DS_Store\n' >> "${gitignore}"
+      fi
+    fi
+    added=1
+  fi
+
+  if [[ "${has_ai}" -eq 0 ]]; then
+    printf '\n# AI Development Harness\n.ai/\n' >> "${gitignore}"
+    added=1
+  fi
+
+  if [[ "${added}" -eq 1 ]]; then
+    echo "Ensured local artifact paths in ${gitignore}"
+  else
+    echo "Local artifact paths already listed in .gitignore"
+  fi
+}
+
 RETIRED_DESIGN_SKILLS=(
   frontend-design
   ui-ux-pro-max
@@ -1035,6 +1085,7 @@ bootstrap_docs_templates
 ensure_gitignore_build
 ensure_playwright_gitignore
 ensure_hallmark_gitignore
+ensure_local_artifact_gitignore
 ensure_roots_resources_images
 restore_skills
 provision_agent_adapters

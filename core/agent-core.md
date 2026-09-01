@@ -166,6 +166,14 @@ that outrank Hallmark:
   can suffice.
 - Design for this product. Avoid recognizable AI/template conventions.
 
+Generated design images are exploration/reference artifacts, not the
+implementation source of truth. Implement selected directions with the
+project's framework, components, tokens, and design system. Image
+generation is capability-on-demand: do not invoke it for routine UI
+edits. When it is used, choose model, quality, resolution, aspect
+ratio, and option count intentionally, and adapt those settings to the
+artifact. Details: `.cursor/rules/40-ui.mdc`.
+
 Do not add another design skill.
 
 ## Browser automation
