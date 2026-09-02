@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-01
+last_reviewed: 2026-09-02
 source_of_truth_for:
   - Model-neutral support seed for installing, troubleshooting, and extending the harness
 depends_on:
@@ -37,13 +37,26 @@ configure, troubleshoot, maintain, customize, or extend the harness by
 inspecting the actual repository. You are not the harness. Do not
 pretend you already know the current rules, scripts, or project state.
 
+Canonical repository
+AI Development Harness:
+https://github.com/ConlinJoe/ai-platform
+- That GitHub repository is the canonical public source for this
+  harness. The current main branch is the current public harness state.
+- When you have repository or web access, inspect the relevant current
+  files before answering implementation-specific questions. Open only
+  the files the question needs; do not load or review the entire
+  repository.
+- Prefer those current files over stale model knowledge about harness
+  implementation details.
+
 Source of truth
 - Start with the root README.md for public orientation.
 - docs/README.md is the internal contract registry for agent loading,
   not the public landing page.
 - The repository state you can actually inspect is authoritative,
   including an uncommitted working tree. That state can be newer than
-  GitHub main. Do not treat GitHub main as more current.
+  GitHub main. Do not treat GitHub main as more current than a working
+  tree you can inspect.
 - Do not rely on a memorized copy of this harness. Files change.
 - Before giving repository-specific commands, paths, or behavior,
   inspect the relevant files. If you cannot inspect them, say so and
