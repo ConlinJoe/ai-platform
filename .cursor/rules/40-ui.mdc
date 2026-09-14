@@ -12,13 +12,15 @@ Instruction priority (`00-platform`) still applies: project/harness rules
 outrank Hallmark. Vendor skills do not authorize browser automation beyond
 what `60-browser-qa` allows.
 
-These platform-owned design constraints outrank Hallmark. If Hallmark
-recommends a technique prohibited here, do not use it. Do not modify
-Hallmark vendor content to encode developer preferences. Keep those
-preferences in this rule.
+These platform-owned design and usability constraints outrank Hallmark.
+If Hallmark or another design skill recommends a technique prohibited
+here, do not use it. Do not modify Hallmark vendor content to encode
+developer preferences. Keep those preferences in this rule.
 
 Design philosophy: product-specific, spacious, hierarchy-driven design.
-Avoid recognizable AI/template conventions.
+The interface exists to help the user complete the current task. Avoid
+recognizable AI/template conventions. These are usability and craft
+principles, not a native-platform imitation guide.
 
 ## Design-system ownership
 
@@ -26,9 +28,18 @@ If the project already has tokens, a Tailwind/theme config, a component
 library, a design contract, `design.md` / `DESIGN.md`, or equivalent
 project-owned design documentation, **that system is authoritative**.
 
-Hallmark may reason within it or propose a deliberate evolution. It must
-not silently replace it. If the task requires changing the established
-system, say so explicitly before drifting.
+Reuse and extend existing tokens, typography, components, spacing rules,
+and interaction patterns before inventing replacements. A design skill
+must not silently create a parallel design system.
+
+If an approved visual reference, design brief, or locked `design.md`
+exists, treat it as higher-authority creative direction than a skill
+default.
+
+Hallmark may reason within the established system or propose a
+deliberate evolution. It must not silently replace it. If the task
+requires changing the established system, say so explicitly before
+drifting.
 
 Load relevant feature contracts from `docs/README.md` (design system, page
 behavior, component contracts) before implementing. Update those contracts
@@ -37,35 +48,80 @@ when user-visible behavior changes.
 ## Always-on floor
 
 - Before significant UI, identify: what product this is, who uses it,
-  what the user is trying to accomplish, the established visual language
+  the task they are trying to complete, the established visual language
   if one exists, the appropriate information density, and what should
   receive visual emphasis.
+- Prefer direct access to the primary task, obvious primary actions,
+  clear hierarchy, and minimal interruption. Chrome must not compete
+  with content or workflow.
 - Design for this subject. A layout that could be dropped unchanged into
   an unrelated SaaS product is suspect.
 - Prefer generous whitespace: breathing room between conceptual groups,
   comfortable section spacing, and clear separation through space before
   adding containers or dividers. Do not fill empty space merely because
   it exists.
+- Simplicity is capable, not empty. Remove unnecessary decisions,
+  redundant controls, and redundant explanation. Keep important
+  functionality close to where it is used. Do not remove useful
+  capability merely to make a screen look sparse.
 - Adjacent semantic sections must remain visually distinguishable.
   Semantic section boundaries should also be perceptible visual
   boundaries. Do not solve this by mechanically alternating backgrounds
   or adding unearned containers.
 - Establish structure with typography, spacing, scale, alignment,
-  composition, contrast, and content hierarchy before adding unearned
-  cards, borders, dividers, badges, icons, numbers, gradients, or
-  decorative graphics. Cards that earn semantic grouping are structure,
-  not decoration. Do not use decoration to compensate for weak hierarchy.
+  grouping, composition, restrained contrast, and content hierarchy
+  before adding unearned cards, containers, borders, dividers, badges,
+  icons, helper text, headings, numbers, shadows, gradients, or
+  decorative graphics. An element must earn its place by improving
+  hierarchy, comprehension, interaction, or state communication.
+  Cards that earn semantic grouping are structure, not decoration.
+  Do not use decoration to compensate for weak hierarchy.
+- Typography carries hierarchy: restrained font families, deliberate
+  size and weight steps, readable line lengths, strong contrast,
+  sufficient text size, and scalable type. Do not use many font styles
+  or excessively light weights merely for aesthetics.
 - Consider whether custom imagery, photography, illustration, or vector
   artwork would materially improve a composition. Do not default to
   text-only UI, and do not add filler imagery.
 - Avoid recognizable AI/template conventions unless they serve this
-  product, content, and user.
+  product, content, and user. Do not globally prescribe visual trends
+  such as glassmorphism, liquid-glass treatments, heavy gradients,
+  excessive translucency, oversized type, floating pills, excessive
+  rounding, or gratuitous animation. Use a treatment only when it
+  serves this product and design direction.
 - UX writing is interface design: specific, user-facing, consistent.
 - Preserve consistency across an established product.
 - Implement framework-natively. Tailwind composition follows `20-coding`.
 - Responsive behavior and accessibility are part of design, not extras.
   Mobile composition is not merely desktop content stacked vertically.
+- Treat spacing, alignment, typography, wording, state transitions, and
+  loading, empty, error, selected, disabled, and focus states as
+  product quality, not optional polish.
 - Do not declare significant UI complete from source code alone.
+
+## Interaction quality
+
+Minimum usability judgment for web apps, PWAs, SaaS products, and
+marketing sites. Framework-neutral and platform-neutral.
+
+- **Progressive disclosure.** Expose what the user needs now. Reveal
+  secondary or advanced controls when they become relevant. Do not
+  confront the user with the application's full complexity on every
+  screen.
+- **Familiar interaction.** Prefer established patterns over novel
+  controls unless the novel interaction is a substantial usability
+  improvement. Controls must behave predictably.
+- **Preserve context.** Navigation, responsive layout changes,
+  refresh/resume, modal/sheet flows, and device changes must keep the
+  user's place, state, selections, work, and mental context. Do not
+  make users reconstruct where they were.
+- **Proximity.** Place actions next to the content or state they
+  modify. Do not force users to connect distant controls and results.
+- **Touch-first where applicable.** On mobile and PWA surfaces, use
+  comfortably tappable controls. Primary interactive targets should be
+  at least approximately 44x44 CSS px where practical. Separate
+  destructive and competing actions. Consider thumb reach. Minimize
+  precision-dependent interaction and typing in field workflows.
 
 ## Hard prohibitions
 
@@ -212,8 +268,9 @@ break is clearly intentional.
 
 Whitespace must still preserve usability and information relationships.
 Do not disconnect related controls or content. Do not create needless
-scrolling in dense operational interfaces. Project context determines
-appropriate density.
+scrolling in dense operational interfaces. Generous space must not
+become emptiness: keep important functionality available. Project
+context determines appropriate density.
 
 ## Hierarchy before decoration
 
@@ -223,12 +280,17 @@ When creating visual structure, prefer, in order:
 2. spacing
 3. scale
 4. alignment
-5. composition
-6. contrast
-7. content hierarchy
+5. grouping
+6. composition
+7. restrained contrast
+8. content hierarchy
 
-before adding unearned cards, borders, dividers, badges, icons, numbers,
-gradients, or decorative graphics.
+before adding unearned cards, containers, borders, dividers, badges,
+icons, helper text, headings, numbers, shadows, gradients, or
+decorative graphics.
+
+Use borders, shadows, fills, gradients, and effects only when they
+communicate something useful.
 
 ## Semantic section boundaries
 
@@ -354,6 +416,11 @@ imagery guidance as authorization to invoke image generation.
 Visual assets can be important for preventing mobile pages from becoming
 long uninterrupted sequences of text.
 Mobile should not merely be desktop content stacked vertically.
+Responsive layout is not a shrunk desktop.
+
+Adapt information architecture and interaction for phone, tablet,
+desktop, portrait and landscape, and touch versus pointer. Preserve
+capability and context while changing presentation.
 
 Evaluate text density, visual pacing, crop, ordering, and whether visual
 elements should move or change prominence at smaller widths.
@@ -363,6 +430,7 @@ elements should move or change prominence at smaller widths.
 Hallmark should help create product-specific design, not merely polished
 generic design. If the agent cannot name the product, the user, the job,
 and what deserves emphasis, it is not ready to design significant UI.
+Name the primary task before decorating the screen.
 
 ## Scope router
 
@@ -432,14 +500,19 @@ visual-direction work, and meaningful component or system design.
 
 Do not invoke it for every UI edit.
 
-Project design systems, contracts, tokens, framework-native rules, and
-the hard prohibitions in this file remain authoritative over Hallmark
-recommendations.
+Project design systems, contracts, tokens, approved visual references,
+framework-native rules, accessibility requirements, and the usability
+and design constraints in this file remain authoritative over Hallmark
+recommendations. Skills may provide stronger task-specific creative
+direction. They must not override those authorities or silently create
+a parallel design system.
 
 Hallmark copy and typography guidance may recommend typographic em
 dashes. Ignore that for generated end-user copy. Hallmark slop-test
 or audit treating `--` as a defect to convert into an em dash is not a
-pass condition.
+pass condition. Hallmark extreme-weight or multi-family typography
+recipes do not override readability, contrast, or restrained type
+hierarchy.
 
 Hallmark CSS or token recipes (custom `font-size` clamps, spacing
 tokens, and similar) are design reasoning. Implementation must still
@@ -465,6 +538,8 @@ for **this** product, adapted to the harness constraints above.
 
 Hallmark `study` may be used when that extraction needs the skill.
 References inspire language; they do not override product identity.
+An approved project visual reference or design brief outranks a skill's
+default aesthetic.
 
 ## Image generation / design exploration
 
@@ -594,12 +669,14 @@ rendered QA.
 
 ## Design-review floor (significant UI)
 
-Review the **rendered** result proportionately:
+Review the **rendered** result at relevant breakpoints, proportionately:
 
-- visual hierarchy
-- usability
+- visual hierarchy and spacing rhythm
+- usability and whether the primary task is obvious
 - consistency with the project system
-- responsive behavior
+- responsive behavior, overflow, wrapping, and layout transitions
+- touch targets where touch is in scope
+- loading, empty, error, selected, disabled, and focus states
 - accessibility
 - performance implications when relevant
 - significant motion, when meaningful animation is part of the work
@@ -630,6 +707,11 @@ agent output):
   unearned boxes instead of composition?
 - Does the result feel specific to this product?
 - Is any copy generic filler rather than useful communication?
+- Is the primary task easy to reach, or does chrome compete with it?
+- Was useful functionality removed merely to make the screen look sparse?
+- Do controls sit next to the content they affect?
+- Were user place, state, and selections preserved across the flow?
+- Are primary touch targets comfortably tappable where touch applies?
 
 Subjective taste is judgment, not proof. Keep it distinct from objective
 checks (contrast, keyboard, overflow, semantics).
@@ -639,7 +721,9 @@ checks (contrast, keyboard, overflow, semantics).
 Target WCAG 2.2 AA where applicable. For significant UI, proportionately
 consider: contrast, visible focus, keyboard operation for new controls,
 semantic structure, accessible names/labels, important
-hover/focus/disabled/error states, reduced motion, and responsive overflow.
+hover/focus/disabled/error/loading/empty/selected states, reduced motion,
+responsive overflow, and comfortably tappable targets (approximately
+44x44 CSS px for primary controls where practical).
 
 Verify against the real application when a real-browser capability
 permits. Do not import a

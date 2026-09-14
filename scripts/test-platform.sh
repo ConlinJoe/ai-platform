@@ -701,6 +701,45 @@ assert_grep 'excessive rounded cards/containers' \
 assert_grep 'arbitrary badges/eyebrows above every heading' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui still challenges arbitrary badges"
+assert_grep 'Simplicity is capable, not empty' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires capable simplicity, not empty screens"
+assert_grep '## Interaction quality' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui encodes interaction-quality principles"
+assert_grep 'Progressive disclosure' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires progressive disclosure"
+assert_grep 'Preserve context' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires preserved user context"
+assert_grep 'approximately 44x44 CSS px' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui sets a practical touch-target floor"
+assert_grep 'excessively light weights' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui rejects aesthetic-only light type weights"
+assert_grep 'Do not globally prescribe visual trends' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not globally prescribe visual trends"
+assert_grep 'higher-authority creative direction' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "approved visual references outrank skill defaults"
+assert_grep 'must not silently create a parallel design system' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui forbids skills from creating a parallel design system"
+assert_grep 'Responsive layout is not a shrunk desktop' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui forbids treating responsive layout as a shrunk desktop"
+assert_grep 'at relevant breakpoints' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "significant UI review is against the rendered result at breakpoints"
+assert_grep 'simplicity rather than empty screens' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core requires capable simplicity"
+assert_grep 'override project design systems' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core keeps design skills from overriding usability principles"
 assert_grep 'Cards are semantic containers' \
   "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" \
   "design-stack ADR does not treat cards as prohibited"

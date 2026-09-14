@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+`40-ui` now encodes durable, framework-neutral usability principles
+alongside the existing visual floor: task-first interaction, capable
+simplicity (not empty screens), progressive disclosure, familiar
+patterns, preserved context, control proximity, touch-first targets
+where applicable, typography as hierarchy, craft as product quality,
+and restraint against globally prescribed visual trends. Design skills
+remain secondary to project design systems, approved visual
+references, accessibility, and these principles.
+
 ## 1.3.0 — 2026-09-01
 
 Optional Deployer capability. The harness can install a standardized

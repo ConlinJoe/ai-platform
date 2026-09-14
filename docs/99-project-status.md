@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-01
+last_reviewed: 2026-09-14
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -61,8 +61,9 @@ architecture. Version 1.3.0.
   UI work. frontend-design, ui-ux-pro-max, and Superdesign were removed
   from the harness. `40-ui` owns hard developer design constraints (no
   decorative sequential numbering, no em dashes in generated end-user
-  copy, generous whitespace, product-specific hierarchy-driven design)
-  that outrank Hallmark. Cards are semantic containers that must earn
+  copy, generous whitespace, product-specific hierarchy-driven design,
+  task-first interaction, capable simplicity, and preserved user
+  context) that outrank Hallmark. Cards are semantic containers that must earn
   grouping; unearned card grids remain prohibited. `40-ui` also covers
   purposeful imagery, art direction, responsive composition, and
   perceptible visual boundaries between adjacent semantic sections

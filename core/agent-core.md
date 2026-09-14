@@ -176,12 +176,18 @@ that outrank Hallmark:
 - Favor generous whitespace and hierarchy (type, space, scale,
   alignment) before decoration. Cards are semantic containers, not
   decoration; use them when containment earns grouping.
+- Design for the current task: obvious primary actions, capable
+  simplicity rather than empty screens, and controls placed next to
+  what they change. Preserve the user's place and state.
 - Adjacent semantic sections must remain visually distinguishable.
   Do not let them merge through identical backgrounds, uninterrupted
   imagery, or insufficient spacing. This is not a mandate to alternate
   section backgrounds; whitespace or other compositional delineation
   can suffice.
 - Design for this product. Avoid recognizable AI/template conventions.
+- Design skills may specialize creative direction. They must not
+  override project design systems, approved visual references,
+  accessibility, or these usability principles.
 
 Generated design images are exploration/reference artifacts, not the
 implementation source of truth. Implement selected directions with the

@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-09-01
+last_reviewed: 2026-09-14
 source_of_truth_for:
   - Decision that Hallmark is the only managed design skill
   - Decision that 40-ui is the UI router and always-on design floor
@@ -82,17 +82,26 @@ Tailwind arbitrary values live in
 `../features/copy-and-tailwind-guardrails.md` (ADR 0006). Hallmark
 typography or CSS recipes do not authorize reversing those rules.
 
-Design philosophy: product-specific, spacious, hierarchy-driven design.
-Avoid recognizable AI/template conventions.
+Design philosophy: product-specific, spacious, hierarchy-driven,
+task-first design. Avoid recognizable AI/template conventions. These
+are usability and craft principles, not a native-platform imitation
+guide.
 
 Hard constraints in `40-ui` include: no decorative sequential numbering
 as a visual device; no em dashes in generated end-user copy; no generic
 AI/template decoration used only because it is familiar. Generous
 whitespace is an intentional tool, not an AI-design tell. Prefer
-typography, spacing, scale, alignment, composition, contrast, and
-content hierarchy before unearned cards, borders, dividers, badges,
-icons, numbers, gradients, or decorative graphics.
+typography, spacing, scale, alignment, grouping, composition, restrained
+contrast, and content hierarchy before unearned cards, borders,
+dividers, badges, icons, numbers, gradients, or decorative graphics.
 Cards are semantic containers, not a prohibited pattern; they must earn grouping.
+Simplicity is capable, not empty: remove unnecessary decisions, not
+useful functionality. Interaction quality (progressive disclosure,
+familiar patterns, preserved context, control proximity, and
+touch-first targets where applicable) is part of the always-on floor.
+Visual trends are not globally prescribed. Design skills may specialize
+creative direction; they must not override project design systems,
+approved visual references, accessibility, or these principles.
 Imagery and responsive composition guidance also live in `40-ui`.
 Adjacent semantic sections must remain visually distinguishable;
 semantic section boundaries should also be perceptible visual

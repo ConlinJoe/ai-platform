@@ -68,14 +68,15 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   automated Playwright/E2E). Significant
   motion may be observed in that pass; it does not by itself authorize
   Mode A or performance profiling.
-- UI: product-specific, spacious, hierarchy-driven design. Avoid
-  recognizable AI/template conventions. Cards are semantic containers,
-  not decoration. Adjacent semantic sections must remain visually
-  distinguishable; this is not a mandate to alternate section
+- UI: product-specific, spacious, hierarchy-driven, task-first design.
+  Avoid recognizable AI/template conventions. Cards are semantic
+  containers, not decoration. Adjacent semantic sections must remain
+  visually distinguishable; this is not a mandate to alternate section
   backgrounds. Meaningful motion is a specialized significant-UI
   concern, not a separate skill. Hard constraints (no decorative
-  sequential numbering; no em dashes in generated end-user copy) live
-  in `.cursor/rules/40-ui.mdc` and outrank Hallmark. Generated design
+  sequential numbering; no em dashes in generated end-user copy;
+  capable simplicity; preserve user context) live in
+  `.cursor/rules/40-ui.mdc` and outrank Hallmark. Generated design
   images are exploration/reference artifacts, not implementation truth.
   Image generation is capability-on-demand and must not replace
   framework-native implementation or bounded Mode B verification.
