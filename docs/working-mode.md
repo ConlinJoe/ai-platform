@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-26
+last_reviewed: 2026-09-14
 source_of_truth_for:
   - Current working mode and agent continuation instructions
 depends_on:
@@ -23,7 +23,7 @@ Bounded harness maintenance.
 
 Shared architecture is frozen except when an explicit platform change
 is requested. Follow Current-First, Framework-Native First,
-capability-on-demand, Hallmark-only design stack, two-layer browser QA,
+capability-on-demand, routed Impeccable/Hallmark design stack, two-layer browser QA,
 and the work-item lifecycle. Contracts and ADRs remain authoritative.
 Do not modify consuming applications from this repository.
 

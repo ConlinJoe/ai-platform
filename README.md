@@ -164,7 +164,7 @@ harness. It does not embed a stale copy of the rules.
 core/agent-core.md portable always-on core (AGENTS.md / CLAUDE.md)
 core/adapters/     per-agent setup and capability matrix
 core/prompts/      adoption and resume prompts
-.agents/skills/    locked skills (Hallmark)
+.agents/skills/    locked skills (Impeccable, Hallmark)
 scripts/           bootstrap, doctor, Deployer installer, update-skills, export, guardrails
 templates/         docs copied into new projects; optional Deployer recipes
 docs/              this harness's contracts and public guides

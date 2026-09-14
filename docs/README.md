@@ -31,7 +31,7 @@ model and templates from `templates/docs/`.
 | `contracts/adrs/0001-two-layer-browser-qa.md` | adr | accepted | Decision to use Mode A/B browser QA |
 | `contracts/adrs/0002-laravel-boost-ownership.md` | adr | accepted | Decision that Boost is project-native |
 | `contracts/adrs/0003-work-item-lifecycle.md` | adr | accepted | Decision to use a provider-neutral work-item lifecycle with GitHub as reference |
-| `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` | adr | accepted | Decision that Hallmark is the only managed design skill, significant UI authorizes bounded Mode B visual verification, and generated design images are exploration/reference artifacts |
+| `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` | adr | accepted | Decision to route significant product UI to Impeccable, expressive art direction to Hallmark, and authorize bounded Mode B visual verification |
 | `contracts/adrs/0005-agent-continuation-and-concise-reporting.md` | adr | accepted | Decision to store agent continuation in working-mode.md and default to concise completion reporting |
 | `contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md` | adr | accepted | Decision that project/platform rules outrank secondary guidance and that em-dash/Tailwind arbitrary values are mechanically checked |
 | `contracts/adrs/0007-optional-deployer-capability.md` | adr | accepted | Decision that Deployer is the standardized optional deployment foundation |

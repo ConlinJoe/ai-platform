@@ -2,11 +2,12 @@
 status: accepted
 last_reviewed: 2026-09-14
 source_of_truth_for:
-  - Decision that Hallmark is the only managed design skill
+  - Decision that Impeccable and Hallmark are the managed design skills
+  - Decision that Impeccable is primary for product/application UI and Hallmark is specialist art direction
   - Decision that 40-ui is the UI router and always-on design floor
   - Decision that significant UI authorizes a bounded Mode B visual pass
   - Decision that Mode B visual verification uses the best available real-browser capability, not Playwright specifically
-  - Decision that developer design constraints live in 40-ui and outrank Hallmark
+  - Decision that developer design constraints live in 40-ui and outrank managed design skills
   - Decision that significant motion is a specialized UI concern with proportionate review, not a separate skill or Mode A authorization
   - Decision that generated design images are exploration/reference artifacts, not implementation truth
 depends_on:
@@ -20,7 +21,7 @@ referenced_by:
 type: adr
 ---
 
-# ADR-0004: Hallmark-only design stack and bounded UI visual verification
+# ADR-0004: Routed design-skill stack and bounded UI visual verification
 
 ## Status
 
@@ -37,24 +38,35 @@ guidance and allowed significant UI to be declared complete from source.
 Superdesign was a skill plus hosted CLI/canvas, not an MCP. It is not
 part of the supported harness.
 
+The September 2026 review evaluated the official Impeccable 4.3.1 skill.
+Its Operate mode, product/design context separation, responsive and
+hardening workflows, critique/audit/polish commands, and deterministic
+detector materially exceed the former generalist stack for application
+UI. Its expressive direction overlaps Hallmark, so explicit routing is
+required.
+
 ## Decision
 
-Managed design intelligence is **Hallmark only**.
+Managed design intelligence is **Impeccable plus Hallmark**, routed by
+task. Do not load both by default.
 
 Canonical ownership:
 
 1. `40-ui` — UI principles, scope routing, reference protocol, review
    and accessibility floors
-2. Hallmark — on-demand design intelligence for significant UI
-3. Framework/project rules — implementation
-4. Mode B — bounded rendered visual verification for significant UI,
+2. Impeccable — primary product/application UI shaping, implementation,
+   critique, adaptation, hardening, polish, and technical audit
+3. Hallmark — specialist expressive marketing, campaign/editorial,
+   reference-study, and alternate art-direction work
+4. Framework/project rules — implementation
+5. Mode B — bounded rendered visual verification for significant UI,
    using the best available real-browser capability in the current
    environment (IDE-integrated browser, browser MCP, or equivalent).
    This is not Playwright execution.
-5. Playwright Mode A — workflow/regression testing when separately
+6. Playwright Mode A — workflow/regression testing when separately
    authorized
 
-Small UI does not automatically load Hallmark or run Playwright.
+Small UI does not automatically load a design skill or run Playwright.
 Significant UI authorizes a **bounded Mode B visual pass of that UI
 only**. That pass is not Mode A, not the full Mode A→B loop, and not
 general browser QA. Tool availability remains insufficient for unrelated
@@ -70,14 +82,19 @@ motion does not by itself authorize Mode A tests or formal performance
 profiling.
 
 Project-owned design systems (tokens, theme, components, design
-contracts, `design.md`) are authoritative over Hallmark. Exploration
-uses written directions, not a hosted canvas.
+contracts, approved briefs and visual references) are authoritative over
+both skills. Impeccable's `PRODUCT.md`, `DESIGN.md`, and `.impeccable/`
+records are optional focused design artifacts, not replacements for
+project documentation contracts.
 
-Do not install `ux-ui-agent-skills` or restore the removed skills.
+Do not restore `frontend-design`, `ui-ux-pro-max`, Superdesign, or
+`ux-ui-agent-skills`. Impeccable subsumes the application workflow and
+most useful reference guidance from those skills; Hallmark retains the
+distinct art-direction role.
 
-Developer design constraints are owned by `40-ui`, not by Hallmark.
-They outrank Hallmark. Do not fork Hallmark vendor content to encode
-them. Mechanical checks for generated-copy em dashes and unnecessary
+Developer design constraints are owned by `40-ui`, not by a skill.
+They outrank Impeccable and Hallmark. Do not fork vendor content to
+encode them. Mechanical checks for generated-copy em dashes and unnecessary
 Tailwind arbitrary values live in
 `../features/copy-and-tailwind-guardrails.md` (ADR 0006). Hallmark
 typography or CSS recipes do not authorize reversing those rules.
@@ -125,20 +142,30 @@ rendered-verification pass.
 
 ### Positive
 
-- One taste system instead of several overlapping ones
+- One primary application workflow and one distinct art-direction
+  specialist instead of several overlapping generalists
 - Significant UI is checked against rendered pixels
 - Small UI stays cheap
-- Multi-agent skill adapters expose only Hallmark
+- Multi-agent skill adapters expose the same two managed skills
 
 ### Negative
 
 - Agents must classify UI scope; borderline cases need judgment
+- The managed skill payload grows by about 2.1 MB
+- Impeccable's launcher may download its pinned engine on first use;
+  hooks and browser workflows remain separately authorized
 - Visual verification still depends on an available real-browser
   capability; environments differ, and agents must report which
   verification level actually occurred
 
 ## Alternatives considered
 
+- Keep Hallmark only — rejected; Impeccable adds a materially stronger
+  product-UI workflow, persistent context model, hardening, critique,
+  responsive adaptation, and deterministic detector
+- Restore `frontend-design` and `ui-ux-pro-max` — rejected; their useful
+  roles substantially overlap Impeccable and Hallmark, recreating
+  conflicting instructions and avoidable context load
 - Keep Superdesign as opt-in canvas — rejected; not MCP, hosted, and
   not a supported harness tool
 - Auto-load multiple design skills — rejected; conflicting context

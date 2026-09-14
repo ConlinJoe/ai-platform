@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-01
+last_reviewed: 2026-09-14
 source_of_truth_for:
   - First-time clone and harness setup
   - Prerequisites, doctor, bootstrap, and bootstrap verification
@@ -106,12 +106,12 @@ chmod +x scripts/*.sh scripts/lib/*.sh
 ls .agents/skills
 ```
 
-Doctor should pass. The locked skill directory should already be present
+Doctor should pass. The locked skill directories should already be present
 from git:
 
-`hallmark`
+`hallmark`, `impeccable`
 
-If that directory is missing, restore from `skills-lock.json`. This is
+If either directory is missing, restore from `skills-lock.json`. This is
 **not** the skill-update command:
 
 ```bash
@@ -120,9 +120,8 @@ npx skills experimental_install
 ```
 
 First-time skill restore requires **network access**. That command
-currently retrieves the locked skill from GitHub/upstream. It does not
-copy Hallmark from this clone. Bootstrap uses the same restore when a
-project is missing locked skills.
+currently retrieves the locked skills from GitHub/upstream. Bootstrap
+uses the same restore when a project is missing locked skills.
 
 `scripts/update-skills.sh` is later maintenance. It runs
 `npx skills update -p -y` in this clone. Review the git diff before
@@ -174,7 +173,7 @@ agent instructions and includes the portable core.
 
 | Kind | Scope | Who installs it |
 | --- | --- | --- |
-| Shared agent skills (Hallmark) | Harness lockfile; copied into `.agents/skills/`; adapter dirs are symlinks | This repository / bootstrap |
+| Shared agent skills (Impeccable, Hallmark) | Harness lockfile; copied into `.agents/skills/`; adapter dirs are symlinks | This repository / bootstrap |
 | Playwright MCP, BrowserMCP | Agent/client config (often user-global) | You. Not bootstrap. [mcp/README.md](../mcp/README.md) |
 | GitKraken or other SCM MCPs | User-global where the client supports it | You. Not owned or required by this harness |
 | Laravel Boost MCP | Laravel **project** `.cursor/mcp.json` | `php artisan boost:install`, not bootstrap |
@@ -251,7 +250,8 @@ Bootstrap is safe to re-run. Shared Cursor rules update immediately
 through those symlinks. A re-run also prunes retired managed skills,
 refreshes Claude/Grok skill adapter links, applies current
 bootstrap-managed project configuration, and adds current ignore entries
-such as `.hallmark/`, `.DS_Store`, and `.ai/`. A later re-run of a newly bootstrapped project is
+for Hallmark, Impeccable ephemeral artifacts, `.DS_Store`, and `.ai/`.
+A later re-run of a newly bootstrapped project is
 classified as existing because `docs/README.md` is now present; that is
 a known limitation, not an overwrite of project docs. Details:
 [Maintaining the harness](maintaining.md#re-run-bootstrap-on-a-project).

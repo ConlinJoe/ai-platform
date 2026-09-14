@@ -487,10 +487,20 @@ assert_file "${AI_REPO}/.cursor/rules/40-ui.mdc" "40-ui rule exists"
 assert_file "${AI_REPO}/docs/contracts/adrs/0004-design-stack-and-ui-visual-verification.md" \
   "design-stack ADR exists"
 assert_dir "${AI_REPO}/.agents/skills/hallmark" "Hallmark skill is present"
+assert_dir "${AI_REPO}/.agents/skills/impeccable" "Impeccable skill is present"
+assert_grep 'version: 4\.3\.1' \
+  "${AI_REPO}/.agents/skills/impeccable/SKILL.md" \
+  "Impeccable skill version is 4.3.1"
+assert_file "${AI_REPO}/.agents/skills/impeccable/scripts/impeccable" \
+  "Impeccable launcher is present"
 assert_file "${AI_REPO}/.claude/skills/hallmark/SKILL.md" \
   "Claude adapter exposes Hallmark"
 assert_file "${AI_REPO}/.grok/skills/hallmark/SKILL.md" \
   "Grok adapter exposes Hallmark"
+assert_file "${AI_REPO}/.claude/skills/impeccable/SKILL.md" \
+  "Claude adapter exposes Impeccable"
+assert_file "${AI_REPO}/.grok/skills/impeccable/SKILL.md" \
+  "Grok adapter exposes Impeccable"
 assert_missing "${AI_REPO}/.agents/skills/frontend-design" \
   "frontend-design is not in the managed skill stack"
 assert_missing "${AI_REPO}/.agents/skills/ui-ux-pro-max" \
@@ -511,6 +521,10 @@ assert_missing "${AI_REPO}/.grok/skills/superdesign" \
   "Grok adapter does not expose superdesign"
 assert_grep '"hallmark"' "${AI_REPO}/skills-lock.json" \
   "skills-lock.json pins Hallmark"
+assert_grep '"impeccable"' "${AI_REPO}/skills-lock.json" \
+  "skills-lock.json pins Impeccable"
+assert_grep '"source": "pbakaus/impeccable"' "${AI_REPO}/skills-lock.json" \
+  "skills-lock.json uses the official Impeccable source"
 assert_not_grep 'frontend-design' "${AI_REPO}/skills-lock.json" \
   "skills-lock.json does not pin frontend-design"
 assert_not_grep 'ui-ux-pro-max' "${AI_REPO}/skills-lock.json" \
@@ -519,16 +533,12 @@ assert_not_grep 'superdesign' "${AI_REPO}/skills-lock.json" \
   "skills-lock.json does not pin Superdesign"
 assert_not_grep 'Automatically consult' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui does not auto-load multiple taste skills"
-assert_not_grep 'frontend-design' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
-  "40-ui does not reference frontend-design"
-assert_not_grep 'ui-ux-pro-max' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
-  "40-ui does not reference ui-ux-pro-max"
-assert_not_grep 'Superdesign' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
-  "40-ui does not reference Superdesign"
+assert_grep 'remain retired' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui keeps retired design skills out of the stack"
 assert_grep 'Scope router' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui classifies UI scope"
-assert_grep 'Do \*\*not\*\* load Hallmark' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
-  "small UI does not automatically load Hallmark"
+assert_grep 'Do \*\*not\*\* load Impeccable or Hallmark' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "small UI does not automatically load a design skill"
 assert_grep 'Do \*\*not\*\* run Playwright' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "small UI does not automatically run Playwright"
 assert_grep 'authoritative' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
@@ -626,12 +636,27 @@ assert_not_grep 'excessive whitespace' \
 assert_grep 'challenge rather than' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui includes anti-AI design heuristics"
-assert_grep 'Hallmark is the only managed design skill' \
+assert_grep 'managed design stack is Impeccable plus Hallmark' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
-  "Hallmark remains the only managed design skill"
-assert_grep 'outrank Hallmark' \
+  "40-ui defines the routed managed design stack"
+assert_grep 'Impeccable is primary for product and application UI' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
-  "40-ui design constraints outrank Hallmark"
+  "40-ui routes product UI to Impeccable"
+assert_grep 'Hallmark is specialist art direction' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui routes expressive art direction to Hallmark"
+assert_grep 'Do not combine them merely to get a second opinion' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui prevents default multi-skill loading"
+assert_grep 'skills never outrank' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui preserves project design authority"
+assert_grep 'availability is not authorization' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Impeccable does not expand tool authorization"
+assert_grep 'outrank Impeccable and Hallmark' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui design constraints outrank both skills"
 assert_grep 'Semantic section boundaries should also be perceptible visual' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui requires perceptible visual section boundaries"
@@ -779,9 +804,9 @@ assert_grep 'not a mandate to alternate' \
 assert_grep 'AI/template conventions' \
   "${AI_REPO}/core/agent-core.md" \
   "portable core avoids generic AI/template design patterns"
-assert_grep 'outrank Hallmark' \
+assert_grep 'outrank Impeccable and Hallmark' \
   "${AI_REPO}/core/agent-core.md" \
-  "portable core states UI constraints outrank Hallmark"
+  "portable core states UI constraints outrank both skills"
 assert_not_grep 'excessive whitespace' \
   "${AI_REPO}/core/agent-core.md" \
   "portable core does not list excessive whitespace as an anti-pattern"
@@ -1247,9 +1272,9 @@ assert_not_grep 'motion' "${AI_REPO}/skills-lock.json" \
 assert_grep 'Do not add a motion skill' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui forbids adding a motion skill"
-assert_grep 'Hallmark is the only managed design skill' \
+assert_grep 'managed design stack is Impeccable plus Hallmark' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
-  "Hallmark remains the only managed design skill"
+  "routed design stack remains in force"
 assert_grep '## Significant motion' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "significant motion receives proportionate review"
@@ -1363,6 +1388,14 @@ assert_missing "${GENERIC}/.github" \
   "generic did not receive a .github directory"
 assert_grep '^\.hallmark/' "${GENERIC}/.gitignore" \
   "generic gitignore ignores Hallmark operational artifacts"
+assert_grep '^# impeccable-ignore-start$' "${GENERIC}/.gitignore" \
+  "generic gitignore includes Impeccable ephemeral-artifact block"
+assert_grep '^\.impeccable/review/$' "${GENERIC}/.gitignore" \
+  "generic gitignore ignores Impeccable review captures"
+assert_not_grep '^\.impeccable/config\.json$' "${GENERIC}/.gitignore" \
+  "generic gitignore keeps shared Impeccable config tracked"
+assert_not_grep '^\.impeccable/design\.json$' "${GENERIC}/.gitignore" \
+  "generic gitignore keeps Impeccable design sidecar tracked"
 assert_not_grep '^design\.md' "${GENERIC}/.gitignore" \
   "generic gitignore does not ignore design.md"
 assert_grep '^\.DS_Store$' "${GENERIC}/.gitignore" \
@@ -1434,8 +1467,11 @@ assert_missing "${GENERIC}/deploy.php" \
 
 echo ""
 echo "--- Skill adapter links (bootstrap from harness cwd) ---"
-mkdir -p "${GENERIC}/.agents/skills/hallmark"
+mkdir -p \
+  "${GENERIC}/.agents/skills/hallmark" \
+  "${GENERIC}/.agents/skills/impeccable"
 printf '# Hallmark\n' > "${GENERIC}/.agents/skills/hallmark/SKILL.md"
+printf '# Impeccable\n' > "${GENERIC}/.agents/skills/impeccable/SKILL.md"
 "${AI_REPO}/scripts/bootstrap-project.sh" "${GENERIC}" \
   >"${LOGDIR}/boot-generic-adapters.log" 2>&1
 if [[ -L "${GENERIC}/.claude/skills/hallmark" ]] \
@@ -1449,6 +1485,18 @@ if [[ -L "${GENERIC}/.grok/skills/hallmark" ]] \
   pass "generic Grok skill adapter links to .agents/skills/hallmark"
 else
   fail "generic Grok skill adapter links to .agents/skills/hallmark"
+fi
+if [[ -L "${GENERIC}/.claude/skills/impeccable" ]] \
+  && [[ "$(readlink "${GENERIC}/.claude/skills/impeccable")" == "../../.agents/skills/impeccable" ]]; then
+  pass "generic Claude skill adapter links to .agents/skills/impeccable"
+else
+  fail "generic Claude skill adapter links to .agents/skills/impeccable"
+fi
+if [[ -L "${GENERIC}/.grok/skills/impeccable" ]] \
+  && [[ "$(readlink "${GENERIC}/.grok/skills/impeccable")" == "../../.agents/skills/impeccable" ]]; then
+  pass "generic Grok skill adapter links to .agents/skills/impeccable"
+else
+  fail "generic Grok skill adapter links to .agents/skills/impeccable"
 fi
 assert_not_grep 'missing source for Claude skill' \
   "${LOGDIR}/boot-generic-adapters.log" \
@@ -1466,6 +1514,12 @@ assert_grep "Claude skill adapter linked: hallmark" \
 assert_grep "Grok skill adapter linked: hallmark" \
   "${LOGDIR}/doctor-generic-adapters.log" \
   "doctor reports the Grok skill adapter is linked"
+assert_grep "Claude skill adapter linked: impeccable" \
+  "${LOGDIR}/doctor-generic-adapters.log" \
+  "doctor reports the Impeccable Claude adapter is linked"
+assert_grep "Grok skill adapter linked: impeccable" \
+  "${LOGDIR}/doctor-generic-adapters.log" \
+  "doctor reports the Impeccable Grok adapter is linked"
 
 echo ""
 echo "--- New Roots/Radicle project ---"
@@ -2060,6 +2114,8 @@ assert_file "${AI_REPO}/.build/chatgpt-context/.cursor/rules/60-browser-qa.mdc" 
   "export includes 60-browser-qa"
 assert_dir "${AI_REPO}/.build/chatgpt-context/.agents/skills/hallmark" \
   "export includes Hallmark"
+assert_dir "${AI_REPO}/.build/chatgpt-context/.agents/skills/impeccable" \
+  "export includes Impeccable"
 assert_grep '^Version 1\.3\.0$' \
   "${AI_REPO}/.build/chatgpt-context/docs/00-project-context.md" \
   "export project context is v1.3.0"

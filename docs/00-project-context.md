@@ -76,7 +76,9 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   concern, not a separate skill. Hard constraints (no decorative
   sequential numbering; no em dashes in generated end-user copy;
   capable simplicity; preserve user context) live in
-  `.cursor/rules/40-ui.mdc` and outrank Hallmark. Generated design
+  `.cursor/rules/40-ui.mdc` and outrank Impeccable and Hallmark.
+  Impeccable is primary for significant product/application UI; Hallmark
+  is specialist expressive art direction. Load one by default. Generated design
   images are exploration/reference artifacts, not implementation truth.
   Image generation is capability-on-demand and must not replace
   framework-native implementation or bounded Mode B verification.

@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-01
+last_reviewed: 2026-09-14
 source_of_truth_for:
   - Public conceptual model of the harness
   - Global versus project-owned files
@@ -59,7 +59,7 @@ canonical project context and shared standards.
 | --- | --- |
 | Shared rules `.cursor/rules/00-*.mdc` through `70-*.mdc` | Project rules `.cursor/rules/90-*.mdc` |
 | `core/agent-core.md` (portable always-on core) | Project `docs/` contracts, ADRs, status, working mode |
-| Locked skills in `.agents/skills/` (Hallmark) | Application source, dependencies, and architecture |
+| Locked skills in `.agents/skills/` (Impeccable, Hallmark) | Application source, dependencies, and architecture |
 | Bootstrap, doctor, export, guardrail, Deployer-installer scripts | Project-native tooling (Laravel Boost, Playwright, CI) |
 | Optional Deployer templates (`templates/deployer/`) | `deploy.php` / `deploy/hosts.yaml` when the developer installs the capability |
 | Templates copied **once** into new projects | Anything already present; bootstrap does not overwrite docs |
@@ -153,10 +153,11 @@ Orientation-only prompt:
 
 ## Skills
 
-Canonical managed skill copies live in `.agents/skills/`. The current
-lockfile pins **Hallmark** for significant UI, redesign, audit, and
-visual-direction work. `40-ui` decides when Hallmark loads. Skills do
-not authorize general browser automation.
+Canonical managed skill copies live in `.agents/skills/`. The lockfile
+pins **Impeccable** and **Hallmark**. `40-ui` routes significant
+product/application UI to Impeccable and expressive art direction to
+Hallmark. It loads one by default. Skills do not authorize general
+browser automation, hooks, or dependency changes.
 
 Image generation for design exploration is optional and owned by
 `40-ui`. Generated images are references, not implementation truth.

@@ -439,6 +439,47 @@ ensure_hallmark_gitignore() {
   echo "Added .hallmark/ to ${gitignore}"
 }
 
+ensure_impeccable_gitignore() {
+  local gitignore="${TARGET_PROJECT}/.gitignore"
+
+  echo "--- Impeccable artifact gitignore ---"
+
+  if [[ ! -f "${gitignore}" ]]; then
+    touch "${gitignore}"
+  fi
+
+  if grep -qF '# impeccable-ignore-start' "${gitignore}"; then
+    echo "Impeccable ignore block already present"
+    return 0
+  fi
+
+  cat >> "${gitignore}" <<'EOF'
+
+# impeccable-ignore-start
+# Ephemeral Impeccable output. Shared config, design, surface, and critique
+# artifacts remain tracked.
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/hook.pending.json
+.impeccable/*.png
+.impeccable/review/
+.impeccable/questions/
+.impeccable/live/server.json
+.impeccable/live/sessions/
+.impeccable/live/previews/
+.impeccable/live/annotations/
+.impeccable/live/cache/
+.impeccable/live/manual-edit-apply-transaction.json
+.impeccable/live/manual-edit-events.jsonl
+.impeccable/live/manual-edit-evidence/
+.impeccable/live/pending-manual-edits.json
+.impeccable/live/deferred-svelte-component-accepts.json
+.impeccable/live/*.png
+# impeccable-ignore-end
+EOF
+  echo "Added Impeccable ignore block to ${gitignore}"
+}
+
 ensure_local_artifact_gitignore() {
   local gitignore="${TARGET_PROJECT}/.gitignore"
 
@@ -1141,6 +1182,7 @@ bootstrap_docs_templates
 ensure_gitignore_build
 ensure_playwright_gitignore
 ensure_hallmark_gitignore
+ensure_impeccable_gitignore
 ensure_local_artifact_gitignore
 ensure_roots_resources_images
 restore_skills

@@ -1,21 +1,21 @@
 ---
-description: Frontend, UI, UX, and design-system work — principles, scope routing, Hallmark, and rendered verification
+description: Frontend, UI, UX, and design-system work — principles, skill routing, and rendered verification
 alwaysApply: false
 ---
 
 # UI / UX
 
-Canonical UI router. Do not load extra design skills. Do not dump Hallmark's
-reference corpus into context.
+Canonical UI router. Use the smallest appropriate design-skill set. Do not
+load multiple design skills by default or dump reference corpora into context.
 
 Instruction priority (`00-platform`) still applies: project/harness rules
-outrank Hallmark. Vendor skills do not authorize browser automation beyond
-what `60-browser-qa` allows.
+outrank Impeccable and Hallmark. Vendor skills do not authorize browser
+automation beyond what `60-browser-qa` allows.
 
-These platform-owned design and usability constraints outrank Hallmark.
-If Hallmark or another design skill recommends a technique prohibited
-here, do not use it. Do not modify Hallmark vendor content to encode
-developer preferences. Keep those preferences in this rule.
+These platform-owned design and usability constraints outrank design skills.
+If a design skill recommends a technique prohibited here, do not use it.
+Do not modify vendor content to encode developer preferences. Keep those
+preferences in this rule.
 
 Design philosophy: product-specific, spacious, hierarchy-driven design.
 The interface exists to help the user complete the current task. Avoid
@@ -36,10 +36,15 @@ If an approved visual reference, design brief, or locked `design.md`
 exists, treat it as higher-authority creative direction than a skill
 default.
 
-Hallmark may reason within the established system or propose a
-deliberate evolution. It must not silently replace it. If the task
-requires changing the established system, say so explicitly before
-drifting.
+Design skills never outrank: approved project design briefs, approved
+visual references/comps, project tokens/components/design systems,
+accessibility requirements, or this global UI floor. Resolve conflicts
+among those authorities through `00-platform` instruction priority.
+
+Impeccable or Hallmark may reason within the established system or
+propose a deliberate evolution. A skill must not silently replace it.
+If the task requires changing the established system, say so explicitly
+before drifting.
 
 Load relevant feature contracts from `docs/README.md` (design system, page
 behavior, component contracts) before implementing. Update those contracts
@@ -427,14 +432,15 @@ elements should move or change prominence at smaller widths.
 
 ## Product-specific design
 
-Hallmark should help create product-specific design, not merely polished
-generic design. If the agent cannot name the product, the user, the job,
-and what deserves emphasis, it is not ready to design significant UI.
-Name the primary task before decorating the screen.
+The selected design skill should help create product-specific design,
+not merely polished generic design. If the agent cannot name the product,
+the user, the job, and what deserves emphasis, it is not ready to design
+significant UI. Name the primary task before decorating the screen.
 
 ## Scope router
 
-Classify every UI task before loading Hallmark or opening a browser.
+Classify every UI task before loading Impeccable or Hallmark, or opening
+a browser.
 
 ### Small
 
@@ -445,7 +451,7 @@ Default:
 
 1. Inspect neighboring implementation and the project design system.
 2. Make the bounded change. Preserve existing tokens and patterns.
-3. Do **not** load Hallmark.
+3. Do **not** load Impeccable or Hallmark.
 4. Do **not** run Playwright.
 5. Do **not** invoke image generation by default.
 
@@ -461,7 +467,8 @@ new visual direction, design-system work, substantial responsive/layout
 change, UI the developer cannot reasonably verify immediately.
 
 1. Inspect the existing design system and product context.
-2. Invoke Hallmark when design intelligence is useful (see below).
+2. Invoke the one design skill selected by Skill routing when its
+   design intelligence is useful.
 3. Implement framework-natively. Generated exploration images are
    references, not the implementation source of truth.
 4. Perform bounded Mode B visual verification when a real-browser
@@ -489,23 +496,47 @@ helps; follow Image generation / design exploration below. Ask the
 developer to choose before significant implementation when approval is
 actually needed. Skip ceremony when the direction is already clear.
 
-## Hallmark
+## Skill routing
 
-Hallmark is the only managed design skill. Load its `SKILL.md`, then only
-the reference files that verb requires. Do not add a motion skill or
-another design skill.
+The managed design stack is Impeccable plus Hallmark. Load one by
+default, then only the reference files its selected workflow requires.
 
-Use it for significant greenfield UI, redesign, audit, reference study,
-visual-direction work, and meaningful component or system design.
+- **Impeccable is primary for product and application UI:** authenticated
+  SaaS, app shells, dashboards, admin, settings, forms, onboarding,
+  workflows, responsive adaptation, implementation critique, hardening,
+  polish, and technical UI audits.
+- **Hallmark is specialist art direction:** expressive marketing and
+  landing pages, campaign/editorial surfaces, reference study, and
+  alternate visual-direction exploration where structural and brand
+  expression are the main problem.
+- Do not combine them merely to get a second opinion. Use both only when
+  the task has distinct product and expressive-art-direction phases, or
+  the developer explicitly requests a comparison. Keep their outputs
+  separated by phase and name which skill owns each decision.
+- `frontend-design`, `ui-ux-pro-max`, and Superdesign remain retired.
+  Impeccable covers the application-UI workflow; Hallmark covers the
+  useful specialist art-direction role. Do not restore overlapping
+  skills as passive reference libraries.
 
-Do not invoke it for every UI edit.
+For most significant application UI, use Impeccable plus the project
+design brief and system. Do not invoke a skill for every UI edit.
 
-Project design systems, contracts, tokens, approved visual references,
-framework-native rules, accessibility requirements, and the usability
-and design constraints in this file remain authoritative over Hallmark
-recommendations. Skills may provide stronger task-specific creative
-direction. They must not override those authorities or silently create
-a parallel design system.
+Project contracts, approved design briefs and visual references, project
+tokens/components/design systems, accessibility requirements,
+framework-native rules, and this file remain authoritative over skill
+recommendations. Skills provide judgment and execution methodology, not
+independent authority to redesign an established product.
+
+Impeccable's `PRODUCT.md`, `DESIGN.md`, and `.impeccable/` artifacts are
+optional focused design records, not replacements for project contracts.
+Before creating or updating them, reconcile them with existing project
+truth. Do not duplicate or contradict an authoritative project contract.
+
+Impeccable instructions to run screenshots, browser iteration, hooks,
+detectors, subprocesses, image generation, or downloaded tooling remain
+subject to `00-platform`, `20-coding`, and `60-browser-qa`. Skill
+availability is not authorization. Do not install hooks or add project
+dependencies unless the current task authorizes that change.
 
 Hallmark copy and typography guidance may recommend typographic em
 dashes. Ignore that for generated end-user copy. Hallmark slop-test

@@ -152,15 +152,17 @@ Do not apply a framework profile to a project that is not that stack.
 
 ## Skills
 
-Canonical skill copies: `.agents/skills/` (`hallmark`). Invoke Hallmark
-when `40-ui` classifies the work as significant UI, redesign, audit,
-reference study, or visual-direction work. Do not load Hallmark for every
-UI edit. Skills do not authorize general browser automation.
+Canonical skill copies: `.agents/skills/` (`impeccable`, `hallmark`).
+For significant product/application UI, use Impeccable. Use Hallmark for
+expressive marketing, campaign/editorial, reference-study, and alternate
+art-direction work. Load one by default and do not invoke a skill for
+every UI edit. Detailed routing lives in `40-ui`. Skills do not authorize
+general browser automation.
 
 ## UI design preferences
 
 Detailed rules: `.cursor/rules/40-ui.mdc`. Hard developer constraints
-that outrank Hallmark:
+that outrank Impeccable and Hallmark:
 
 - Do not use decorative sequential numbering (`01 / 02 / 03` and
   equivalents) as a visual device. Numbers are allowed when they
@@ -197,7 +199,8 @@ edits. When it is used, choose model, quality, resolution, aspect
 ratio, and option count intentionally, and adapt those settings to the
 artifact. Details: `.cursor/rules/40-ui.mdc`.
 
-Do not add another design skill.
+Do not restore retired overlapping design skills. Impeccable and
+Hallmark are the managed design stack.
 
 ## Browser automation
 

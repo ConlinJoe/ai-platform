@@ -97,11 +97,14 @@ check_platform() {
   check_file "${RULES_DIR}/60-browser-qa.mdc" "Rule 60-browser-qa.mdc"
   check_file "${RULES_DIR}/70-work-items.mdc" "Rule 70-work-items.mdc"
 
-  if [[ -d "${AI_REPO}/.agents/skills/hallmark" ]]; then
-    ok "Hallmark skill present"
-  else
-    fail "Hallmark skill missing"
-  fi
+  local managed
+  for managed in hallmark impeccable; do
+    if [[ -d "${AI_REPO}/.agents/skills/${managed}" ]]; then
+      ok "Managed skill present: ${managed}"
+    else
+      fail "Managed skill missing: ${managed}"
+    fi
+  done
 
   local retired
   for retired in frontend-design ui-ux-pro-max superdesign; do
@@ -132,10 +135,10 @@ with open(sys.argv[1], encoding="utf-8") as handle:
 print(" ".join(sorted(data.get("skills", {}))))
 PY
 )"
-  if [[ "${lock_skills}" == "hallmark" ]]; then
-    ok "skills-lock.json contains only hallmark"
+  if [[ "${lock_skills}" == "hallmark impeccable" ]]; then
+    ok "skills-lock.json contains hallmark and impeccable"
   else
-    fail "skills-lock.json expected only hallmark, got: ${lock_skills}"
+    fail "skills-lock.json expected hallmark and impeccable, got: ${lock_skills}"
   fi
   check_file "${SKILLS_LOCK}" "skills-lock.json"
   check_file "${AI_REPO}/core/project-profiles/laravel-webapp.md" "Laravel webapp profile"

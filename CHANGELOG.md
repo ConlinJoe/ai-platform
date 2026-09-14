@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+Impeccable 4.3.1 is now the primary managed skill for significant
+product/application UI, including shaping, responsive adaptation,
+critique, hardening, polish, and technical audit. Hallmark remains the
+specialist for expressive marketing, campaign/editorial, reference
+study, and alternate art direction. `40-ui` loads one by default.
+`frontend-design`, `ui-ux-pro-max`, and Superdesign remain retired.
+
 `40-ui` now encodes durable, framework-neutral usability principles
 alongside the existing visual floor: task-first interaction, capable
 simplicity (not empty screens), progressive disclosure, familiar

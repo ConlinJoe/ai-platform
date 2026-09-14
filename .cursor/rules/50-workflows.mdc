@@ -67,7 +67,8 @@ Running bootstrap on a target project:
 -   For existing projects (docs index already present): does not overwrite
     docs; may add missing draft templates (working mode, status, browser QA,
     reconciliation)
--   Adds `.build/`, `.hallmark/`, `.DS_Store`, `**/.DS_Store`, and
+-   Adds `.build/`, `.hallmark/`, Impeccable ephemeral-artifact patterns,
+    `.DS_Store`, `**/.DS_Store`, and
     `.ai/` to `.gitignore` when missing
 -   For Laravel web apps: ensures Playwright artifact gitignore entries;
     diagnoses Laravel Boost and Playwright without installing packages
@@ -88,7 +89,8 @@ Bootstrap is safe to re-run on an already-bootstrapped project.
 Shared Cursor rules update immediately through those symlinks. A re-run
 also prunes retired managed skills, refreshes Claude/Grok skill adapter
 links, applies current bootstrap-managed project configuration, and adds
-current ignore entries such as `.hallmark/`, `.DS_Store`, and `.ai/`.
+current ignore entries for Hallmark, Impeccable ephemeral artifacts,
+`.DS_Store`, and `.ai/`.
 Developers do not need to edit those managed files by hand.
 
 It does not run Composer, `boost:install`, add Playwright, or install

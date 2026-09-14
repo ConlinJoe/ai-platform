@@ -57,13 +57,15 @@ architecture. Version 1.3.0.
   Meaningful motion receives
   proportionate review in that pass; it does not by itself authorize
   Mode A or performance profiling.
-- Design stack: Hallmark is the only managed design skill; `40-ui` routes
-  UI work. frontend-design, ui-ux-pro-max, and Superdesign were removed
-  from the harness. `40-ui` owns hard developer design constraints (no
+- Design stack: Impeccable and Hallmark are managed; `40-ui` routes UI
+  work and loads one by default. Impeccable is primary for significant
+  product/application UI. Hallmark is specialist expressive art
+  direction. frontend-design, ui-ux-pro-max, and Superdesign remain
+  retired. `40-ui` owns hard developer design constraints (no
   decorative sequential numbering, no em dashes in generated end-user
   copy, generous whitespace, product-specific hierarchy-driven design,
   task-first interaction, capable simplicity, and preserved user
-  context) that outrank Hallmark. Cards are semantic containers that must earn
+  context) that outrank both skills. Cards are semantic containers that must earn
   grouping; unearned card grids remain prohibited. `40-ui` also covers
   purposeful imagery, art direction, responsive composition, and
   perceptible visual boundaries between adjacent semantic sections

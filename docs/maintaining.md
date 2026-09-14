@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-01
+last_reviewed: 2026-09-14
 source_of_truth_for:
   - Updating the harness clone and propagating changes
   - Skill update and restore
@@ -47,7 +47,8 @@ Re-run bootstrap in the project to reconcile managed files:
 - prune retired managed skills that are no longer in the lockfile
 - refresh Claude/Grok skill adapter links
 - apply current bootstrap-managed project configuration
-- add current ignore entries such as `.hallmark/`, `.DS_Store`, and `.ai/`
+- add current ignore entries for Hallmark, Impeccable ephemeral
+  artifacts, `.DS_Store`, and `.ai/`
 - link current platform scripts such as `scripts/check-guardrails.sh`
 
 ```bash
@@ -98,7 +99,7 @@ npx skills experimental_install
 ```
 
 The same restore command is used in the harness clone if
-`.agents/skills/hallmark` is missing after clone. It requires network
+one of the locked skill directories is missing after clone. It requires network
 access; see [Getting started](getting-started.md#2-configure-the-harness-clone).
 
 ## Validate
@@ -129,7 +130,7 @@ ran.
 
 | Symptom | What to check |
 | --- | --- |
-| Doctor fails on the clone | Missing rules, Hallmark skill, or non-executable scripts. Re-run `chmod +x scripts/*.sh scripts/lib/*.sh`. Restore skills if `.agents/skills/hallmark` is missing. |
+| Doctor fails on the clone | Missing rules, a locked skill, or non-executable scripts. Re-run `chmod +x scripts/*.sh scripts/lib/*.sh`. Restore skills if `.agents/skills/impeccable` or `.agents/skills/hallmark` is missing. |
 | Doctor fails on a project | First confirm `ls -l project/.cursor/rules` shows symlinks into `$AI_PLATFORM`. If those links are missing or stale, re-run bootstrap. If the links are correct and the project is Laravel, a FAIL for missing Boost is expected until `laravel/boost` is declared, installed, and MCP-configured. |
 | Rules in the project are real files, not symlinks | Bootstrap prompts before replacing a real file. Shared `00`–`70` rules should be symlinks into the clone. |
 | Agent ignores detailed `.mdc` rules | Expected on some non-Cursor clients. Read [core/adapters/README.md](../core/adapters/README.md). The portable core still applies via `AGENTS.md`. |
@@ -139,7 +140,7 @@ ran.
 | Browser automation ran unexpectedly | Availability is not authorization. Policy: [60-browser-qa](../.cursor/rules/60-browser-qa.mdc). |
 | Deployer prompt or install looked like a deploy | Installing the stack is not authorization to deploy. Contract: [Deployer capability](contracts/features/deployer.md). |
 | Unsure whether install worked | Doctor pass on the clone, then `ls -l project/.cursor/rules` showing links into `$AI_PLATFORM/.cursor/rules/`. Project doctor may still FAIL on Laravel until Boost is present. |
-| Claude or Grok skills missing after bootstrap | Confirm `.agents/skills/hallmark` exists, then re-run bootstrap so `.claude/skills/` and `.grok/skills/` adapter links are created. |
+| Claude or Grok skills missing after bootstrap | Confirm both locked skills exist under `.agents/skills/`, then re-run bootstrap so `.claude/skills/` and `.grok/skills/` adapter links are created. |
 
 If documentation and scripts disagree, treat the scripts and
 `.cursor/rules/` as implementation truth and report the docs conflict.
@@ -165,8 +166,8 @@ Typical leftovers to remove if you no longer want the harness:
 - `AGENTS.md` / `CLAUDE.md` only if you added them via bootstrap and
   no longer want them (do not delete Boost-owned files without a plan)
 
-Ignore entries (`.build/`, `.hallmark/`, `.DS_Store`, `.ai/`,
-Playwright artifact paths)
+Ignore entries (`.build/`, `.hallmark/`, Impeccable ephemeral-artifact
+paths, `.DS_Store`, `.ai/`, Playwright artifact paths)
 are ordinary `.gitignore` lines; remove them only if you want that.
 
 After removal, coding agents in that project no longer load harness
