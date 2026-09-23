@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+WordPress projects that use Tailwind and `theme.json` (including
+Radicle/Sage) keep typography and color in the project Tailwind tokens.
+`theme.json` presets alias those tokens. Editorial element styles stay
+scoped to the block editor canvas and the published content region.
+Canonical rule: `.cursor/rules/36-wordpress-theme.mdc`.
+
 Impeccable 4.3.1 is now the primary managed skill for significant
 product/application UI, including shaping, responsive adaptation,
 critique, hardening, polish, and technical audit. Hallmark remains the

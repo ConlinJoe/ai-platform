@@ -141,6 +141,7 @@ up front):
 | Application code | `.cursor/rules/20-coding.mdc` |
 | Laravel web app | `.cursor/rules/30-laravel.mdc` |
 | Roots/Radicle/Sage | `.cursor/rules/35-roots.mdc` |
+| WordPress with Tailwind and theme.json | `.cursor/rules/36-wordpress-theme.mdc` |
 | UI/UX | `.cursor/rules/40-ui.mdc` |
 | Bootstrap / adoption | `.cursor/rules/50-workflows.mdc` |
 | Browser QA | `.cursor/rules/60-browser-qa.mdc` |

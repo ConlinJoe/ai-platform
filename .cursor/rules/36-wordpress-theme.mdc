@@ -1,0 +1,133 @@
+---
+description: WordPress theme.json presets and editorial typography when the project also uses Tailwind
+globs: theme.json,**/theme.json
+alwaysApply: false
+---
+
+# WordPress, Tailwind, and theme.json
+
+Apply this rule only when the project uses WordPress together with
+Tailwind and `theme.json`. That includes Radicle/Sage themes and other
+WordPress themes on this combination.
+
+Do not apply it to Laravel, React, Rails, or other non-WordPress
+stacks. Do not apply it to WordPress projects that do not use both
+Tailwind and `theme.json`.
+
+Current-First Engineering in `00-platform` still applies. Inspect the
+installed WordPress and Tailwind versions and the CSS this project
+actually generates. Handbook examples go stale: WordPress has emitted
+both bare element selectors and `:root :where(...)` wrappers. Follow
+the generated stylesheet for the installed version.
+
+## Source of truth
+
+Project Tailwind tokens are the typography and color source of truth.
+On Tailwind v4 that is the CSS-first theme (`@theme` and the version's
+other theme APIs). On Tailwind v3 that is the v3 theme configuration.
+Do not upgrade Tailwind to satisfy this rule.
+
+Generate or align `theme.json` presets with those tokens so editors
+get the approved fonts, sizes, and colors. Point palette, font-family,
+and font-size presets at the CSS variables the Tailwind theme already
+defines. WordPress preset variables (`--wp--preset--color--*`,
+`--wp--preset--font-size--*`, and font-family presets) may alias those
+tokens. Do not keep a second, independent set of color or type values
+in `theme.json`.
+
+Use `theme.json` for WordPress settings and for intentional content
+defaults. Keep the file. Do not remove `theme.json` to escape a
+cascade conflict.
+
+## Editorial typography
+
+WordPress generates CSS from `theme.json` for both the block editor
+and the public site. Top-level `styles.elements` for `heading` and
+`h1`-`h6` emit heading element selectors. Some blocks, including
+`core/paragraph`, can emit an element selector such as `p`. Treat
+lists the same way: a generated `ul` or `ol` rule with no content
+scope is unscoped element typography.
+
+Avoid that unscoped element typography. It can override Tailwind
+utilities on custom page components. Tailwind v4 keeps utilities in
+`@layer utilities`. Unlayered WordPress CSS beats layered utilities
+even when the utility is more specific. Tailwind v3 utilities are
+unlayered unless the project opted into layers. Read the actual
+stylesheets for this project.
+
+Scope editorial typography to both of these surfaces, and to no wider
+target:
+
+- the block editor content canvas
+- the published content region that wraps block content on the public
+  site
+
+Custom templates and components keep control of their typography
+through the project design system and Tailwind utilities. A descendant
+element selector on a broad wrapper still matches component headings
+rendered inside it, including every `h1` under `.editor-styles-wrapper`
+or under the content region. Prefer selectors that match editorial
+blocks. Keep component roots outside those selectors.
+
+A core heading block style that targets `.wp-block-heading` is a
+block-scoped default. It applies in the editor and on the published
+site for that block. Use a paragraph or list block style only when
+its generated selector is block-scoped. If WordPress emits `p`, `ul`,
+or `ol` for that block, put the default in scoped theme CSS so it
+does not match custom components.
+
+Custom CSS that ships through `theme.json` or the theme stylesheet is
+global until its selectors are limited to the canvas and the published
+content region.
+
+Editor and published block content must share the same tokens and the
+same scoping decision. Confirm the installed editor canvas (iframed or
+not) and the theme's real content wrapper. Keep the Tailwind token
+scale as the only type scale.
+
+If headings are responsive, align the preset or the scoped editorial
+rule with the token. A token that is already fluid can be referenced
+directly. WordPress `@mobile` and `@tablet` keys, and
+`settings.typography.fluid`, are available when they match that token.
+Do not add a second clamp or a second breakpoint map that diverges
+from the Tailwind theme.
+
+Do not add `!important` to utilities or to `theme.json` styles to win
+this cascade.
+
+## Site-wide element rules
+
+A site-wide element rule is appropriate only when it is a document
+baseline that custom components are expected to inherit, and those
+components do not override it with utilities. Typical cases are `body`
+font-family or a single root text color.
+
+Heading scale, paragraph measure, and list styling belong in the
+scoped editorial styles above when custom components set them with
+Tailwind utilities.
+
+Before keeping a site-wide element rule:
+
+1. Read the generated selector, not only the `theme.json` source.
+2. Check specificity and whether the rule is unlayered.
+3. Check it against Tailwind's cascade layers. Unlayered CSS wins
+   over `@layer utilities` regardless of specificity.
+4. Drop the rule if it overrides component utilities. Do not repair
+   that with `!important`.
+
+## Verification
+
+When changing `theme.json`, editorial typography, or component type
+that shares this cascade, check all of the following:
+
+- Editor: a heading, paragraph, and list in the content canvas use
+  the approved fonts, sizes, and colors.
+- Published block content: those same blocks match the editor.
+- Custom page components: Tailwind utilities control their headings,
+  paragraphs, and lists. Scaffold element CSS does not override them.
+- Generated CSS: the global stylesheet has no unscoped `h1`-`h6`, `p`,
+  `ul`, or `ol` typography from `theme.json`, unless a site-wide
+  exception above was checked against cascade layers.
+- Responsive headings: at a narrow and a wide viewport, editor
+  headings, published block headings, and custom-component headings
+  each follow the scale the design system defines for that surface.

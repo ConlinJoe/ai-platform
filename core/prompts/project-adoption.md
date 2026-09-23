@@ -56,6 +56,7 @@ Then read stack rules that apply to **this** repository:
   `core/project-profiles/laravel-webapp.md` (via the AI Platform clone)
 - Roots/Radicle/Sage: `.cursor/rules/35-roots.mdc`,
   `core/project-profiles/roots-radicle.md`
+- WordPress with Tailwind and `theme.json`: `.cursor/rules/36-wordpress-theme.mdc`
 - UI work in scope: `.cursor/rules/40-ui.mdc`
 - Browser-capable Laravel: `.cursor/rules/60-browser-qa.mdc`
 - Coding standards when inspecting source: `.cursor/rules/20-coding.mdc`
@@ -305,6 +306,10 @@ warranted, say so and skip.
   commit secrets.
 - Do not re-provision or restructure production WordPress content during
   adoption.
+- If `theme.json` is present with Tailwind, follow
+  `.cursor/rules/36-wordpress-theme.mdc` for presets and element styles.
+  Do not keep unscoped scaffold heading, paragraph, or list styles that
+  override Tailwind utilities.
 
 ### 11. Completion criteria
 

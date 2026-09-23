@@ -119,4 +119,5 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Browser QA | `contracts/features/browser-qa.md` |
 | Laravel Boost | `contracts/features/laravel-boost.md` |
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
+| WordPress, Tailwind, and theme.json | `.cursor/rules/36-wordpress-theme.mdc` |
 | MCP ownership | `mcp/README.md` |

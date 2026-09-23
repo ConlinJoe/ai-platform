@@ -60,6 +60,8 @@ intentional alternatives.
 - Acorn provides the Laravel-based application layer inside WordPress.
 - Prefer existing patterns over introducing new ones when those patterns
   correctly use the installed stack.
+- When the project uses Tailwind and `theme.json`, presets and editorial
+  typography follow `.cursor/rules/36-wordpress-theme.mdc`.
 
 ## Navigation
 
@@ -507,6 +509,9 @@ contracts should record, concisely:
 - WPForms Lite is the default basic forms layer
 - upgrades or alternatives require actual project need
 - credentials and secrets are never committed
+- when the project uses Tailwind and `theme.json`: Tailwind tokens are
+  the typography and color source of truth, and `theme.json` follows
+  `.cursor/rules/36-wordpress-theme.mdc`
 
 ## Optional Deployer
 

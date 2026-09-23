@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-14
+last_reviewed: 2026-09-23
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -46,6 +46,13 @@ architecture. Version 1.3.0.
   Forms remains a valid project-specific choice, not the default.
   Page/menu provisioning is an explicit idempotent project-native
   operation driven by each project's contracts, not a universal sitemap.
+- WordPress with Tailwind and `theme.json`: Tailwind tokens are the
+  typography and color source of truth. `theme.json` presets alias
+  those tokens. Editorial element styles stay scoped to the editor
+  canvas and the published content region. Canonical rule:
+  `.cursor/rules/36-wordpress-theme.mdc`. Roots/Radicle/Sage projects
+  that use this combination follow that rule; it does not apply to
+  other stacks.
 - Two-layer browser QA policy: documented and wired into Laravel profile.
   Availability is not general authorization (`60-browser-qa`). Availability
   is also not justification for using a tool. Significant UI authorizes

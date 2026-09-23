@@ -43,6 +43,12 @@ Framework-Native First, compatibility checks, license/credential
 requirements, and explicit project ADRs/contracts. Do not force them
 onto existing projects that already have intentional alternatives.
 
+# Theme.json and Tailwind
+
+When this stack uses Tailwind and `theme.json`, presets and editorial
+typography follow `.cursor/rules/36-wordpress-theme.mdc`. That rule is
+the canonical guidance. Do not copy it into this file.
+
 # Navigation
 
 Log1x Navi (`https://github.com/Log1x/navi`) is the preferred navigation
@@ -270,4 +276,7 @@ contracts should record: ACF owns structured editorial fields; frontend
 layout remains code-owned; no unrestricted ACF page builder; Keen is the
 preferred slider/gallery dependency; WPForms Lite is the default basic
 forms layer; upgrades/alternatives require actual project need;
-credentials/secrets are never committed.
+credentials/secrets are never committed. When the project uses Tailwind
+and `theme.json`, also record that Tailwind tokens are the typography
+and color source of truth and that `theme.json` follows
+`.cursor/rules/36-wordpress-theme.mdc`.

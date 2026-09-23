@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-14
+last_reviewed: 2026-09-23
 source_of_truth_for:
   - Public conceptual model of the harness
   - Global versus project-owned files
@@ -83,6 +83,7 @@ Other supported agents get the portable core via `AGENTS.md` /
 | Application code | `20-coding.mdc` |
 | Laravel web app | `30-laravel.mdc` |
 | Roots/Radicle/Sage | `35-roots.mdc` |
+| WordPress with Tailwind and theme.json | `36-wordpress-theme.mdc` |
 | UI / UX | `40-ui.mdc` |
 | Bootstrap / adoption | `50-workflows.mdc` |
 | Browser QA | `60-browser-qa.mdc` |

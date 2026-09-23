@@ -122,6 +122,7 @@ flowchart TD
 | Issues, PRs, discovered work | `contracts/features/work-item-lifecycle.md` |
 | Laravel web app profile | `core/project-profiles/laravel-webapp.md` |
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
+| WordPress, Tailwind, and theme.json | `.cursor/rules/36-wordpress-theme.mdc` |
 
 ## ChatGPT Export
 

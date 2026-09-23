@@ -45,7 +45,7 @@ of done.
 | --- | --- |
 | Global agent directives | Identity boundary, safety, Current-First / Framework-Native First, instruction priority (`00-platform`, `core/agent-core.md`) |
 | Coding standards | Focused implementation, Tailwind composition, no opportunistic scope (`20-coding`) |
-| Framework profiles | Laravel and Roots/Radicle/Sage rules that attach only when that stack is present |
+| Framework profiles | Laravel and Roots/Radicle/Sage rules that attach only when that stack is present. WordPress with Tailwind and `theme.json` follows `36-wordpress-theme` |
 | UI / design | Product-specific design constraints; Hallmark for significant UI (`40-ui`) |
 | Workflows | Bootstrap, adoption, documentation contracts (`50-workflows`) |
 | Optional Deployer | Optional SSH/PHP deployment foundation; install does not deploy (`docs/contracts/features/deployer.md`) |

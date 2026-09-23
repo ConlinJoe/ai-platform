@@ -106,6 +106,10 @@ container behavior configured centrally, over reconstructing
 Apply this to new and touched markup. Do not mass-refactor existing
 reconstructed utilities unless the task is to adopt the standard.
 
+When the project uses WordPress with Tailwind and `theme.json`, presets
+and editorial element styles follow `.cursor/rules/36-wordpress-theme.mdc`.
+That rule does not apply to other stacks.
+
 ## Safety
 
 Never:

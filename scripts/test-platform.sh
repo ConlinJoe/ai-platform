@@ -1076,6 +1076,29 @@ assert_grep 'Do not fork Hallmark' \
 assert_grep 'git-changed files versus' \
   "${AI_REPO}/docs/contracts/features/copy-and-tailwind-guardrails.md" \
   "guardrail contract defaults to git-changed files"
+assert_file "${AI_REPO}/.cursor/rules/36-wordpress-theme.mdc" \
+  "36-wordpress-theme rule exists"
+assert_grep 'Project Tailwind tokens are the typography and color source of truth' \
+  "${AI_REPO}/.cursor/rules/36-wordpress-theme.mdc" \
+  "wordpress theme rule keeps Tailwind tokens as the type and color source"
+assert_grep 'Do not add `!important`' \
+  "${AI_REPO}/.cursor/rules/36-wordpress-theme.mdc" \
+  "wordpress theme rule does not prescribe !important"
+assert_grep 'Do not remove `theme.json`' \
+  "${AI_REPO}/.cursor/rules/36-wordpress-theme.mdc" \
+  "wordpress theme rule keeps theme.json"
+assert_grep 'Do not apply it to Laravel' \
+  "${AI_REPO}/.cursor/rules/36-wordpress-theme.mdc" \
+  "wordpress theme rule stays off non-WordPress stacks"
+assert_grep '36-wordpress-theme.mdc' \
+  "${AI_REPO}/.cursor/rules/35-roots.mdc" \
+  "roots rule points at the wordpress theme rule"
+assert_grep '36-wordpress-theme.mdc' \
+  "${AI_REPO}/.cursor/rules/20-coding.mdc" \
+  "coding rule points at the wordpress theme rule for WordPress theme.json"
+assert_grep '36-wordpress-theme.mdc' \
+  "${AI_REPO}/core/project-profiles/roots-radicle.md" \
+  "roots profile points at the wordpress theme rule"
 
 GUARD_FIXTURES="${WORKDIR}/guardrail-fixtures"
 mkdir -p "${GUARD_FIXTURES}/resources/views" "${GUARD_FIXTURES}/resources/css"

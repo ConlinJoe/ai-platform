@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-02
+last_reviewed: 2026-09-23
 source_of_truth_for:
   - Model-neutral support seed for installing, troubleshooting, and extending the harness
 depends_on:
@@ -121,6 +121,8 @@ Where to look (confirm these paths still exist)
   core/project-profiles/laravel-webapp.md
 - Roots/Radicle/Sage (only if that stack is present):
   .cursor/rules/35-roots.mdc, core/project-profiles/roots-radicle.md
+- WordPress with Tailwind and theme.json (only if that combination is
+  present, including Radicle/Sage): .cursor/rules/36-wordpress-theme.mdc
 
 Global vs project
 - The harness clone owns shared rules, skills, scripts, and templates.

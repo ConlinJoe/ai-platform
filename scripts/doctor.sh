@@ -92,6 +92,7 @@ check_platform() {
   check_file "${RULES_DIR}/20-coding.mdc" "Rule 20-coding.mdc"
   check_file "${RULES_DIR}/30-laravel.mdc" "Rule 30-laravel.mdc"
   check_file "${RULES_DIR}/35-roots.mdc" "Rule 35-roots.mdc"
+  check_file "${RULES_DIR}/36-wordpress-theme.mdc" "Rule 36-wordpress-theme.mdc"
   check_file "${RULES_DIR}/50-workflows.mdc" "Rule 50-workflows.mdc"
   check_file "${RULES_DIR}/40-ui.mdc" "Rule 40-ui.mdc"
   check_file "${RULES_DIR}/60-browser-qa.mdc" "Rule 60-browser-qa.mdc"
