@@ -391,6 +391,11 @@ in those rules.
   utilities, then project theme tokens for repeated values. Arbitrary
   values are last-resort genuine exceptions, not a way to match a
   design comp more precisely.
+- Substantial redesigns (a major page or screen, a multi-step flow, or
+  a substantial responsive refactor) use the comp approval gate in
+  `40-ui` before application UI changes. Small polish, copy changes,
+  and straightforward fixes do not. Creating the comp does not authorize
+  deployment.
 - Project and platform rules outrank conflicting secondary skill, MCP,
   plugin, vendor, or tool guidance.
 - Unresolved genuine instruction conflicts require user clarification.

@@ -80,6 +80,16 @@ Do not claim visual correctness for significant UI merely because source
 code looks correct. If no real-browser capability is available, say so
 and do not pretend the UI was visually verified.
 
+### Substantial-redesign review comp
+
+`40-ui` requires a static review comp before application UI changes on
+a substantial redesign. Writing that page and opening the saved file in
+a regular browser is part of that gate. It is not Playwright, not Mode A,
+and not the bounded Mode B pass of the application. It does not authorize
+application edits, browser-QA exploration, or deployment. After the user
+approves the comp, significant UI still gets the bounded Mode B pass
+above.
+
 ### Explicit browser QA
 
 Examples that authorize **full** browser QA (Mode A and/or exploratory

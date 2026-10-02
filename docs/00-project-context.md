@@ -82,6 +82,9 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   images are exploration/reference artifacts, not implementation truth.
   Image generation is capability-on-demand and must not replace
   framework-native implementation or bounded Mode B verification.
+  A substantial redesign requires an approved project-local review comp
+  before application UI changes (`40-ui`, ADR 0008). Creating that comp
+  does not authorize deployment.
 - Tailwind: use the standard utility scale when an equivalent exists.
   Arbitrary values are last-resort exceptions, not a way to match a
   comp (`20-coding`).
@@ -110,6 +113,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | ChatGPT export workflow | `chatgpt-projects.md` |
 | Cursor rules | `.cursor/rules/` |
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, ADR 0004 |
+| Substantial UI redesign | `.cursor/rules/40-ui.mdc`, `../core/prompts/ui-comp-approval.md`, ADR 0008 |
 | Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
 | Fresh agent / resume | `working-mode.md`, `../core/prompts/resume.md` |
 | Multi-agent adapters | `core/adapters/README.md` |

@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-26
+last_reviewed: 2026-10-02
 source_of_truth_for:
   - Two-layer browser QA policy (Mode A deterministic, Mode B agentic)
   - Playwright applicability rules
@@ -14,6 +14,7 @@ source_of_truth_for:
   - Mode A regression, selector, artifact, and data-isolation policy
   - Defect-to-regression policy
   - Browser QA implementation loop (when authorized)
+  - Substantial-redesign review comps are not Playwright, Mode A, or the bounded Mode B pass
 depends_on:
   - ../adrs/0001-two-layer-browser-qa.md
   - ../adrs/0004-design-stack-and-ui-visual-verification.md
@@ -24,6 +25,7 @@ referenced_by:
   - ../../../core/prompts/browser-qa-loop.md
   - ../../../.cursor/rules/60-browser-qa.mdc
   - ../../../mcp/playwright/README.md
+  - ../adrs/0008-substantial-redesign-comp-approval.md
 type: feature
 ---
 
@@ -109,6 +111,16 @@ that warrants permanent regression coverage, recommend or capture that
 through the work-item lifecycle.
 
 Small UI does not automatically authorize Playwright.
+
+### Substantial-redesign review comp
+
+`40-ui` requires a static, project-local review comp before application
+UI changes on a substantial redesign. Writing that page and opening the
+saved file in a regular browser is part of that gate. It is not
+Playwright, not Mode A, and not the bounded Mode B pass. It does not
+authorize application edits or deployment. After approval, significant
+UI still gets the bounded Mode B pass. Procedure:
+`.cursor/rules/40-ui.mdc`. Decision: ADR 0008.
 
 Do not claim visual correctness for significant UI merely because
 source code looks correct. If no real-browser capability is

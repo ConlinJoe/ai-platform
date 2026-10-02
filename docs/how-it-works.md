@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-23
+last_reviewed: 2026-10-02
 source_of_truth_for:
   - Public conceptual model of the harness
   - Global versus project-owned files
@@ -163,6 +163,13 @@ browser automation, hooks, or dependency changes.
 Image generation for design exploration is optional and owned by
 `40-ui`. Generated images are references, not implementation truth.
 Availability of an image-generation tool does not authorize its use.
+
+A substantial redesign (major page or screen, multi-step flow, or
+substantial responsive refactor) stops for a project-local review comp
+before application UI changes. Procedure: `40-ui`. Checklist:
+[core/prompts/ui-comp-approval.md](../core/prompts/ui-comp-approval.md).
+The comp is a review artifact. Creating it does not authorize
+deployment.
 
 Bootstrap copies locked skills into the project and links adapter
 directories (`.claude/skills/`, `.grok/skills/`) at `.agents/skills/`.

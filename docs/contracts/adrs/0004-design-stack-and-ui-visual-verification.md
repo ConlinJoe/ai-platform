@@ -16,6 +16,7 @@ depends_on:
 referenced_by:
   - ../features/browser-qa.md
   - 0006-instruction-precedence-and-mechanical-guardrails.md
+  - 0008-substantial-redesign-comp-approval.md
   - ../../../.cursor/rules/40-ui.mdc
   - ../../../.cursor/rules/60-browser-qa.mdc
 type: adr

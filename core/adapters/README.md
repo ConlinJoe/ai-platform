@@ -16,6 +16,10 @@ CLAUDE.md                   Claude Code (@AGENTS.md)
 Do not add `.hermes.md`. Hermes consumes the shared `AGENTS.md`.
 Do not copy `.cursor/rules/` into adapter docs.
 
+Substantial-redesign approval lives in `.cursor/rules/40-ui.mdc`.
+`core/agent-core.md` points every agent at that gate. Do not restate the
+procedure in an adapter doc.
+
 | Agent | Doc |
 | --- | --- |
 | Cursor (reference) | `cursor.md` |

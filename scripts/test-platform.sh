@@ -774,6 +774,55 @@ assert_grep 'not a mechanical alternating-background rule' \
 assert_not_grep 'over cards, dividers' \
   "${AI_REPO}/core/agent-core.md" \
   "portable core does not rank hierarchy over cards as such"
+assert_grep '### Substantial redesign' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui requires a substantial-redesign comp gate"
+assert_grep 'design-reviews/<slug>/index.html' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui saves the review comp at a stable project path"
+assert_grep 'does not authorize deployment' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not treat comp generation as deployment authorization"
+assert_grep 'small polish, copy changes, straightforward fixes' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui keeps small UI off the comp gate"
+assert_grep 'Impeccable `shape` owns discovery' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui keeps shape as discovery rather than a second design process"
+assert_grep 'Do not fork either skill' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui does not encode the comp gate by forking vendor skills"
+assert_file "${AI_REPO}/core/prompts/ui-comp-approval.md" \
+  "UI comp approval checklist exists"
+assert_grep 'file://' \
+  "${AI_REPO}/core/prompts/ui-comp-approval.md" \
+  "comp checklist tells the user how to open the comp in a browser"
+assert_grep 'Stop. Do not change application UI' \
+  "${AI_REPO}/core/prompts/ui-comp-approval.md" \
+  "comp checklist stops before application UI changes"
+assert_file "${AI_REPO}/docs/contracts/adrs/0008-substantial-redesign-comp-approval.md" \
+  "substantial-redesign comp ADR exists"
+assert_grep 'comp approval gate' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core routes every agent to the comp approval gate"
+assert_grep 'ui-comp-approval.md' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core points at the comp checklist"
+assert_grep 'comp approval gate in' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "always-on platform rule points at the comp gate"
+assert_grep 'Substantial-redesign review comp' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "browser QA distinguishes the review comp from Mode B"
+assert_grep 'Playwright, not Mode A' \
+  "${AI_REPO}/docs/contracts/features/browser-qa.md" \
+  "browser-qa contract distinguishes the review comp from Playwright"
+assert_not_grep 'design-reviews' \
+  "${AI_REPO}/.agents/skills/impeccable/reference/shape.md" \
+  "shape is not forked to host the harness comp gate"
+assert_not_grep 'design-reviews' \
+  "${AI_REPO}/.agents/skills/impeccable/reference/new-work.md" \
+  "new-work is not forked to host the harness comp gate"
 assert_grep '### Exploration' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui keeps exploration routing"

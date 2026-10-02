@@ -35,6 +35,7 @@ model and templates from `templates/docs/`.
 | `contracts/adrs/0005-agent-continuation-and-concise-reporting.md` | adr | accepted | Decision to store agent continuation in working-mode.md and default to concise completion reporting |
 | `contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md` | adr | accepted | Decision that project/platform rules outrank secondary guidance and that em-dash/Tailwind arbitrary values are mechanically checked |
 | `contracts/adrs/0007-optional-deployer-capability.md` | adr | accepted | Decision that Deployer is the standardized optional deployment foundation |
+| `contracts/adrs/0008-substantial-redesign-comp-approval.md` | adr | accepted | Decision that a substantial UI redesign requires an approved project-local review comp before application UI changes |
 | `contracts/features/browser-qa.md` | feature | active | Browser QA policy, invocation, capability-aware visual verification, Playwright vs interactive distinction, applicability, isolation |
 | `contracts/features/copy-and-tailwind-guardrails.md` | feature | active | Mechanical em-dash and Tailwind arbitrary-value check, exceptions, DONE gating |
 | `contracts/features/deployer.md` | feature | active | Optional Deployer capability, installer, server configuration, deploy authorization |
@@ -62,6 +63,7 @@ flowchart TD
   continuationAdr[contracts/adrs/0005-agent-continuation-and-concise-reporting.md]
   guardrailAdr[contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md]
   deployerAdr[contracts/adrs/0007-optional-deployer-capability.md]
+  compAdr[contracts/adrs/0008-substantial-redesign-comp-approval.md]
   browserQa[contracts/features/browser-qa.md]
   boost[contracts/features/laravel-boost.md]
   workItems[contracts/features/work-item-lifecycle.md]
@@ -91,6 +93,8 @@ flowchart TD
   guardrailAdr --> guardrails
   guardrailAdr --> designAdr
   deployerAdr --> deployer
+  compAdr --> designAdr
+  compAdr --> browserQa
   browserQa --> browserAdr
   boost --> boostAdr
   workItems --> workAdr
@@ -113,6 +117,7 @@ flowchart TD
 | Documentation standard | `documentation-philosophy.md` |
 | ChatGPT export setup | `chatgpt-projects.md` |
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` |
+| Substantial UI redesign | `.cursor/rules/40-ui.mdc`, `../core/prompts/ui-comp-approval.md`, `contracts/adrs/0008-substantial-redesign-comp-approval.md` |
 | Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
 | Multi-agent adapters | `core/adapters/README.md` |
 | Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |

@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-23
+last_reviewed: 2026-10-02
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -81,7 +81,12 @@ architecture. Version 1.3.0.
   dependency. Image generation for design exploration is owned by
   `40-ui`: settings are intentional and artifact-adaptive; generated
   images are references, not implementation truth; availability does
-  not authorize use.
+  not authorize use. A substantial redesign (major page or screen,
+  multi-step flow, or substantial responsive refactor) requires an
+  approved project-local review comp before application UI changes
+  (`40-ui`, `core/prompts/ui-comp-approval.md`, ADR 0008). The comp is
+  a review artifact. Creating it does not authorize deployment. Small
+  polish, copy changes, and straightforward fixes do not use that gate.
 - Capability-on-demand: external tools are not capability-by-default.
   Bootstrap does not install MCP servers or make additional MCPs
   required dependencies. Client-specific MCP configuration remains

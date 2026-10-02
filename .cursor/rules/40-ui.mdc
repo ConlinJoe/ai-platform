@@ -1,5 +1,5 @@
 ---
-description: Frontend, UI, UX, and design-system work — principles, skill routing, and rendered verification
+description: Frontend, UI, UX, and design-system work — principles, skill routing, rendered verification, and the substantial-redesign comp approval gate
 alwaysApply: false
 ---
 
@@ -466,10 +466,15 @@ Examples: new screen, dashboard, navigation, major component, redesign,
 new visual direction, design-system work, substantial responsive/layout
 change, UI the developer cannot reasonably verify immediately.
 
+A major page or screen redesign, a new or reworked multi-step flow, or
+a substantial responsive refactor is a **substantial redesign**. Complete
+that gate before step 3.
+
 1. Inspect the existing design system and product context.
 2. Invoke the one design skill selected by Skill routing when its
    design intelligence is useful.
-3. Implement framework-natively. Generated exploration images are
+3. Implement framework-natively, after the substantial-redesign gate
+   when that gate applies. Generated exploration images are
    references, not the implementation source of truth.
 4. Perform bounded Mode B visual verification when a real-browser
    capability is available (`60-browser-qa`). Use the best available
@@ -481,9 +486,89 @@ change, UI the developer cannot reasonably verify immediately.
 
 Significant UI work **is** authorization for that bounded visual pass.
 It is **not** authorization for a Mode A suite, the full Mode A→B loop,
-broad exploration, or unrelated browser QA. Significant motion does
+broad exploration, or unrelated browser QA. It is **not** authorization
+to skip the substantial-redesign gate. Significant motion does
 not by itself authorize Mode A tests, formal performance profiling,
 new animation dependencies, or additional MCP installation.
+
+### Substantial redesign
+
+Required approval gate before any application UI change. This is a
+subset of significant UI, not a separate design process.
+
+Use it for a major page or screen redesign, a new or reworked
+multi-step flow, or a substantial responsive refactor.
+
+Do not use it for small polish, copy changes, straightforward fixes,
+isolated component tweaks, token tweaks, or a local addition that
+inherits an established screen without reworking its structure or
+sequence.
+
+Project authority stays in force. The project design system, approved
+briefs, and approved visual references outrank skill defaults. An
+approved review comp is the approved visual reference for that task.
+Impeccable `shape` owns discovery and the brief. Impeccable `new-work`
+owns visual-world and surface-concept decisions only when that
+reference already applies. Hallmark supplies art direction only when
+skill routing selects it. Do not start a second direction tournament,
+hosted canvas, or parallel design system. Do not fork either skill to
+encode this gate.
+
+An Impeccable image comp, decision page, or `.impeccable/mocks/` file
+may inform the review. It does not satisfy the gate. A code-led skill
+default does not waive it. `shape` still does not write application
+code. Writing the review comp is required, and it is not the
+application code `shape` forbids. If material facts are still unknown,
+ask them in `shape`'s cadence and wait. Do not add a separate
+prose-brief approval before this comp. The comp is the approval stop.
+
+Before changing application UI:
+
+1. Inspect the current product, design system, content, and behavior,
+   including the states the flow actually has.
+2. Build one static review page of the key screens and the states that
+   matter. Show each at a phone width and a desktop width, labeled, on
+   the same page. Include keyboard-open, selected, empty, error, and
+   result states when the flow has them. Keyboard-open means the mobile
+   layout while the on-screen keyboard is visible and the active field
+   is still reachable. Omit states the product does not have. Use real
+   product content. Proposed copy follows the em-dash rule above.
+3. Save the page and its relative assets in the project at
+   `design-reviews/<slug>/index.html`, unless a project contract already
+   names a review-comp directory. The page must open from disk in a
+   regular browser, without the application server. Do not leave the
+   only copy in an agent store, a chat attachment, `.impeccable/mocks/`,
+   or a temporary browser session.
+4. Give the user the absolute path and a `file://` URL. Explain the
+   proposed behavior and any consequential decisions: what changes,
+   what stays, and what approval means.
+5. Stop. Do not change application UI, routes, or production assets
+   until the user approves that comp.
+
+The comp is a review artifact. It is not production source, not a
+documentation contract, and not the implementation source of truth.
+Do not add it to application routes, the asset pipeline, or a deploy.
+Creating it does not authorize deployment, a dependency change, or a
+commit.
+
+After approval, implement only that direction with the project's
+framework, components, and tokens. Implementation follows `20-coding`.
+Do not pixel-match the comp with arbitrary Tailwind values. If
+implementation must depart from the approved comp, stop and say why.
+Then run the bounded Mode B visual pass and the project checks,
+including `scripts/check-guardrails.sh` when public-facing copy or
+Tailwind markup changed.
+
+An explicit user instruction to implement without a comp outranks this
+gate. Say that the gate was waived, then implement. "The direction
+feels clear", a skill default, or an unapproved mock does not waive it.
+If this task already has an approved review comp covering the screens
+and states in scope, implement that comp. Do not generate a competing
+one.
+
+Checklist, in the AI Platform clone: `core/prompts/ui-comp-approval.md`.
+Decision record: `docs/contracts/adrs/0008-substantial-redesign-comp-approval.md`
+in the AI Platform clone.
 
 ### Exploration
 
@@ -495,6 +580,8 @@ reference language. Image generation may be used when it materially
 helps; follow Image generation / design exploration below. Ask the
 developer to choose before significant implementation when approval is
 actually needed. Skip ceremony when the direction is already clear.
+Skipping exploration ceremony does not skip the substantial-redesign
+comp gate.
 
 ## Skill routing
 
@@ -525,7 +612,9 @@ Project contracts, approved design briefs and visual references, project
 tokens/components/design systems, accessibility requirements,
 framework-native rules, and this file remain authoritative over skill
 recommendations. Skills provide judgment and execution methodology, not
-independent authority to redesign an established product.
+independent authority to redesign an established product. On a
+substantial redesign, skill output feeds the comp approval gate. It
+does not replace that gate.
 
 Impeccable's `PRODUCT.md`, `DESIGN.md`, and `.impeccable/` artifacts are
 optional focused design records, not replacements for project contracts.
@@ -683,7 +772,9 @@ avoid generic stock imagery.
 ### Generated images are not implementation truth
 
 Generated design images are exploration/reference artifacts, not the
-implementation source of truth.
+implementation source of truth. A substantial-redesign review comp is
+the same kind of artifact. It is not production source. See Substantial
+redesign.
 
 Once a direction is selected:
 

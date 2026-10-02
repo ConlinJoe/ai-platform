@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+A substantial UI redesign requires a project-local review comp and
+explicit approval before application UI changes. The comp shows the
+key screens and relevant states at mobile and desktop sizes, and it
+opens from `design-reviews/<slug>/index.html` in a regular browser.
+Small polish, copy changes, and straightforward fixes stay on the
+existing path. The comp is a review artifact. Creating it does not
+authorize deployment. Procedure: `.cursor/rules/40-ui.mdc`. Checklist:
+`core/prompts/ui-comp-approval.md`. Decision: ADR 0008.
+
 WordPress projects that use Tailwind and `theme.json` (including
 Radicle/Sage) keep typography and color in the project Tailwind tokens.
 `theme.json` presets alias those tokens. Editorial element styles stay

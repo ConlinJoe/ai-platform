@@ -165,6 +165,8 @@ PY
   check_file "${AI_REPO}/mcp/laravel-boost/README.md" "Boost MCP guidance"
   check_file "${AI_REPO}/mcp/playwright/README.md" "Playwright MCP guidance"
   check_file "${AI_REPO}/core/prompts/browser-qa-loop.md" "Browser QA loop prompt"
+  check_file "${AI_REPO}/core/prompts/ui-comp-approval.md" "UI comp approval prompt"
+  check_file "${AI_REPO}/docs/contracts/adrs/0008-substantial-redesign-comp-approval.md" "Substantial redesign comp ADR"
   check_file "${AI_REPO}/core/prompts/project-adoption.md" "Project adoption prompt"
   check_file "${AI_REPO}/CHANGELOG.md" "CHANGELOG"
   check_file "${AI_REPO}/LICENSE" "LICENSE"

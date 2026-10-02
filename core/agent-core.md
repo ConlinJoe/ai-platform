@@ -200,6 +200,14 @@ edits. When it is used, choose model, quality, resolution, aspect
 ratio, and option count intentionally, and adapt those settings to the
 artifact. Details: `.cursor/rules/40-ui.mdc`.
 
+Substantial redesigns (a major page or screen, a multi-step flow, or a
+substantial responsive refactor) require the comp approval gate in
+`.cursor/rules/40-ui.mdc` before any application UI change. Checklist:
+`core/prompts/ui-comp-approval.md` in the AI Platform clone. Small
+polish, copy changes, and straightforward fixes do not use that gate.
+The comp is a review artifact, not production code, and creating it
+does not authorize deployment.
+
 Do not restore retired overlapping design skills. Impeccable and
 Hallmark are the managed design stack.
 
