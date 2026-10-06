@@ -490,35 +490,16 @@ ensure_local_artifact_gitignore() {
   fi
 
   local added=0
-  local has_ds=0
-  local has_nested_ds=0
-  local has_ai=0
 
-  if grep -qE '^\.DS_Store$' "${gitignore}"; then
-    has_ds=1
-  fi
-  if grep -qE '^\*\*/\.DS_Store$' "${gitignore}"; then
-    has_nested_ds=1
-  fi
-  if grep -qE '^\.ai/?$' "${gitignore}"; then
-    has_ai=1
-  fi
-
-  if [[ "${has_ds}" -eq 0 || "${has_nested_ds}" -eq 0 ]]; then
-    if [[ "${has_ds}" -eq 0 && "${has_nested_ds}" -eq 0 ]]; then
-      printf '\n# macOS\n.DS_Store\n**/.DS_Store\n' >> "${gitignore}"
-    else
-      if [[ "${has_ds}" -eq 0 ]]; then
-        printf '\n.DS_Store\n' >> "${gitignore}"
-      fi
-      if [[ "${has_nested_ds}" -eq 0 ]]; then
-        printf '\n**/.DS_Store\n' >> "${gitignore}"
-      fi
-    fi
+  # A slash-free .DS_Store pattern matches in every directory. The **/ and
+  # *.DS_Store forms are the same global match. Path-specific rules do not
+  # count, and an existing global rule is left unchanged.
+  if ! grep -qE '^[[:space:]]*(\.DS_Store|\*\*/\.DS_Store|\*\.DS_Store)[[:space:]]*\r?$' "${gitignore}"; then
+    printf '\n# macOS\n.DS_Store\n' >> "${gitignore}"
     added=1
   fi
 
-  if [[ "${has_ai}" -eq 0 ]]; then
+  if ! grep -qE '^\.ai/?$' "${gitignore}"; then
     printf '\n# AI Development Harness\n.ai/\n' >> "${gitignore}"
     added=1
   fi

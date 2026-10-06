@@ -1472,8 +1472,8 @@ assert_not_grep '^design\.md' "${GENERIC}/.gitignore" \
   "generic gitignore does not ignore design.md"
 assert_grep '^\.DS_Store$' "${GENERIC}/.gitignore" \
   "generic gitignore ignores .DS_Store"
-assert_grep '^\*\*/\.DS_Store$' "${GENERIC}/.gitignore" \
-  "generic gitignore ignores nested .DS_Store"
+assert_not_grep '^\*\*/\.DS_Store$' "${GENERIC}/.gitignore" \
+  "generic gitignore does not add redundant nested .DS_Store"
 assert_grep '^\.ai/?$' "${GENERIC}/.gitignore" \
   "generic gitignore ignores .ai/"
 assert_grep '^# macOS$' "${GENERIC}/.gitignore" \
@@ -1612,8 +1612,8 @@ assert_not_grep 'playwright-report' "${RADICLE_NEW}/.gitignore" \
   "Radicle gitignore has no Playwright artifacts"
 assert_grep '^\.DS_Store$' "${RADICLE_NEW}/.gitignore" \
   "Radicle gitignore ignores .DS_Store"
-assert_grep '^\*\*/\.DS_Store$' "${RADICLE_NEW}/.gitignore" \
-  "Radicle gitignore ignores nested .DS_Store"
+assert_not_grep '^\*\*/\.DS_Store$' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore does not add redundant nested .DS_Store"
 assert_grep '^\.ai/?$' "${RADICLE_NEW}/.gitignore" \
   "Radicle gitignore ignores .ai/"
 assert_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-radicle-new.log \
@@ -1706,8 +1706,8 @@ assert_grep 'playwright-report' "${LARAVEL_NEW}/.gitignore" \
   "new Laravel gitignore includes Playwright artifacts"
 assert_grep '^\.DS_Store$' "${LARAVEL_NEW}/.gitignore" \
   "new Laravel gitignore ignores .DS_Store"
-assert_grep '^\*\*/\.DS_Store$' "${LARAVEL_NEW}/.gitignore" \
-  "new Laravel gitignore ignores nested .DS_Store"
+assert_not_grep '^\*\*/\.DS_Store$' "${LARAVEL_NEW}/.gitignore" \
+  "new Laravel gitignore does not add redundant nested .DS_Store"
 assert_grep '^\.ai/?$' "${LARAVEL_NEW}/.gitignore" \
   "new Laravel gitignore ignores .ai/"
 assert_grep "Detected profile: laravel-webapp" ${LOGDIR}/boot-laravel-new.log \
@@ -1844,14 +1844,88 @@ assert_grep "UNIQUE_GITIGNORE_MARKER" "${EXISTING_GH}/.gitignore" \
   "existing gitignore contents were preserved"
 assert_grep '^\.DS_Store$' "${EXISTING_GH}/.gitignore" \
   "existing-project gitignore gained .DS_Store"
-assert_grep '^\*\*/\.DS_Store$' "${EXISTING_GH}/.gitignore" \
-  "existing-project gitignore gained nested .DS_Store"
+assert_not_grep '^\*\*/\.DS_Store$' "${EXISTING_GH}/.gitignore" \
+  "existing-project gitignore did not gain redundant nested .DS_Store"
 assert_grep '^\.ai/?$' "${EXISTING_GH}/.gitignore" \
   "existing-project gitignore gained .ai/"
 assert_grep "does not copy or overwrite .github/" ${LOGDIR}/boot-existing-github.log \
   "existing-project bootstrap states it does not overwrite GitHub templates"
 assert_not_grep 'gh auth' ${LOGDIR}/boot-existing-github.log \
   "bootstrap does not authenticate GitHub CLI"
+
+echo ""
+echo "--- macOS metadata gitignore coverage ---"
+DS_MISSING="${WORKDIR}/ds-missing"
+mkdir -p "${DS_MISSING}"
+printf 'vendor/\nresources/.DS_Store\n' > "${DS_MISSING}/.gitignore"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_MISSING}" >${LOGDIR}/boot-ds-missing.log 2>&1
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_MISSING}" >${LOGDIR}/boot-ds-missing-2.log 2>&1
+assert_grep '^vendor/$' "${DS_MISSING}/.gitignore" \
+  "existing gitignore without a global .DS_Store rule keeps its contents"
+assert_grep '^resources/\.DS_Store$' "${DS_MISSING}/.gitignore" \
+  "path-specific .DS_Store rules are preserved"
+ds_missing_count="$(grep -cE '^\.DS_Store$' "${DS_MISSING}/.gitignore" || true)"
+if [[ "${ds_missing_count}" -eq 1 ]]; then
+  pass "missing global .DS_Store rule is added once across two bootstraps"
+else
+  fail "missing global .DS_Store rule is added once across two bootstraps (count=${ds_missing_count})"
+fi
+assert_not_grep '^\*\*/\.DS_Store$' "${DS_MISSING}/.gitignore" \
+  "path-specific coverage does not cause a redundant nested rule"
+
+DS_PRESENT="${WORKDIR}/ds-present"
+mkdir -p "${DS_PRESENT}"
+printf 'keep-me\n.DS_Store\n' > "${DS_PRESENT}/.gitignore"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_PRESENT}" >${LOGDIR}/boot-ds-present.log 2>&1
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_PRESENT}" >${LOGDIR}/boot-ds-present-2.log 2>&1
+assert_grep '^keep-me$' "${DS_PRESENT}/.gitignore" \
+  "gitignore that already ignores .DS_Store keeps its contents"
+ds_present_count="$(grep -cE '^\.DS_Store$' "${DS_PRESENT}/.gitignore" || true)"
+if [[ "${ds_present_count}" -eq 1 ]]; then
+  pass "existing .DS_Store rule is not duplicated"
+else
+  fail "existing .DS_Store rule is not duplicated (count=${ds_present_count})"
+fi
+assert_not_grep '^\*\*/\.DS_Store$' "${DS_PRESENT}/.gitignore" \
+  "existing .DS_Store rule does not gain a nested variant"
+
+DS_GLOB="${WORKDIR}/ds-glob"
+mkdir -p "${DS_GLOB}"
+printf '**/.DS_Store\n' > "${DS_GLOB}/.gitignore"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_GLOB}" >${LOGDIR}/boot-ds-glob.log 2>&1
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_GLOB}" >${LOGDIR}/boot-ds-glob-2.log 2>&1
+assert_not_grep '^\.DS_Store$' "${DS_GLOB}/.gitignore" \
+  "existing **/.DS_Store coverage does not add a second global rule"
+ds_glob_count="$(grep -cE '^\*\*/\.DS_Store$' "${DS_GLOB}/.gitignore" || true)"
+if [[ "${ds_glob_count}" -eq 1 ]]; then
+  pass "existing **/.DS_Store rule is not duplicated"
+else
+  fail "existing **/.DS_Store rule is not duplicated (count=${ds_glob_count})"
+fi
+
+DS_STAR="${WORKDIR}/ds-star"
+mkdir -p "${DS_STAR}"
+printf '*.DS_Store\n' > "${DS_STAR}/.gitignore"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_STAR}" >${LOGDIR}/boot-ds-star.log 2>&1
+assert_not_grep '^\.DS_Store$' "${DS_STAR}/.gitignore" \
+  "existing *.DS_Store coverage does not add a second global rule"
+assert_grep '^\*\.DS_Store$' "${DS_STAR}/.gitignore" \
+  "existing *.DS_Store rule is preserved"
+
+DS_NONE="${WORKDIR}/ds-none"
+mkdir -p "${DS_NONE}"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_NONE}" >${LOGDIR}/boot-ds-none.log 2>&1
+"${AI_REPO}/scripts/bootstrap-project.sh" "${DS_NONE}" >${LOGDIR}/boot-ds-none-2.log 2>&1
+assert_file "${DS_NONE}/.gitignore" \
+  "project without a .gitignore receives one"
+ds_none_count="$(grep -cE '^\.DS_Store$' "${DS_NONE}/.gitignore" || true)"
+if [[ "${ds_none_count}" -eq 1 ]]; then
+  pass "created .gitignore contains one .DS_Store rule after two bootstraps"
+else
+  fail "created .gitignore contains one .DS_Store rule after two bootstraps (count=${ds_none_count})"
+fi
+assert_not_grep '^\*\*/\.DS_Store$' "${DS_NONE}/.gitignore" \
+  "created .gitignore does not add redundant nested .DS_Store"
 
 echo ""
 echo "--- Idempotent re-run (generic) ---"
@@ -1869,10 +1943,10 @@ else
   fail "re-run does not duplicate .DS_Store gitignore (count=${ds_count})"
 fi
 nested_ds_count="$(grep -cE '^\*\*/\.DS_Store$' "${GENERIC}/.gitignore" || true)"
-if [[ "${nested_ds_count}" -eq 1 ]]; then
-  pass "re-run does not duplicate nested .DS_Store gitignore"
+if [[ "${nested_ds_count}" -eq 0 ]]; then
+  pass "re-run does not add redundant nested .DS_Store gitignore"
 else
-  fail "re-run does not duplicate nested .DS_Store gitignore (count=${nested_ds_count})"
+  fail "re-run does not add redundant nested .DS_Store gitignore (count=${nested_ds_count})"
 fi
 ai_count="$(grep -cE '^\.ai/?$' "${GENERIC}/.gitignore" || true)"
 if [[ "${ai_count}" -eq 1 ]]; then

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+Bootstrap adds one `.DS_Store` rule to a project `.gitignore` when macOS
+metadata is not already ignored in every directory. An existing global
+rule (`.DS_Store`, `**/.DS_Store`, or `*.DS_Store`) is left unchanged.
+Path-specific rules do not count as full coverage, and existing
+`.gitignore` contents are preserved.
+
 A substantial UI redesign requires a project-local review comp and
 explicit approval before application UI changes. The comp shows the
 key screens and relevant states at mobile and desktop sizes, and it

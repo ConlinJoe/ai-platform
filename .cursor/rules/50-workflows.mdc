@@ -68,8 +68,10 @@ Running bootstrap on a target project:
     docs; may add missing draft templates (working mode, status, browser QA,
     reconciliation)
 -   Adds `.build/`, `.hallmark/`, Impeccable ephemeral-artifact patterns,
-    `.DS_Store`, `**/.DS_Store`, and
-    `.ai/` to `.gitignore` when missing
+    `.DS_Store`, and `.ai/` to `.gitignore` when missing. One `.DS_Store`
+    rule ignores that file in every directory. An existing global rule
+    (`.DS_Store`, `**/.DS_Store`, or `*.DS_Store`) is not duplicated or
+    replaced
 -   For Laravel web apps: ensures Playwright artifact gitignore entries;
     diagnoses Laravel Boost and Playwright without installing packages
 -   For new Roots/Radicle/Sage projects: ensures `resources/images/`
