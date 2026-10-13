@@ -341,6 +341,10 @@ Never:
     resetting databases, wiping application data, and removing
     previous releases beyond established safe Deployer
     `keep_releases` cleanup.
+-   Install, enable, or deploy public-submission protection during
+    bootstrap or existing-project adoption. Inventory and recommend
+    first. Requirement:
+    `docs/contracts/features/spam-and-abuse-protection.md`.
 
 Before an authorized production deployment, verify a restorable production backup
 exists. If it cannot be verified, stop. Deployer availability is

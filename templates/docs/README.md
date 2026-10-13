@@ -22,6 +22,7 @@ and declares its dependencies in frontmatter.
 | `contracts/foundational/vision.md` | foundational | active | Product purpose, goals, constraints |
 | `contracts/foundational/architecture.md` | foundational | active | System structure, major components |
 | `contracts/planning/roadmap.md` | planning | active | Planned work (not implementation authority) |
+| `contracts/features/public-submissions.md` | feature | draft | Whether this project has public submission surfaces, and how they are protected |
 
 Add rows as contracts are created. Set `Type` to `foundational` for stable,
 high-level context. Set `Type` to `adr` for architecture decision records.
@@ -37,6 +38,7 @@ flowchart TD
   vision[contracts/foundational/vision.md]
   architecture[contracts/foundational/architecture.md]
   roadmap[contracts/planning/roadmap.md]
+  publicSubmissions[contracts/features/public-submissions.md]
 
   context --> vision
   workingMode --> context
@@ -44,6 +46,7 @@ flowchart TD
   status --> context
   architecture --> vision
   roadmap --> vision
+  publicSubmissions --> architecture
 ```
 
 Update this graph when contract dependencies change.

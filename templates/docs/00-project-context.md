@@ -35,6 +35,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 - Generated public-facing copy must not use em dashes. Prefer standard
   Tailwind utilities and project tokens over arbitrary values
   (see `.cursor/rules/20-coding.mdc`, `.cursor/rules/40-ui.mdc`).
+- Public submission surfaces follow the AI Platform contract
+  `docs/contracts/features/spam-and-abuse-protection.md`. Record
+  `applicable` or `not applicable` in
+  `contracts/features/public-submissions.md`.
 
 <!-- Additional non-negotiable technical, business, or operational constraints. -->
 
@@ -47,5 +51,6 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Architectural decisions | `contracts/adrs/` |
 | Current working mode | `working-mode.md` |
 | Implementation status | `99-project-status.md` |
+| Public submissions | `contracts/features/public-submissions.md` |
 
 Update this table as contracts are added.

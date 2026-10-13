@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-02
+last_reviewed: 2026-10-13
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -119,6 +119,14 @@ architecture. Version 1.3.0.
   transitions, not after every bounded task.
 - Symlink architecture: unchanged in v1.3.0. Project-local `.ai/`
   portability remains deferred.
+- Public submission protection: every project with a public contact,
+  lead, quote, registration, comment, or similar endpoint includes
+  server-side spam and abuse protection when that surface is built.
+  Projects with no such surface record `not applicable`. Existing
+  projects are inventoried during adoption and are not silently
+  retrofitted. Canonical:
+  `docs/contracts/features/spam-and-abuse-protection.md`. Bootstrap
+  copies the project record and does not install protection.
 
 ## Validation
 

@@ -152,6 +152,8 @@ PY
   check_file "${AI_REPO}/docs/contracts/adrs/0006-instruction-precedence-and-mechanical-guardrails.md" "Guardrail ADR"
   check_file "${AI_REPO}/docs/contracts/features/copy-and-tailwind-guardrails.md" "Copy and Tailwind guardrails contract"
   check_file "${AI_REPO}/docs/contracts/features/deployer.md" "Deployer capability contract"
+  check_file "${AI_REPO}/docs/contracts/features/spam-and-abuse-protection.md" "Spam and abuse protection contract"
+  check_file "${AI_REPO}/templates/docs/contracts/features/public-submissions.md" "Public submissions project template"
   check_file "${AI_REPO}/docs/contracts/adrs/0007-optional-deployer-capability.md" "Deployer ADR"
   check_file "${AI_REPO}/templates/deployer/laravel/deploy.php" "Laravel Deployer recipe"
   check_file "${AI_REPO}/templates/deployer/roots/deploy.php" "Roots Deployer recipe"
@@ -443,6 +445,14 @@ check_docs() {
       ok "Platform reconciliation contract present"
     else
       warn "Existing project has no platform-reconciliation contract"
+    fi
+  fi
+
+  if docs_index_present "${target}"; then
+    if public_submissions_record_present "${target}"; then
+      ok "Public submissions record present"
+    else
+      warn "Public submissions record missing (docs/contracts/features/public-submissions.md)"
     fi
   fi
 

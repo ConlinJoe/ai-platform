@@ -102,6 +102,13 @@ commands, coverage, and data naming.
 Prefer semantic role/label selectors. Add `data-testid` only where those
 are unreliable or a stable automation contract is valuable.
 
+## Public submissions
+
+When this application exposes a public submission surface, use Laravel
+validation and rate limiting, and follow
+`docs/contracts/features/spam-and-abuse-protection.md`.
+Record applicability in `docs/contracts/features/public-submissions.md`.
+
 ## Documentation
 
 Follow the `10-documentation` project rule.

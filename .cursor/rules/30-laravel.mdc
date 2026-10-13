@@ -124,6 +124,13 @@ Laravel / Livewire:
 The AI Platform repository owns the reusable policy; this project's
 `docs/contracts/features/browser-qa.md` owns commands and coverage.
 
+## Public submissions
+
+Use Laravel validation and the framework rate limiter. The requirement
+is `docs/contracts/features/spam-and-abuse-protection.md`. Do not add a
+challenge package unless that contract calls for a challenge and this
+project needs one.
+
 # Laravel Web Application Profile
 
 ## Purpose

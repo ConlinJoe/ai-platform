@@ -41,6 +41,7 @@ model and templates from `templates/docs/`.
 | `contracts/features/deployer.md` | feature | active | Optional Deployer capability, installer, server configuration, deploy authorization |
 | `contracts/features/laravel-boost.md` | feature | active | Boost capability, detection, bootstrap/doctor |
 | `contracts/features/work-item-lifecycle.md` | feature | active | Capture-don't-expand, Issues/PRs, approval boundaries, optional gh |
+| `contracts/features/spam-and-abuse-protection.md` | feature | active | Public submission spam and abuse protection, not-applicable recording, adoption inventory, safe rollout |
 
 ## Dependency Graph
 
@@ -69,6 +70,7 @@ flowchart TD
   workItems[contracts/features/work-item-lifecycle.md]
   guardrails[contracts/features/copy-and-tailwind-guardrails.md]
   deployer[contracts/features/deployer.md]
+  spam[contracts/features/spam-and-abuse-protection.md]
 
   chatgpt --> philosophy
   chatgpt --> context
@@ -125,6 +127,7 @@ flowchart TD
 | Browser QA / Playwright | `contracts/features/browser-qa.md` |
 | Laravel Boost / MCP | `contracts/features/laravel-boost.md`, `mcp/README.md` |
 | Issues, PRs, discovered work | `contracts/features/work-item-lifecycle.md` |
+| Public submission protection | `contracts/features/spam-and-abuse-protection.md` |
 | Laravel web app profile | `core/project-profiles/laravel-webapp.md` |
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
 | WordPress, Tailwind, and theme.json | `.cursor/rules/36-wordpress-theme.mdc` |

@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-02
+last_reviewed: 2026-10-13
 source_of_truth_for:
   - Public conceptual model of the harness
   - Global versus project-owned files
@@ -93,6 +93,10 @@ Other supported agents get the portable core via `AGENTS.md` /
 Optional Deployer behavior lives in
 [docs/contracts/features/deployer.md](contracts/features/deployer.md).
 It is not a Cursor-only rule file.
+
+Public submission protection lives in
+[docs/contracts/features/spam-and-abuse-protection.md](contracts/features/spam-and-abuse-protection.md).
+Stack rules point at that contract. They do not restate it.
 
 Framework-specific rules attach only when that stack is present. The
 harness is not Laravel-only.

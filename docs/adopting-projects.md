@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-01
+last_reviewed: 2026-10-13
 source_of_truth_for:
   - Human overview of new versus existing project adoption
   - What bootstrap changes in a project
@@ -54,7 +54,7 @@ It does:
 - copy documentation **templates** only when the project has no docs
   index
 - add missing draft files on existing projects (working mode, status,
-  reconciliation, Laravel browser QA)
+  reconciliation, public-submissions record, Laravel browser QA)
 - ensure ignore entries such as `.build/`, `.hallmark/`, `.DS_Store`,
   and `.ai/`
 - optionally offer the Deployer stack (`Install Deployer deployment
@@ -83,6 +83,14 @@ app with your usual stack tooling, then bootstrap.
 Laravel and Roots/Radicle/Sage have additional profile notes in
 `core/project-profiles/`. Do not apply a profile to a project that is
 not that stack.
+
+Record public submissions in
+`docs/contracts/features/public-submissions.md`. Write
+`not applicable` when the project has none. When it has a public
+contact, lead, quote, registration, comment, or similar endpoint,
+include protection as part of building that surface. The requirement
+is [spam and abuse protection](contracts/features/spam-and-abuse-protection.md).
+Bootstrap does not install it.
 
 ## Existing projects
 
@@ -121,6 +129,12 @@ Findings use A/B/C/D:
 Sound decisions and installed versions are preserved. Material
 remediation needs your approval. Rejected C items are recorded as B.
 Deferred work goes on the roadmap.
+
+Adoption inventories public submission endpoints and their current
+protection before recommending a change. It does not install, enable,
+or deploy that protection. A project with no such surface records
+`not applicable`. Requirement:
+[spam and abuse protection](contracts/features/spam-and-abuse-protection.md).
 
 Existing Issue/PR/branch conventions are respected. Bootstrap does not
 create GitHub infrastructure.

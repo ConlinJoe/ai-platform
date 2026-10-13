@@ -75,6 +75,18 @@ record that here.
 | CONTRIBUTING | | |
 | PR-related GitHub Actions | | |
 
+## Public submissions
+
+Record applicability and the endpoint inventory in
+`docs/contracts/features/public-submissions.md`. The requirement is
+the AI Platform contract
+`docs/contracts/features/spam-and-abuse-protection.md`.
+
+If there is no public submission surface, that record says
+`not applicable`. If protection is missing or only client-side,
+classify the gap under **C** and wait for approval. Do not install,
+enable, or deploy it during adoption.
+
 ## D. Questions for the developer
 
 Decisions that cannot safely be inferred from the repository. Grouped;

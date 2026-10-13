@@ -187,6 +187,10 @@ reconciliation_contract_present() {
   [[ -f "$1/docs/contracts/foundational/platform-reconciliation.md" ]]
 }
 
+public_submissions_record_present() {
+  [[ -f "$1/docs/contracts/features/public-submissions.md" ]]
+}
+
 project_docs_exist() {
   docs_index_present "$1"
 }

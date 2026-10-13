@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-14
+last_reviewed: 2026-10-13
 source_of_truth_for:
   - Updating the harness clone and propagating changes
   - Skill update and restore
@@ -69,7 +69,9 @@ optional Deployer stack later without a full bootstrap:
 `docs/README.md`. After the first bootstrap of a new project that file
 exists, so a later re-run classifies the project as existing. It may
 add a draft `docs/contracts/foundational/platform-reconciliation.md`
-and print the existing-project adoption prompt. It still does not
+and, when missing, `docs/contracts/features/public-submissions.md`.
+It also prints the existing-project adoption prompt. Those drafts do
+not install or enable spam protection. It still does not
 overwrite project docs. A greenfield project can ignore that prompt and
 omit or delete the unused reconciliation draft. Do not treat this as a
 signal to run Project Adoption on an app you just scaffolded.

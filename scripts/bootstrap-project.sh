@@ -117,6 +117,7 @@ DOCTOR_SCRIPT="${AI_REPO}/scripts/doctor.sh"
 GUARDRAILS_SCRIPT="${AI_REPO}/scripts/check-guardrails.sh"
 DOCS_TEMPLATES_DIR="${AI_REPO}/templates/docs"
 BROWSER_QA_TEMPLATE="${AI_REPO}/templates/docs/contracts/features/browser-qa.md"
+PUBLIC_SUBMISSIONS_TEMPLATE="${AI_REPO}/templates/docs/contracts/features/public-submissions.md"
 RECONCILIATION_TEMPLATE="${AI_REPO}/templates/existing-project/platform-reconciliation.md"
 AGENT_CORE="${AI_REPO}/core/agent-core.md"
 CLAUDE_TEMPLATE="${AI_REPO}/templates/agents/CLAUDE.md"
@@ -340,6 +341,12 @@ add_missing_profile_templates() {
       "browser QA contract" \
       "${fill_hint}"
   fi
+
+  copy_if_missing \
+    "${PUBLIC_SUBMISSIONS_TEMPLATE}" \
+    "${target_docs}/contracts/features/public-submissions.md" \
+    "public submissions record" \
+    "Record applicable or not applicable. Do not install protection during bootstrap. ${fill_hint}"
 }
 
 ensure_gitignore_build() {

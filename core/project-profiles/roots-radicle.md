@@ -313,8 +313,12 @@ WordPress / WPForms should own:
 - validation
 - submission handling
 - notifications
-- spam-protection capabilities
+- spam-protection capabilities that meet
+  `docs/contracts/features/spam-and-abuse-protection.md` on the server
 - form administration
+
+WPForms is the ordinary-forms default on this stack only. It is not
+required on Laravel, custom APIs, or other stacks.
 
 Sage/Blade/Tailwind should own:
 
@@ -509,6 +513,9 @@ contracts should record, concisely:
 - WPForms Lite is the default basic forms layer
 - upgrades or alternatives require actual project need
 - credentials and secrets are never committed
+- public submissions are recorded as `applicable` or `not applicable`
+  in `docs/contracts/features/public-submissions.md` (requirement:
+  `docs/contracts/features/spam-and-abuse-protection.md`)
 - when the project uses Tailwind and `theme.json`: Tailwind tokens are
   the typography and color source of truth, and `theme.json` follows
   `.cursor/rules/36-wordpress-theme.mdc`

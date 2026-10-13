@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-14
+last_reviewed: 2026-10-13
 source_of_truth_for:
   - First-time clone and harness setup
   - Prerequisites, doctor, bootstrap, and bootstrap verification
@@ -241,9 +241,10 @@ prompts for a target path.
 | Locked skills | Copied into `.agents/skills/` (`npx skills experimental_install`) when missing; requires network |
 | `docs/` | Copied from templates if `docs/README.md` is missing; existing docs are not overwritten |
 | `.github/` Issue/PR templates | Not copied; existing GitHub files are not overwritten |
-| Existing projects | May add missing drafts: `working-mode.md`, `99-project-status.md`, `platform-reconciliation.md`, Laravel `browser-qa.md` |
+| Existing projects | May add missing drafts: `working-mode.md`, `99-project-status.md`, `platform-reconciliation.md`, `public-submissions.md`, Laravel `browser-qa.md` |
 | `.cursor/rules/90-*.mdc` | Not created; project-owned if you add them later |
 | Application code, Composer, npm, WordPress plugins | Not modified / not installed, except optional Deployer may declare `deployer/deployer` in `require-dev` without running Composer |
+| Public submission protection | Not installed. New projects receive a `public-submissions.md` record to fill (`not applicable` is valid). Requirement: [spam and abuse protection](contracts/features/spam-and-abuse-protection.md) |
 | Optional Deployer | Prompt or `--with-deployer` / `--without-deployer`. Does not deploy. |
 
 Bootstrap is safe to re-run. Shared Cursor rules update immediately

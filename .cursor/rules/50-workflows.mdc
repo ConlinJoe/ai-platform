@@ -66,7 +66,7 @@ Running bootstrap on a target project:
 -   Copies documentation templates when `docs/README.md` does not exist
 -   For existing projects (docs index already present): does not overwrite
     docs; may add missing draft templates (working mode, status, browser QA,
-    reconciliation)
+    reconciliation, public-submissions record)
 -   Adds `.build/`, `.hallmark/`, Impeccable ephemeral-artifact patterns,
     `.DS_Store`, and `.ai/` to `.gitignore` when missing. One `.DS_Store`
     rule ignores that file in every directory. An existing global rule
@@ -99,6 +99,8 @@ It does not run Composer, `boost:install`, add Playwright, or install
 WordPress plugins or npm packages, except the optional Deployer path
 which may declare `deployer/deployer` in `composer.json` require-dev
 without running Composer.
+It does not install, enable, or deploy public-submission protection.
+That requirement is `docs/contracts/features/spam-and-abuse-protection.md`.
 It does not install MCP servers or make additional MCPs required
 bootstrap dependencies. Client-specific MCP configuration remains
 client-specific.
@@ -116,14 +118,16 @@ the project.
 ## New vs existing projects
 
 **New** (no `docs/README.md`): copy documentation templates, including
-`working-mode.md`, `99-project-status.md`, and a draft browser-QA contract
-for Laravel web apps. Then establish contracts from the installed scaffold.
+`working-mode.md`, `99-project-status.md`,
+`docs/contracts/features/public-submissions.md`, and a draft browser-QA
+contract for Laravel web apps. Then establish contracts from the
+installed scaffold.
 
 **Existing** (docs index present): do not clone the platform into the
 app. Bootstrap only provisions/links the platform and may add missing
-drafts (working mode, status, reconciliation, Laravel browser QA). Then
-run Project Adoption in a fresh agent session:
-`core/prompts/project-adoption.md`.
+drafts (working mode, status, reconciliation, public-submissions
+record, Laravel browser QA). Then run Project Adoption in a fresh
+agent session: `core/prompts/project-adoption.md`.
 
 Do not migrate or refactor application code during bootstrap.
 
@@ -166,6 +170,13 @@ the roadmap; rejected work is recorded as **B**.
 Ask only when the answer is a genuine product, business, architectural,
 security, or implementation decision. Do not ask what the repository
 already establishes.
+
+Inventory public submission endpoints and their current protection
+before recommending a change. Record the result in
+`docs/contracts/features/public-submissions.md` (`not applicable` when
+there are none). Do not install, enable, or deploy protection during
+adoption. Requirement:
+`docs/contracts/features/spam-and-abuse-protection.md`.
 
 Inspect existing Issue conventions, PR templates, branch naming,
 contribution guidelines, and GitHub Actions tied to PRs. Preserve
@@ -213,7 +224,13 @@ contracts:
 4. For Laravel web apps: treat missing Boost as a capability gap (native
    install, not a platform MCP patch). Treat Playwright Mode A as expected;
    do not add `@playwright/test` without approval.
-5. For Roots/Radicle/Sage: follow `core/project-profiles/roots-radicle.md`.
+5. Record public submissions in
+   `docs/contracts/features/public-submissions.md`. If the project has
+   none, write `not applicable`. If it has any, include protection when
+   the surface is built. Requirement:
+   `docs/contracts/features/spam-and-abuse-protection.md`.
+   Bootstrap does not install that protection.
+6. For Roots/Radicle/Sage: follow `core/project-profiles/roots-radicle.md`.
    After Current-First compatibility checks, complete the approved
    greenfield baseline: ensure `resources/images/` exists; install
    `keen-slider` via the project's npm/Vite workflow; once WordPress is
@@ -263,6 +280,9 @@ Every project must include:
     (update when the working mode itself changes)
 -   `docs/99-project-status.md` — current implementation status (update when
     phases or major milestones complete)
+-   `docs/contracts/features/public-submissions.md` — applicability of
+    public submission protection (`not applicable` is a complete answer).
+    Requirement: `docs/contracts/features/spam-and-abuse-protection.md`
 
 Minimum viable contracts:
 
@@ -284,7 +304,10 @@ should also record: ACF owns structured editorial fields and is not a
 page builder; frontend layout remains code-owned; Keen is the preferred
 slider/gallery dependency; WPForms Lite is the default basic forms
 layer; upgrades/alternatives require actual project need; credentials
-are never committed.
+are never committed. Public submissions are recorded as `applicable`
+or `not applicable` in `docs/contracts/features/public-submissions.md`.
+The requirement is
+`docs/contracts/features/spam-and-abuse-protection.md`.
 
 Add engine and feature contracts as the project grows. Do not create the
 legacy four-file layout for new projects.

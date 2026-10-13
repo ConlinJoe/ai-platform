@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+Projects that accept public submissions include server-side spam and
+abuse protection when that surface is built. Contact and lead forms,
+quote requests, registration, comments, and other endpoints that create
+records, send mail, or trigger costly work are in scope. A browser
+widget, JavaScript check, or CSRF token alone does not count. Projects
+with no such surface record `not applicable`. Existing-project adoption
+inventories current endpoints and protection and does not silently
+retrofit or deploy them. Canonical requirement:
+`docs/contracts/features/spam-and-abuse-protection.md`.
+
 Bootstrap adds one `.DS_Store` rule to a project `.gitignore` when macOS
 metadata is not already ignored in every directory. An existing global
 rule (`.DS_Store`, `**/.DS_Store`, or `*.DS_Store`) is left unchanged.

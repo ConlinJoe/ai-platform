@@ -126,6 +126,13 @@ Inspect, as applicable:
   GitHub Actions tied to PRs
 - Design system, tokens, component conventions, existing UI rules,
   accessibility conventions, and browser/visual QA capabilities
+- Public submission endpoints (contact, lead, quote, registration,
+  comments, and any other route that creates a record, sends mail, or
+  triggers costly work). Note the current server-side protection, rate
+  limits, validation, tests, and where credentials live. If none exist,
+  the record is `not applicable`. Do not install or enable protection
+  during this inspection. Requirement, in the harness clone:
+  `docs/contracts/features/spam-and-abuse-protection.md`
 
 Preserve reasonable existing project conventions. Do not impose a new
 design system during adoption.
@@ -207,6 +214,7 @@ Required outcomes:
 | Planned work and deferred remediation | `docs/contracts/planning/roadmap.md` |
 | Index | `docs/README.md` (registry + dependency graph) |
 | A/B/C/D findings | `docs/contracts/foundational/platform-reconciliation.md` |
+| Public submissions | `docs/contracts/features/public-submissions.md` (`not applicable` when there are none). Inventory first. Do not install, enable, or deploy protection during adoption. Requirement: harness `docs/contracts/features/spam-and-abuse-protection.md` |
 
 Laravel web apps also need `docs/contracts/features/browser-qa.md` when
 the profile applies.

@@ -174,6 +174,12 @@ spam protection, and form administration. Sage/Blade/Tailwind owns page
 composition, surrounding presentation, theme integration, and visual
 treatment.
 
+Public submission protection is
+`docs/contracts/features/spam-and-abuse-protection.md`. The forms
+system must meet that contract on the server. WPForms is the
+ordinary-forms default on this stack only. It is not required on other
+stacks.
+
 Do not hand-code POST handlers, email delivery, nonce/validation
 infrastructure, or custom form storage when WPForms already satisfies
 the requirement. Theme via supported hooks/classes/templates/APIs; do
@@ -276,7 +282,10 @@ contracts should record: ACF owns structured editorial fields; frontend
 layout remains code-owned; no unrestricted ACF page builder; Keen is the
 preferred slider/gallery dependency; WPForms Lite is the default basic
 forms layer; upgrades/alternatives require actual project need;
-credentials/secrets are never committed. When the project uses Tailwind
+credentials/secrets are never committed. Record public submissions as
+`applicable` or `not applicable` in
+`docs/contracts/features/public-submissions.md` (requirement:
+`docs/contracts/features/spam-and-abuse-protection.md`). When the project uses Tailwind
 and `theme.json`, also record that Tailwind tokens are the typography
 and color source of truth and that `theme.json` follows
 `.cursor/rules/36-wordpress-theme.mdc`.

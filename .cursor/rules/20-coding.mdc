@@ -119,6 +119,16 @@ Never:
 -   Perform destructive database operations without approval.
 -   Deploy to any environment unless explicitly instructed.
 
+## Public submissions
+
+Contact forms, lead forms, quote requests, registration, comments, and
+any other public endpoint that creates a record, sends mail, or
+triggers costly work follow
+`docs/contracts/features/spam-and-abuse-protection.md`.
+Load that contract when building or changing one. Record the result in
+the project's `docs/contracts/features/public-submissions.md`
+(`not applicable` when the project has no such surface).
+
 ## Quality
 
 Before considering a task complete:

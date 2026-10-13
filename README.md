@@ -49,6 +49,7 @@ of done.
 | UI / design | Product-specific design constraints; Hallmark for significant UI (`40-ui`) |
 | Workflows | Bootstrap, adoption, documentation contracts (`50-workflows`) |
 | Optional Deployer | Optional SSH/PHP deployment foundation; install does not deploy (`docs/contracts/features/deployer.md`) |
+| Public submissions | Server-side spam and abuse protection when a project accepts public submissions (`docs/contracts/features/spam-and-abuse-protection.md`) |
 | Project context | Working mode, status, ADRs, selective contract loading |
 | Skills | Locked Hallmark skill, restored into projects |
 | Verification | Doctor, copy/Tailwind guardrails, authorized browser QA |

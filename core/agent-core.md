@@ -99,6 +99,10 @@ DNS changes, or destructive data operations. The catastrophic-operation
 guardrail applies to deployment scripts the same way it applies to
 commands executed directly. Details:
 `docs/contracts/features/deployer.md` in the AI Platform clone.
+Do not install, enable, or deploy public-submission protection during
+bootstrap or existing-project adoption. Inventory and recommend first.
+Requirement: `docs/contracts/features/spam-and-abuse-protection.md`
+in the AI Platform clone.
 
 ## Current-First and Framework-Native
 
@@ -147,6 +151,7 @@ up front):
 | Browser QA | `.cursor/rules/60-browser-qa.mdc` |
 | Issues, PRs, discovered work | `.cursor/rules/70-work-items.mdc` |
 | Deployment / Deployer | `docs/contracts/features/deployer.md` in the AI Platform clone; project `docs/contracts/features/deployment.md` when the optional stack is installed |
+| Public submission protection | `docs/contracts/features/spam-and-abuse-protection.md` in the AI Platform clone; project `docs/contracts/features/public-submissions.md` records applicability |
 | Project-specific | `.cursor/rules/90-*.mdc` if present |
 
 Do not apply a framework profile to a project that is not that stack.

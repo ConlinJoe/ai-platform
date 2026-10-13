@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-09-23
+last_reviewed: 2026-10-13
 source_of_truth_for:
   - Model-neutral support seed for installing, troubleshooting, and extending the harness
 depends_on:
@@ -112,6 +112,7 @@ Where to look (confirm these paths still exist)
 - Bootstrap: scripts/bootstrap-project.sh
 - Doctor: scripts/doctor.sh
 - Optional Deployer: scripts/install-deployer.sh and docs/contracts/features/deployer.md
+- Public submission protection: docs/contracts/features/spam-and-abuse-protection.md
 - Guardrails: scripts/check-guardrails.sh
 - Skill updates: scripts/update-skills.sh
 - Agent adapters: core/adapters/

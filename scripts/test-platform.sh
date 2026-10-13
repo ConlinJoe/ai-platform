@@ -1417,6 +1417,15 @@ printf 'hello\n' > "${GENERIC}/README.md"
 assert_file "${GENERIC}/docs/README.md" "generic received docs templates"
 assert_file "${GENERIC}/docs/working-mode.md" \
   "generic received working-mode template"
+assert_file "${GENERIC}/docs/contracts/features/public-submissions.md" \
+  "generic new project received public-submissions record"
+assert_grep 'not applicable' "${GENERIC}/docs/contracts/features/public-submissions.md" \
+  "public-submissions template records not applicable"
+assert_grep 'spam-and-abuse-protection.md' \
+  "${GENERIC}/docs/contracts/features/public-submissions.md" \
+  "public-submissions template points at the canonical contract"
+assert_not_grep 'Turnstile' ${LOGDIR}/boot-generic.log \
+  "bootstrap does not install or recommend Turnstile"
 assert_file "${GENERIC}/AGENTS.md" "generic received AGENTS.md"
 assert_file "${GENERIC}/CLAUDE.md" "generic received CLAUDE.md"
 if [[ -L "${GENERIC}/AGENTS.md" ]] && [[ "$(readlink "${GENERIC}/AGENTS.md")" == "${AI_REPO}/core/agent-core.md" ]]; then
@@ -1602,6 +1611,8 @@ write_radicle_composer "${RADICLE_NEW}"
 "${AI_REPO}/scripts/bootstrap-project.sh" "${RADICLE_NEW}" >${LOGDIR}/boot-radicle-new.log 2>&1
 
 assert_file "${RADICLE_NEW}/docs/README.md" "Radicle project received docs templates"
+assert_file "${RADICLE_NEW}/docs/contracts/features/public-submissions.md" \
+  "Radicle project received public-submissions record"
 assert_missing "${RADICLE_NEW}/docs/contracts/features/browser-qa.md" \
   "Radicle project did not receive browser-QA template"
 assert_dir "${RADICLE_NEW}/resources/images" \
@@ -1660,6 +1671,10 @@ assert_missing "${RADICLE_EXISTING}/resources/images" \
   "existing Radicle bootstrap does not create resources/images"
 assert_file "${RADICLE_EXISTING}/docs/contracts/foundational/platform-reconciliation.md" \
   "existing Radicle project received reconciliation draft"
+assert_file "${RADICLE_EXISTING}/docs/contracts/features/public-submissions.md" \
+  "existing Radicle project received missing public-submissions draft"
+assert_not_grep 'Turnstile' ${LOGDIR}/boot-radicle-existing.log \
+  "existing Radicle bootstrap does not install Turnstile"
 assert_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-radicle-existing.log \
   "existing Radicle bootstrap detects roots-radicle"
 assert_grep "Do not install or migrate during bootstrap" ${LOGDIR}/boot-radicle-existing.log \
@@ -1700,6 +1715,8 @@ write_laravel_composer "${LARAVEL_NEW}" 0
 
 assert_file "${LARAVEL_NEW}/docs/contracts/features/browser-qa.md" \
   "new Laravel project received browser-QA draft"
+assert_file "${LARAVEL_NEW}/docs/contracts/features/public-submissions.md" \
+  "new Laravel project received public-submissions record"
 assert_missing "${LARAVEL_NEW}/resources/images" \
   "Laravel project did not receive Roots resources/images"
 assert_grep 'playwright-report' "${LARAVEL_NEW}/.gitignore" \
@@ -1804,6 +1821,10 @@ assert_file "${LARAVEL_EXISTING}/CLAUDE.md" \
   "existing Laravel project received CLAUDE.md"
 assert_file "${LARAVEL_EXISTING}/docs/contracts/features/browser-qa.md" \
   "existing Laravel project received missing browser-QA draft"
+assert_file "${LARAVEL_EXISTING}/docs/contracts/features/public-submissions.md" \
+  "existing Laravel project received missing public-submissions draft"
+assert_grep 'Do not install protection during bootstrap' ${LOGDIR}/boot-existing.log \
+  "existing-project public-submissions draft does not install protection"
 assert_file "${LARAVEL_EXISTING}/docs/contracts/foundational/platform-reconciliation.md" \
   "existing Laravel project received reconciliation draft"
 assert_file "${LARAVEL_EXISTING}/docs/working-mode.md" \
@@ -2237,6 +2258,71 @@ else
   fail "doctor on generic project without Deployer still exits 0"
   cat "${LOGDIR}/doctor-generic-deployer.log"
 fi
+assert_grep 'Public submissions record present' \
+  "${LOGDIR}/doctor-generic-deployer.log" \
+  "doctor accepts a project public-submissions record"
+
+echo ""
+echo "--- Public submission protection ---"
+SPAM_CONTRACT="${AI_REPO}/docs/contracts/features/spam-and-abuse-protection.md"
+assert_file "${SPAM_CONTRACT}" \
+  "spam and abuse protection contract exists"
+assert_grep 'A browser widget, JavaScript check, or CSRF token alone does not count as spam protection' \
+  "${SPAM_CONTRACT}" \
+  "canonical contract rejects widget, JavaScript, and CSRF-only protection"
+assert_grep 'Cloudflare Turnstile' "${SPAM_CONTRACT}" \
+  "canonical contract recommends Turnstile when a challenge is warranted"
+assert_grep 'Do not require Turnstile, WPForms' "${SPAM_CONTRACT}" \
+  "canonical contract does not mandate Turnstile or WPForms"
+assert_grep 'Custom HTTP APIs and other stacks' "${SPAM_CONTRACT}" \
+  "canonical contract covers custom APIs"
+assert_grep 'not applicable' "${SPAM_CONTRACT}" \
+  "canonical contract records not applicable"
+assert_grep 'must not silently retrofit' "${SPAM_CONTRACT}" \
+  "canonical contract forbids silent adoption retrofit"
+assert_grep '36-wordpress-theme.mdc' "${SPAM_CONTRACT}" \
+  "canonical contract keeps theme.json out of submission protection"
+for spam_pointer in \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "${AI_REPO}/.cursor/rules/20-coding.mdc" \
+  "${AI_REPO}/.cursor/rules/30-laravel.mdc" \
+  "${AI_REPO}/.cursor/rules/35-roots.mdc" \
+  "${AI_REPO}/.cursor/rules/50-workflows.mdc" \
+  "${AI_REPO}/core/agent-core.md" \
+  "${AI_REPO}/core/project-profiles/laravel-webapp.md" \
+  "${AI_REPO}/core/project-profiles/roots-radicle.md" \
+  "${AI_REPO}/core/prompts/project-adoption.md"
+do
+  assert_grep 'docs/contracts/features/spam-and-abuse-protection.md' \
+    "${spam_pointer}" \
+    "$(basename "${spam_pointer}") points at the spam contract"
+  assert_not_grep 'Turnstile' "${spam_pointer}" \
+    "$(basename "${spam_pointer}") does not restate the Turnstile recommendation"
+done
+assert_not_grep 'Turnstile' "${AI_REPO}/.cursor/rules/36-wordpress-theme.mdc" \
+  "wordpress theme rule does not define a challenge vendor"
+assert_not_grep 'spam-and-abuse-protection' \
+  "${AI_REPO}/.cursor/rules/36-wordpress-theme.mdc" \
+  "wordpress theme rule does not own submission protection"
+assert_grep 'not applicable' "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption records not applicable"
+assert_grep 'Do not install or enable protection' \
+  "${AI_REPO}/core/prompts/project-adoption.md" \
+  "adoption does not install protection during inspection"
+assert_not_grep 'Turnstile' "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap script does not mention Turnstile"
+
+rm -f "${GENERIC}/docs/contracts/features/public-submissions.md"
+if "${AI_REPO}/scripts/doctor.sh" "${GENERIC}" \
+  >"${LOGDIR}/doctor-missing-public-submissions.log" 2>&1; then
+  pass "doctor warns instead of failing when the public-submissions record is missing"
+else
+  fail "doctor warns instead of failing when the public-submissions record is missing"
+  cat "${LOGDIR}/doctor-missing-public-submissions.log"
+fi
+assert_grep 'Public submissions record missing' \
+  "${LOGDIR}/doctor-missing-public-submissions.log" \
+  "doctor warns when the public-submissions record is missing"
 
 echo ""
 echo "--- ChatGPT context export ---"
@@ -2274,6 +2360,8 @@ assert_grep '^Version 1\.3\.0$' \
   "export README is v1.3.0"
 assert_file "${AI_REPO}/.build/chatgpt-context/docs/contracts/features/deployer.md" \
   "export includes the Deployer contract"
+assert_file "${AI_REPO}/.build/chatgpt-context/docs/contracts/features/spam-and-abuse-protection.md" \
+  "export includes the spam and abuse protection contract"
 assert_missing "${AI_REPO}/.build/chatgpt-context/.agents/skills/frontend-design" \
   "export does not bundle frontend-design"
 assert_missing "${AI_REPO}/.build/chatgpt-context/.agents/skills/ui-ux-pro-max" \

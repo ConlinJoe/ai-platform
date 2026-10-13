@@ -98,6 +98,9 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 - User-global Cursor MCP (Playwright MCP, BrowserMCP) is configured in
   Cursor, not by bootstrap. Additional MCPs are not bootstrap
   dependencies. See `mcp/README.md`.
+- Public submission surfaces follow
+  `contracts/features/spam-and-abuse-protection.md`. This repository
+  has no such surface: not applicable.
 
 ## Where to Look
 
@@ -121,6 +124,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Optional Deployer | `contracts/features/deployer.md`, ADR 0007 |
 | Issues / PRs / discovered work | `contracts/features/work-item-lifecycle.md` |
 | Browser QA | `contracts/features/browser-qa.md` |
+| Public submission protection | `contracts/features/spam-and-abuse-protection.md` |
 | Laravel Boost | `contracts/features/laravel-boost.md` |
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
 | WordPress, Tailwind, and theme.json | `.cursor/rules/36-wordpress-theme.mdc` |
