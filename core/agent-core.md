@@ -145,6 +145,7 @@ up front):
 | Application code | `.cursor/rules/20-coding.mdc` |
 | Laravel web app | `.cursor/rules/30-laravel.mdc` |
 | Roots/Radicle/Sage | `.cursor/rules/35-roots.mdc` |
+| Roots upgrade, or a security assessment of Bedrock, Sage, Radicle, Acorn, or Bud | `docs/contracts/features/roots-upgrade.md` and `core/prompts/roots-upgrade.md` in the AI Platform clone. A routine single-package update inside the current constraint does not use the full procedure. |
 | WordPress with Tailwind and theme.json | `.cursor/rules/36-wordpress-theme.mdc` |
 | UI/UX | `.cursor/rules/40-ui.mdc` |
 | Bootstrap / adoption | `.cursor/rules/50-workflows.mdc` |

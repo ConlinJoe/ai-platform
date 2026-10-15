@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-13
+last_reviewed: 2026-10-15
 source_of_truth_for:
   - Public conceptual model of the harness
   - Global versus project-owned files
@@ -83,6 +83,7 @@ Other supported agents get the portable core via `AGENTS.md` /
 | Application code | `20-coding.mdc` |
 | Laravel web app | `30-laravel.mdc` |
 | Roots/Radicle/Sage | `35-roots.mdc` |
+| Roots upgrade or Roots security assessment | `docs/contracts/features/roots-upgrade.md`, `core/prompts/roots-upgrade.md` |
 | WordPress with Tailwind and theme.json | `36-wordpress-theme.mdc` |
 | UI / UX | `40-ui.mdc` |
 | Bootstrap / adoption | `50-workflows.mdc` |
@@ -97,6 +98,15 @@ It is not a Cursor-only rule file.
 Public submission protection lives in
 [docs/contracts/features/spam-and-abuse-protection.md](contracts/features/spam-and-abuse-protection.md).
 Stack rules point at that contract. They do not restate it.
+
+Roots upgrades (any mix of Bedrock, Sage, Radicle, Acorn, and Bud)
+live in
+[docs/contracts/features/roots-upgrade.md](contracts/features/roots-upgrade.md).
+The runbook is
+[core/prompts/roots-upgrade.md](../core/prompts/roots-upgrade.md).
+`35-roots` points at that contract. The procedure inventories the
+installed generation and does not replace it with a newer Roots
+default.
 
 Framework-specific rules attach only when that stack is present. The
 harness is not Laravel-only.

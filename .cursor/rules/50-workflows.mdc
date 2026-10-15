@@ -144,6 +144,12 @@ that describes verified existing behavior. It must **not** make material
 implementation or architectural changes merely because the project
 differs from AI Platform standards.
 
+Roots upgrades are a separate procedure
+(`docs/contracts/features/roots-upgrade.md`,
+`core/prompts/roots-upgrade.md`). Adoption records the installed
+generation and any version ADRs. It does not run that procedure or
+change Roots, PHP, Node, or Tailwind versions.
+
 Adopted projects inherit harness UI design preferences (`40-ui`) unless
 an existing project requirement explicitly conflicts. Do not silently
 rewrite an established visual language because it already uses a

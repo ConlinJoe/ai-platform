@@ -1149,6 +1149,61 @@ assert_grep '36-wordpress-theme.mdc' \
   "${AI_REPO}/core/project-profiles/roots-radicle.md" \
   "roots profile points at the wordpress theme rule"
 
+assert_file "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract exists"
+assert_file "${AI_REPO}/docs/contracts/adrs/0009-roots-upgrade-procedure.md" \
+  "Roots upgrade ADR exists"
+assert_file "${AI_REPO}/core/prompts/roots-upgrade.md" \
+  "Roots upgrade prompt exists"
+assert_grep 'read-only' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract requires a read-only assessment"
+assert_grep 'newest major is not a default target' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract does not default to the newest major"
+assert_grep 'Immediate security remediation' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract classifies security remediation"
+assert_grep 'Compatible patch or minor maintenance' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract classifies maintenance"
+assert_grep 'Framework upgrade' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract classifies framework upgrades"
+assert_grep 'Major architectural migration' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract classifies architectural migrations"
+assert_grep 'Deferred or blocked' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract classifies deferred work"
+assert_grep 'roots/radicle' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract detects Radicle by composer name"
+assert_grep 'When a routine update is enough' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract defines the routine-update boundary"
+assert_not_grep 'evoscapes' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract does not hardcode a project name"
+assert_grep 'docs/contracts/features/roots-upgrade.md' \
+  "${AI_REPO}/.cursor/rules/35-roots.mdc" \
+  "35-roots points at the Roots upgrade contract"
+assert_grep 'docs/contracts/features/roots-upgrade.md' \
+  "${AI_REPO}/core/agent-core.md" \
+  "agent core points at the Roots upgrade contract"
+assert_grep 'docs/contracts/features/roots-upgrade.md' \
+  "${AI_REPO}/core/prompts/roots-upgrade.md" \
+  "Roots upgrade prompt points at the contract"
+assert_grep 'docs/contracts/planning/roots-upgrade.md' \
+  "${AI_REPO}/core/prompts/roots-upgrade.md" \
+  "Roots upgrade prompt writes the plan in the project"
+assert_grep 'not an application root' \
+  "${AI_REPO}/core/prompts/roots-upgrade.md" \
+  "Roots upgrade prompt ignores plugin-internal composer files"
+assert_grep 'Do not plan' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade contract does not upgrade inside plugin source"
+
 GUARD_FIXTURES="${WORKDIR}/guardrail-fixtures"
 mkdir -p "${GUARD_FIXTURES}/resources/views" "${GUARD_FIXTURES}/resources/css"
 

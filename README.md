@@ -132,6 +132,7 @@ greenfield vs existing next steps:
 | Skills | [How the harness works](docs/how-it-works.md#skills) · lockfile `skills-lock.json` |
 | Workflows | [.cursor/rules/50-workflows.mdc](.cursor/rules/50-workflows.mdc) |
 | Project adoption | [Adopting projects](docs/adopting-projects.md) · [adoption prompt](core/prompts/project-adoption.md) |
+| Roots upgrades | [Roots upgrade procedure](docs/contracts/features/roots-upgrade.md) · [runbook](core/prompts/roots-upgrade.md) |
 | Project context and documentation | [Documentation philosophy](docs/documentation-philosophy.md) · [contract registry](docs/README.md) |
 | UI standards | [.cursor/rules/40-ui.mdc](.cursor/rules/40-ui.mdc) |
 | Safety guardrails | [How the harness works](docs/how-it-works.md#verification-and-safety) |
@@ -164,7 +165,7 @@ harness. It does not embed a stale copy of the rules.
 .cursor/rules/     canonical Cursor rules (symlinked into projects)
 core/agent-core.md portable always-on core (AGENTS.md / CLAUDE.md)
 core/adapters/     per-agent setup and capability matrix
-core/prompts/      adoption and resume prompts
+core/prompts/      adoption, resume, and Roots upgrade prompts
 .agents/skills/    locked skills (Impeccable, Hallmark)
 scripts/           bootstrap, doctor, Deployer installer, update-skills, export, guardrails
 templates/         docs copied into new projects; optional Deployer recipes

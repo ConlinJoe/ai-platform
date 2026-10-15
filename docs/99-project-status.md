@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-13
+last_reviewed: 2026-10-15
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -46,6 +46,12 @@ architecture. Version 1.3.0.
   Forms remains a valid project-specific choice, not the default.
   Page/menu provisioning is an explicit idempotent project-native
   operation driven by each project's contracts, not a universal sitemap.
+- Roots upgrades and Roots security assessments use one procedure for
+  every Bedrock, Sage, Radicle, Acorn, and Bud generation. Assessment
+  is read-only until a stage is approved. The newest major is not the
+  default target. Findings stay in the project's planning contract.
+  Canonical: `docs/contracts/features/roots-upgrade.md`,
+  `core/prompts/roots-upgrade.md`, ADR 0009.
 - WordPress with Tailwind and `theme.json`: Tailwind tokens are the
   typography and color source of truth. `theme.json` presets alias
   those tokens. Editorial element styles stay scoped to the editor

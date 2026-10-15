@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+Roots upgrades and Roots security assessments follow one procedure for
+whatever mix of Bedrock, Sage, Radicle, Acorn, and Bud a project
+already uses. The assessment is read-only until a specific stage is
+approved. The newest major is not the default target, and a routine
+update of one package inside its current constraint does not use the
+full workflow. Findings stay in the application project's planning
+contract. Canonical:
+`docs/contracts/features/roots-upgrade.md`. Runbook:
+`core/prompts/roots-upgrade.md`. Decision: ADR 0009.
+
 Projects that accept public submissions include server-side spam and
 abuse protection when that surface is built. Contact and lead forms,
 quote requests, registration, comments, and other endpoints that create

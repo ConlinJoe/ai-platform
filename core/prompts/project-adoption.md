@@ -310,6 +310,12 @@ warranted, say so and skip.
 - Do not install, upgrade, or migrate Navi, ACF, Keen, WPForms, or
   Gravity Forms as part of adoption unless the developer approves that
   remediation.
+- Do not run the Roots upgrade procedure during adoption. Record the
+  installed Bedrock, Sage, Radicle, Acorn, Bud, PHP, Node, and
+  Tailwind generation, including version ADRs. A requested upgrade or
+  security assessment is a separate task:
+  `docs/contracts/features/roots-upgrade.md` and
+  `core/prompts/roots-upgrade.md` in the AI Platform clone.
 - Do not invent a custom form fallback, substitute free ACF for Pro, or
   commit secrets.
 - Do not re-provision or restructure production WordPress content during

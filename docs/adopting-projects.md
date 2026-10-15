@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-13
+last_reviewed: 2026-10-15
 source_of_truth_for:
   - Human overview of new versus existing project adoption
   - What bootstrap changes in a project
@@ -129,6 +129,13 @@ Findings use A/B/C/D:
 Sound decisions and installed versions are preserved. Material
 remediation needs your approval. Rejected C items are recorded as B.
 Deferred work goes on the roadmap.
+
+Roots upgrades are not part of adoption. A later upgrade or security
+assessment uses
+[the Roots upgrade procedure](contracts/features/roots-upgrade.md)
+and [core/prompts/roots-upgrade.md](../core/prompts/roots-upgrade.md).
+That procedure keeps the installed Bedrock, Sage, Radicle, Acorn, and
+Bud generation until you approve a stage.
 
 Adoption inventories public submission endpoints and their current
 protection before recommending a change. It does not install, enable,

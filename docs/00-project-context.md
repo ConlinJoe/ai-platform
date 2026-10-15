@@ -127,5 +127,6 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Public submission protection | `contracts/features/spam-and-abuse-protection.md` |
 | Laravel Boost | `contracts/features/laravel-boost.md` |
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
+| Roots upgrade | `contracts/features/roots-upgrade.md`, `../core/prompts/roots-upgrade.md`, ADR 0009 |
 | WordPress, Tailwind, and theme.json | `.cursor/rules/36-wordpress-theme.mdc` |
 | MCP ownership | `mcp/README.md` |

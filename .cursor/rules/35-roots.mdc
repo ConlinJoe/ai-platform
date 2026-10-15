@@ -1,5 +1,5 @@
 ---
-description: Roots/Radicle/Sage WordPress architecture, ACF Pro, Keen Slider, WPForms Lite, Log1x Navi, and WordPress page/menu provisioning
+description: Roots/Radicle/Sage WordPress architecture, including Bedrock, Acorn, and Bud, plus ACF Pro, Keen Slider, WPForms Lite, Log1x Navi, page/menu provisioning, and the Roots upgrade procedure
 globs: functions.php,**/functions.php,app/setup.php,app/filters.php,**/wp-cli.yml,theme.json,config/theme.php,app/View/Composers/**/*.php,app/Fields/**/*.php,resources/views/**/*.blade.php,resources/js/**/*.{js,ts}
 alwaysApply: false
 ---
@@ -271,6 +271,26 @@ Inspect existing page/menu state first. Do not automatically
 re-provision or restructure production content. Adopt this convention
 only when the user asks to standardize or reproducibly manage that
 structure.
+
+# Upgrades
+
+Version changes and security assessments for Bedrock, Sage, Radicle,
+Acorn, Bud, and the WordPress, PHP, Node, and frontend toolchain
+around them follow `docs/contracts/features/roots-upgrade.md` in the
+AI Platform clone. Runbook: `core/prompts/roots-upgrade.md`. Decision:
+`docs/contracts/adrs/0009-roots-upgrade-procedure.md`.
+
+Use the full procedure for a Roots upgrade, a security assessment of
+that stack, or a change that crosses a major version, build tool,
+production PHP or Node floor, or Tailwind major. A routine update of
+one named package inside its current constraint, with no advisory that
+requires a newer major, stays on the normal dependency-approval path.
+
+Discover the generation that is installed. Keep that architecture
+unless a migration is justified and approved. Do not apply the
+greenfield baseline (ACF Pro, Keen Slider, WPForms Lite) as an
+upgrade. Write findings in the project's planning contract, not in
+this rule. Assessment stays read-only until the user approves a stage.
 
 # Documentation
 

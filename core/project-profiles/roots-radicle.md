@@ -488,6 +488,18 @@ when WordPress is intended to own navigation.
 - Adopt this provisioning convention only when the user asks to
   standardize or reproducibly manage that structure.
 
+## Upgrades
+
+Upgrades and security assessments of an existing Bedrock, Sage,
+Radicle, Acorn, or Bud project use the harness procedure
+`docs/contracts/features/roots-upgrade.md` (runbook
+`core/prompts/roots-upgrade.md`). The installed generation stays in
+place until a stage of that procedure is approved. Do not treat a
+newer Radicle, Sage, Acorn, Vite, or Tailwind line as the project's
+standard. Do not install this profile's greenfield baseline as part
+of an upgrade. Project findings go in that project's planning
+contract.
+
 ## Development Principles
 
 - Keep solutions simple and maintainable.

@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-13
+last_reviewed: 2026-10-15
 source_of_truth_for:
   - Model-neutral support seed for installing, troubleshooting, and extending the harness
 depends_on:
@@ -122,6 +122,10 @@ Where to look (confirm these paths still exist)
   core/project-profiles/laravel-webapp.md
 - Roots/Radicle/Sage (only if that stack is present):
   .cursor/rules/35-roots.mdc, core/project-profiles/roots-radicle.md
+- Roots upgrades and Roots security assessments:
+  docs/contracts/features/roots-upgrade.md,
+  core/prompts/roots-upgrade.md. A routine single-package update does
+  not use the full procedure.
 - WordPress with Tailwind and theme.json (only if that combination is
   present, including Radicle/Sage): .cursor/rules/36-wordpress-theme.mdc
 
