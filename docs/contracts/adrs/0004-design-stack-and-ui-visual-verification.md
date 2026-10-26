@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-09-14
+last_reviewed: 2026-10-26
 source_of_truth_for:
   - Decision that Impeccable and Hallmark are the managed design skills
   - Decision that Impeccable is primary for product/application UI and Hallmark is specialist art direction
@@ -9,6 +9,8 @@ source_of_truth_for:
   - Decision that Mode B visual verification uses the best available real-browser capability, not Playwright specifically
   - Decision that developer design constraints live in 40-ui and outrank managed design skills
   - Decision that significant motion is a specialized UI concern with proportionate review, not a separate skill or Mode A authorization
+  - Decision that creative direction and motion planning extend 40-ui and do not add a design skill
+  - Decision that GSAP and Higgsfield stay optional and are not harness dependencies
   - Decision that generated design images are exploration/reference artifacts, not implementation truth
 depends_on:
   - 0001-two-layer-browser-qa.md
@@ -19,6 +21,7 @@ referenced_by:
   - 0008-substantial-redesign-comp-approval.md
   - ../../../.cursor/rules/40-ui.mdc
   - ../../../.cursor/rules/60-browser-qa.mdc
+  - ../../../core/prompts/creative-direction.md
 type: adr
 ---
 
@@ -81,6 +84,46 @@ animation dependency, or MCP to the harness. Simple hover/focus
 transitions do not trigger an expanded motion review. Significant
 motion does not by itself authorize Mode A tests or formal performance
 profiling.
+
+Creative direction for a substantial redesign, and for an authorized
+new expressive direction, is planned before the review comp. That
+planning extends this router through `40-ui` and
+`core/prompts/creative-direction.md`. It does not add a design skill,
+a prose-brief approval, or a second gate. Established project facts
+are inferred. The agent asks only when a consequential choice is still
+unresolved, and does not ask again once a direction is established.
+
+Motion intensity is a design decision: none, subtle, or expressive.
+Subtle is the preferred recommendation when motion is appropriate.
+Implementation uses the smallest technology the project and effect
+justify: the project's existing animation system, then native CSS,
+then browser-native APIs, then a library such as GSAP when complexity
+requires it, then a generated asset when cinematic media is warranted.
+Do not add GSAP to the harness. Adding GSAP to a consumer project
+requires explicit authorization when it is not already installed.
+GSAP's public site states that it is free for everyone. That fact
+does not authorize a dependency change.
+
+Higgsfield (`higgsfield-ai/skills`, MIT, version 0.13.0 as reviewed
+on 2026-10-26) is an optional account-authenticated image and video
+service. It is not a managed skill, not an entry in `skills-lock.json`,
+and not a substitute for browser-native motion or the project's
+framework. Its website builder targets a separate React and Cloudflare
+stack and must not implement harness projects. Recommend it only when
+the developer authorizes generation, the integration is available,
+cost and production-use rights are confirmed, and the asset does not
+replace semantic content. Do not install it by default.
+
+Principles from Elaya's `ai-design-skills` (MIT, Copyright 2026 Elaya)
+may inform discovery, narrative, and motion fidelity. Do not install
+that repository or add it as a router. Do not copy its prescribed
+visual system. Project authority, real product content, and the floors
+in `40-ui` remain in force where they differ.
+
+After implementation, bounded Mode B compares the rendered product
+with the approved comp. When motion is material, observe it. A static
+screenshot does not prove motion quality. That observation does not
+authorize Mode A or performance profiling.
 
 Project-owned design systems (tokens, theme, components, design
 contracts, approved briefs and visual references) are authoritative over
@@ -170,5 +213,11 @@ rendered-verification pass.
 - Keep Superdesign as opt-in canvas — rejected; not MCP, hosted, and
   not a supported harness tool
 - Auto-load multiple design skills — rejected; conflicting context
+- Add GSAP to the harness — rejected; most effects do not need it, and
+  consumer projects opt in explicitly
+- Install Elaya or Higgsfield as additional managed skills — rejected;
+  useful method fits the existing router, and Higgsfield is an optional
+  account-authenticated generation service rather than a design-skill
+  dependency
 - Require explicit “run Playwright” for all visual checks — rejected;
   significant UI was completing from source alone

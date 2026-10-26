@@ -482,6 +482,8 @@ that gate before step 3.
    execution. Image generation does not replace that pass.
 5. Review against the design-review and accessibility floors. When
    meaningful motion is involved, also apply the motion review floor.
+   Compare the rendered product with the approved review comp when one
+   exists. A static screenshot does not prove motion quality.
 6. Iterate if the rendered result exposes real problems.
 
 Significant UI work **is** authorization for that bounded visual pass.
@@ -522,6 +524,19 @@ application code `shape` forbids. If material facts are still unknown,
 ask them in `shape`'s cadence and wait. Do not add a separate
 prose-brief approval before this comp. The comp is the approval stop.
 
+Before building the comp, resolve creative direction. Load
+`core/prompts/creative-direction.md`. Inspect the product first and
+infer what the brand system and approved references already decide.
+Ask only when a consequential choice is still unresolved, in one
+grouped set, then wait.
+Do not ask again once a direction is established.
+Do not use this discovery for small UI. For new creative
+work, consider motion before the review comp. Intensity is none,
+subtle, or expressive.
+Subtle motion is the preferred default when motion is appropriate.
+There is still one approval.
+Approval of the review comp includes the motion treatment represented there.
+
 Before changing application UI:
 
 1. Inspect the current product, design system, content, and behavior,
@@ -533,6 +548,17 @@ Before changing application UI:
    layout while the on-screen keyboard is visible and the active field
    is still reachable. Omit states the product does not have. Use real
    product content. Proposed copy follows the em-dash rule above.
+   When meaningful motion is proposed, include a concise motion
+   treatment on this page: what moves, what triggers it, timing and
+   easing, intensity, mobile behavior, reduced-motion behavior, and
+   whether an external animated asset is needed.
+   A simple CSS entrance does not need its own prototype. When timing or easing would
+   materially change the decision, add a motion preview in this review
+   experience or as a linked sibling file. The preview opens from disk
+   in a regular browser, without the application server, a hosted
+   canvas, or a new project dependency. It shows timing and easing,
+   and it has a static and reduced-motion fallback. It is a temporary
+   review artifact.
 3. Save the page and its relative assets in the project at
    `design-reviews/<slug>/index.html`, unless a project contract already
    names a review-comp directory. The page must open from disk in a
@@ -543,7 +569,10 @@ Before changing application UI:
    proposed behavior and any consequential decisions: what changes,
    what stays, and what approval means.
 5. Stop. Do not change application UI, routes, or production assets
-   until the user approves that comp.
+   until the user approves that comp. If the user approves the stills
+   and rejects the motion, revise only that treatment and obtain
+   approval again before implementing the motion.
+   Do not open a second gate for the rest of the comp.
 
 The comp is a review artifact. It is not production source, not a
 documentation contract, and not the implementation source of truth.
@@ -576,12 +605,16 @@ Use when visual direction is genuinely unresolved. Do not introduce a
 hosted canvas or extra design tool.
 
 Offer 2–3 meaningfully different directions in concise description and
-reference language. Image generation may be used when it materially
-helps; follow Image generation / design exploration below. Ask the
-developer to choose before significant implementation when approval is
-actually needed. Skip ceremony when the direction is already clear.
-Skipping exploration ceremony does not skip the substantial-redesign
-comp gate.
+reference language. The options must differ in composition or visual
+idea. Do not offer three superficial variants of one generic page.
+Image generation may be used when it materially helps; follow Image
+generation / design exploration below. Ask the developer to choose
+before significant implementation when approval is actually needed.
+An approved direction is followed. It is not re-explored. Skip
+ceremony when the direction is already clear. Skipping exploration
+ceremony does not skip the substantial-redesign comp gate. When the
+work is substantial or expressive, consider motion while choosing,
+using `core/prompts/creative-direction.md`.
 
 ## Skill routing
 
@@ -604,6 +637,10 @@ default, then only the reference files its selected workflow requires.
   Impeccable covers the application-UI workflow; Hallmark covers the
   useful specialist art-direction role. Do not restore overlapping
   skills as passive reference libraries.
+- Do not install Elaya, Higgsfield, or another design skill to get a
+  third opinion. Useful method from those sources is already reflected
+  in `core/prompts/creative-direction.md`. The managed stack remains
+  Impeccable plus Hallmark.
 
 For most significant application UI, use Impeccable plus the project
 design brief and system. Do not invoke a skill for every UI edit.
@@ -803,6 +840,11 @@ Review the **rendered** result at relevant breakpoints, proportionately:
 - performance implications when relevant
 - significant motion, when meaningful animation is part of the work
   (see Significant motion below)
+- fidelity to the approved review comp when one exists: composition,
+  type, brand character, crops, and states
+- when motion was approved: timing, easing, competing motion, layout
+  stability, and reduced-motion behavior. A static screenshot does not
+  prove motion quality.
 
 Internal review floor (do not dump this as a giant checklist in normal
 agent output):
@@ -857,9 +899,38 @@ trivial changes.
 Meaningful motion and animation are a specialized concern within
 significant UI. Do not add a motion skill to the harness. Do not add
 GSAP, Motion, Framer Motion, or any other animation dependency to the
-harness. Framework and project requirements determine implementation
-technology. Prefer the project's existing animation technology before
-introducing another dependency.
+harness.
+Adding GSAP to a consumer project requires explicit authorization when it is not already installed.
+Framework and project requirements determine implementation technology. Prefer the project's
+existing animation system before introducing another dependency.
+
+On a substantial redesign or an authorized new expressive direction,
+consider motion before the review comp. Categories, treatments, and
+the technology order live in `core/prompts/creative-direction.md`.
+Do not treat motion only as a finishing pass after implementation.
+
+Choose the smallest suitable technology:
+
+1. The project's existing animation system.
+2. Native CSS transitions and animations for straightforward effects.
+3. Browser-native capabilities such as Intersection Observer and
+   supported scroll-driven animations, with feature detection and a
+   fallback.
+4. A specialized library such as GSAP when sequencing, scroll
+   choreography, or interaction complexity genuinely requires it.
+5. A generated video or image asset for cinematic storytelling when
+   that asset is justified.
+
+Do not add an abstraction for a simple fade. Do not introduce React,
+Next.js, or another stack because a motion tool prefers it. Laravel,
+Blade, Livewire, Tailwind, WordPress, and Roots stay on their
+installed framework.
+
+Higgsfield is optional generated-media capability, not a managed skill
+and not interactive motion. Do not add it to `skills-lock.json`, and
+do not install its CLI, skills, or MCP as part of ordinary UI work.
+Recommend it only through `core/prompts/creative-direction.md`.
+Generated media must not replace semantic content or working UI.
 
 ### When motion is significant
 
@@ -877,6 +948,9 @@ When significant motion is part of an approved UI task:
 
 - motion must serve comprehension, hierarchy, feedback, orientation, or
   intentional product character
+- important content stays available if JavaScript fails, an observer
+  never fires, or reduced motion is set
+- animation enhances a design that is already complete when still
 - animation should not exist merely to make the interface look more
   sophisticated
 - do not use motion to compensate for weak static composition
@@ -911,7 +985,12 @@ review proportionately. In addition to the visual floor, inspect:
 
 Use the real rendered application when a real-browser capability
 permits (`60-browser-qa`). Bounded Mode B visual verification may include
-observing the relevant animation and interaction states.
+observing the relevant animation and interaction states. Compare the
+rendered product with the approved review comp and the creative
+direction. A static screenshot does not prove motion quality. When
+motion is materially part of the task, observe timing and easing in
+the running application. Source inspection alone does not complete
+that review.
 
 Do not require formal performance profiling for every animation.
 Escalate to deeper performance tooling only when visible performance

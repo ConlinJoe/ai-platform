@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-02
+last_reviewed: 2026-10-26
 source_of_truth_for:
   - Two-layer browser QA policy (Mode A deterministic, Mode B agentic)
   - Playwright applicability rules
@@ -15,6 +15,8 @@ source_of_truth_for:
   - Defect-to-regression policy
   - Browser QA implementation loop (when authorized)
   - Substantial-redesign review comps are not Playwright, Mode A, or the bounded Mode B pass
+  - A review comp may carry a motion treatment and preview without becoming Mode B
+  - Material motion is observed in the bounded Mode B pass; a static screenshot does not prove motion quality
 depends_on:
   - ../adrs/0001-two-layer-browser-qa.md
   - ../adrs/0004-design-stack-and-ui-visual-verification.md
@@ -93,10 +95,11 @@ available in the current environment.
 
 That pass may render the actual implementation, inspect affected
 viewport classes and materially affected interaction states, compare
-against supplied references, check relevant accessibility on the real
-UI, observe relevant animation and interaction states when meaningful
-motion is involved, and iterate if the rendered result exposes
-meaningful problems.
+against the approved review comp and other supplied references, check
+relevant accessibility on the real UI, and iterate if the rendered
+result exposes meaningful problems. When meaningful motion is involved,
+observe timing, easing, and interaction states in the running
+application. A static screenshot does not prove motion quality.
 
 It does **not** authorize creating or expanding a Mode A suite, the
 full Mode A→B loop, broad application exploration, unrelated browser
@@ -114,12 +117,17 @@ Small UI does not automatically authorize Playwright.
 
 ### Substantial-redesign review comp
 
-`40-ui` requires a static, project-local review comp before application
-UI changes on a substantial redesign. Writing that page and opening the
+`40-ui` requires a project-local review comp before application UI
+changes on a substantial redesign. The comp remains a static review of
+screens and states. When meaningful motion is proposed, that same
+artifact carries the motion treatment and, when timing would materially
+change the decision, a browser-openable preview. A simple CSS entrance
+does not need its own prototype. Writing that page and opening the
 saved file in a regular browser is part of that gate. It is not
 Playwright, not Mode A, and not the bounded Mode B pass. It does not
 authorize application edits or deployment. After approval, significant
-UI still gets the bounded Mode B pass. Procedure:
+UI still gets the bounded Mode B pass, which compares the rendered
+product with the approved comp and observes approved motion. Procedure:
 `.cursor/rules/40-ui.mdc`. Decision: ADR 0008.
 
 Do not claim visual correctness for significant UI merely because

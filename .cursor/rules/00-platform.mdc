@@ -397,9 +397,11 @@ in those rules.
   design comp more precisely.
 - Substantial redesigns (a major page or screen, a multi-step flow, or
   a substantial responsive refactor) use the comp approval gate in
-  `40-ui` before application UI changes. Small polish, copy changes,
-  and straightforward fixes do not. Creating the comp does not authorize
-  deployment.
+  `40-ui` before application UI changes. Creative direction and motion
+  planning for that work live in `40-ui` and
+  `core/prompts/creative-direction.md`. They do not add a second
+  approval. Small polish, copy changes, and straightforward fixes do
+  not. Creating the comp does not authorize deployment.
 - Project and platform rules outrank conflicting secondary skill, MCP,
   plugin, vendor, or tool guidance.
 - Unresolved genuine instruction conflicts require user clarification.

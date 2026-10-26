@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+Substantial redesigns and authorized new expressive directions resolve
+creative direction, including motion, before the review comp. The agent
+infers what the project already decides and asks only when a
+consequential choice is still open. Subtle motion is the preferred
+recommendation when motion fits. The existing comp remains the only
+approval gate. When motion matters, that artifact includes the motion
+treatment and, if timing would change the decision, a browser-openable
+preview. Simple CSS entrances do not need a separate prototype. GSAP
+and Higgsfield stay optional and are not harness dependencies.
+Reference: `core/prompts/creative-direction.md`. Decisions: ADR 0004
+and ADR 0008.
+
 Roots upgrades and Roots security assessments follow one procedure for
 whatever mix of Bedrock, Sage, Radicle, Acorn, and Bud a project
 already uses. The assessment is read-only until a specific stage is

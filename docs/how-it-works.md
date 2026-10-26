@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-15
+last_reviewed: 2026-10-26
 source_of_truth_for:
   - Public conceptual model of the harness
   - Global versus project-owned files
@@ -180,7 +180,10 @@ Availability of an image-generation tool does not authorize its use.
 
 A substantial redesign (major page or screen, multi-step flow, or
 substantial responsive refactor) stops for a project-local review comp
-before application UI changes. Procedure: `40-ui`. Checklist:
+before application UI changes. Open creative and motion choices are
+resolved first (`core/prompts/creative-direction.md`). The comp remains
+the only approval gate and can include the motion treatment. Procedure:
+`40-ui`. Checklist:
 [core/prompts/ui-comp-approval.md](../core/prompts/ui-comp-approval.md).
 The comp is a review artifact. Creating it does not authorize
 deployment.

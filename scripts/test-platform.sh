@@ -823,6 +823,74 @@ assert_not_grep 'design-reviews' \
 assert_not_grep 'design-reviews' \
   "${AI_REPO}/.agents/skills/impeccable/reference/new-work.md" \
   "new-work is not forked to host the harness comp gate"
+assert_file "${AI_REPO}/core/prompts/creative-direction.md" \
+  "creative direction reference exists"
+assert_grep 'creative-direction.md' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "40-ui routes creative discovery through the on-demand reference"
+assert_grep 'Ask only when a consequential choice is still unresolved' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "unresolved design choices trigger focused questions"
+assert_grep 'Do not ask again once a direction is established' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "an established direction does not trigger redundant questions"
+assert_grep 'Do not use this discovery for small UI' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "small UI bypasses creative discovery"
+assert_grep 'consider motion before the review comp' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "motion is considered before the review comp"
+assert_grep 'Subtle motion is the preferred default when motion is appropriate' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "subtle motion is the preferred default when motion fits"
+assert_grep 'Approval of the review comp includes the motion treatment' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "motion is reviewed with the existing comp"
+assert_grep 'simple CSS entrance does not need' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "a simple CSS entrance does not need its own prototype"
+assert_grep 'Do not open a second gate' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "motion revision does not create a second approval gate"
+assert_grep 'Do not create a second approval pipeline' \
+  "${AI_REPO}/core/prompts/creative-direction.md" \
+  "creative direction does not add a second approval pipeline"
+assert_grep 'visual signature' \
+  "${AI_REPO}/core/prompts/creative-direction.md" \
+  "expressive work can name a visual signature"
+assert_grep 'Do not add GSAP to the harness' \
+  "${AI_REPO}/core/prompts/creative-direction.md" \
+  "GSAP is not a harness dependency"
+assert_grep 'Adding GSAP to a consumer project requires explicit authorization' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "adding GSAP to a project requires authorization"
+assert_grep 'Higgsfield is optional' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Higgsfield stays optional"
+assert_grep 'Do not add it to `skills-lock.json`' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Higgsfield is not added to the skill lock"
+assert_grep 'must not replace semantic content' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "generated media does not replace working UI"
+assert_grep 'Do not introduce React' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "motion tooling does not replace the project framework"
+assert_grep 'A static screenshot does not prove motion quality' \
+  "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "significant motion requires more than a static screenshot"
+assert_grep 'creative-direction.md' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core points at creative direction"
+assert_not_grep 'higgsfield' \
+  "${AI_REPO}/skills-lock.json" \
+  "skills-lock does not pin Higgsfield"
+assert_not_grep 'gsap' \
+  "${AI_REPO}/skills-lock.json" \
+  "skills-lock does not pin GSAP"
+assert_not_grep 'higgsfield' \
+  "${AI_REPO}/scripts/bootstrap-project.sh" \
+  "bootstrap does not install Higgsfield"
 assert_grep '### Exploration' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "40-ui keeps exploration routing"
@@ -1420,9 +1488,12 @@ assert_grep 'Do not require formal performance profiling' \
 assert_grep 'formal performance profiling' \
   "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
   "Mode B motion observation does not authorize profiling"
-assert_grep 'observe the relevant animation' \
+assert_grep 'observe timing, easing' \
   "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
-  "bounded Mode B may observe significant motion"
+  "bounded Mode B observes significant motion timing"
+assert_grep 'A static screenshot does not prove motion quality' \
+  "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "a static screenshot does not prove motion quality"
 assert_grep 'everything fading upward on scroll' \
   "${AI_REPO}/.cursor/rules/40-ui.mdc" \
   "anti-AI motion patterns remain in design heuristics"

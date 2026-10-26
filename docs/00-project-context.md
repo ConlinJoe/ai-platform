@@ -116,7 +116,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | ChatGPT export workflow | `chatgpt-projects.md` |
 | Cursor rules | `.cursor/rules/` |
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, ADR 0004 |
-| Substantial UI redesign | `.cursor/rules/40-ui.mdc`, `../core/prompts/ui-comp-approval.md`, ADR 0008 |
+| Substantial UI redesign | `.cursor/rules/40-ui.mdc`, `../core/prompts/ui-comp-approval.md`, `../core/prompts/creative-direction.md`, ADR 0008 |
 | Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
 | Fresh agent / resume | `working-mode.md`, `../core/prompts/resume.md` |
 | Multi-agent adapters | `core/adapters/README.md` |

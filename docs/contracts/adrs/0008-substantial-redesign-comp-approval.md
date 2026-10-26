@@ -1,8 +1,10 @@
 ---
 status: accepted
-last_reviewed: 2026-10-02
+last_reviewed: 2026-10-26
 source_of_truth_for:
   - Decision that a substantial UI redesign requires an approved project-local review comp before application UI changes
+  - Decision that creative discovery happens before that comp and does not add a prose-brief approval
+  - Decision that a proposed motion treatment is reviewed inside the existing comp and is not a second approval gate
   - Decision that the comp is a review artifact and does not authorize deployment
   - Decision that the gate uses the existing shape/new-work router and does not fork vendor skills
 depends_on:
@@ -14,6 +16,7 @@ referenced_by:
   - ../../../.cursor/rules/00-platform.mdc
   - ../../../core/agent-core.md
   - ../../../core/prompts/ui-comp-approval.md
+  - ../../../core/prompts/creative-direction.md
 type: adr
 ---
 
@@ -48,7 +51,8 @@ copy changes, straightforward fixes, and local additions that inherit
 an established screen do not use this gate.
 
 The procedure lives in `.cursor/rules/40-ui.mdc` (Substantial redesign).
-The checklist is `core/prompts/ui-comp-approval.md`.
+The checklist is `core/prompts/ui-comp-approval.md`. Creative discovery
+and motion planning live in `core/prompts/creative-direction.md`.
 
 The gate uses the existing skill router and project design authority.
 `shape` remains discovery. `new-work` remains the visual-world path
@@ -63,9 +67,28 @@ keyboard-open when the flow has it. It is not production source.
 Generating it does not authorize deployment, a dependency change, or a
 commit.
 
+Before that comp, resolve open creative choices, including motion,
+through the existing `shape` path and
+`core/prompts/creative-direction.md`. Infer established brand and
+design-system facts. Ask only when a consequential choice is still
+unresolved. Do not ask again once a direction is established. Small
+UI does not use this discovery. Do not add a prose-brief approval.
+
+When meaningful motion is proposed, the same review artifact carries
+a concise motion treatment. A simple CSS entrance does not need its
+own prototype. When timing or easing would materially change the
+decision, the review experience includes a browser-openable preview
+that does not modify application UI and does not add a project
+dependency. Approval of the review comp includes the motion treatment
+represented there. If the user approves the stills and rejects the
+motion, revise only that treatment and obtain approval before
+implementing the motion. That revision is not a second gate.
+
 After approval, implementation and verification stay on the existing
 path: framework-native implementation of the approved direction, then
-the bounded Mode B pass and project checks.
+the bounded Mode B pass and project checks. When motion is part of
+the approved direction, that pass observes it. A static screenshot
+does not prove motion quality.
 
 An explicit user instruction to implement without a comp outranks this
 gate. Skill defaults do not.
@@ -94,3 +117,9 @@ gate. Skill defaults do not.
   belongs in `40-ui`, which already outranks the skills.
 - Host the comp only in an agent store or a temporary server. Rejected.
   The user needs a project path that opens in a regular browser.
+- Add a mandatory creative-brief approval before the comp. Rejected.
+  The comp is the decision the developer can see.
+- Require a separate motion-approval document. Rejected. Timing that
+  matters belongs in the same review experience.
+- Require a motion prototype for every transition. Rejected. A simple
+  CSS entrance can be described on the comp.

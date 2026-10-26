@@ -44,10 +44,11 @@ That pass may:
 - render the actual implementation
 - inspect affected viewport classes
 - inspect materially affected interaction states
-- compare against supplied references when applicable
+- compare against the approved review comp and other supplied
+  references when applicable
 - check relevant accessibility concerns on the real UI
-- when meaningful motion is involved, observe the relevant animation
-  and interaction states (`40-ui`)
+- when meaningful motion is involved, observe timing, easing, and interaction states in the running application (`40-ui`).
+  A static screenshot does not prove motion quality.
 - iterate if the rendered result exposes meaningful problems
 
 It does **not** authorize:
@@ -82,13 +83,20 @@ and do not pretend the UI was visually verified.
 
 ### Substantial-redesign review comp
 
-`40-ui` requires a static review comp before application UI changes on
-a substantial redesign. Writing that page and opening the saved file in
-a regular browser is part of that gate. It is not Playwright, not Mode A,
-and not the bounded Mode B pass of the application. It does not authorize
-application edits, browser-QA exploration, or deployment. After the user
-approves the comp, significant UI still gets the bounded Mode B pass
-above.
+`40-ui` requires a project-local review comp before application UI
+changes on a substantial redesign. The comp remains a static review of
+screens and states. When meaningful motion is proposed, that same
+artifact carries the motion treatment and, when timing would materially
+change the decision, a browser-openable preview. A simple CSS entrance
+does not need its own prototype. Writing or opening that page is part
+of the gate. It is not Playwright, not Mode A, and not the bounded
+Mode B pass of the application. It does not authorize application
+edits, browser-QA exploration, or deployment. After the user approves
+the comp, significant UI still gets the bounded Mode B pass above.
+That pass compares the rendered product with the approved comp,
+including motion when motion is part of the approved direction.
+Observing that motion does not authorize Mode A or performance
+profiling.
 
 ### Explicit browser QA
 

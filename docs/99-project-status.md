@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-15
+last_reviewed: 2026-10-26
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -90,8 +90,15 @@ architecture. Version 1.3.0.
   not authorize use. A substantial redesign (major page or screen,
   multi-step flow, or substantial responsive refactor) requires an
   approved project-local review comp before application UI changes
-  (`40-ui`, `core/prompts/ui-comp-approval.md`, ADR 0008). The comp is
-  a review artifact. Creating it does not authorize deployment. Small
+  (`40-ui`, `core/prompts/ui-comp-approval.md`,
+  `core/prompts/creative-direction.md`, ADR 0008). Creative discovery,
+  including motion, happens before that comp. The agent infers
+  established decisions and asks only when a consequential choice is
+  still open. Subtle motion is the preferred recommendation when motion
+  fits. The comp can carry the motion treatment and, when timing
+  matters, a browser-openable preview. That is the same approval, not
+  a second gate. GSAP and Higgsfield stay optional and are not harness
+  dependencies. The comp is a review artifact. Creating it does not authorize deployment. Small
   polish, copy changes, and straightforward fixes do not use that gate.
 - Capability-on-demand: external tools are not capability-by-default.
   Bootstrap does not install MCP servers or make additional MCPs

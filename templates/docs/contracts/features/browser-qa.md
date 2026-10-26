@@ -23,7 +23,9 @@ pass uses the best available real-browser capability and is not
 Playwright execution. Do not
 run Playwright or browser automation otherwise unless the current task
 explicitly authorizes it. Meaningful motion may be observed in that
-pass; it does not by itself authorize Mode A tests or performance
+pass, including timing and easing when motion is part of the approved
+direction. A static screenshot does not prove motion quality. Motion
+observation does not by itself authorize Mode A tests or performance
 profiling.
 
 Fill this file from **this** project's reality. Delete sections that do not

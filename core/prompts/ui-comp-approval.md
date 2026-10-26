@@ -10,17 +10,28 @@ Canonical rule: `.cursor/rules/40-ui.mdc`, section **Substantial
 redesign**. That rule wins if this checklist and the rule disagree.
 Skill routing, project design authority, and `shape` / `new-work`
 integration live there. Decision: `docs/contracts/adrs/0008-substantial-redesign-comp-approval.md`.
+Before the comp, resolve open creative and motion choices with
+`core/prompts/creative-direction.md`. That discovery is not a second
+approval.
 
 ## Checklist
 
 1. Inspect the current product, design system, content, and behavior,
-   including the states the flow actually has.
+   including the states the flow actually has. Infer established brand
+   and motion decisions. Ask only when a consequential choice is still
+   unresolved.
 2. Build one static review page of the key screens and the states that
    matter. Show each at a phone width and a desktop width, labeled, on
    the same page. Include keyboard-open, selected, empty, error, and
    result states when the flow has them. Keyboard-open means the mobile
    layout while the on-screen keyboard is visible and the active field
-   is still reachable.
+   is still reachable. When meaningful motion is proposed, include the
+   motion treatment on this page. A simple CSS entrance does not need
+   its own prototype. When timing or easing would materially change the
+   decision, include a motion preview in the page or a sibling file
+   linked from it. The preview opens from disk, uses no application
+   server, no hosted canvas, and no new project dependency, and it has
+   a static and reduced-motion fallback.
 3. Save the page and its relative assets at
    `design-reviews/<slug>/index.html` in the project, unless a project
    contract already names a review-comp directory. The page must open
@@ -29,6 +40,9 @@ integration live there. Decision: `docs/contracts/adrs/0008-substantial-redesign
 4. Give the absolute path and a `file://` URL. Explain the proposed
    behavior and any consequential decisions.
 5. Stop. Do not change application UI until the user approves that comp.
+   Approval of the review comp includes the motion treatment represented
+   there. If the user approves the stills and rejects the motion, revise
+   only that treatment and stop again before implementing the motion.
 
 The comp is a review artifact. It is not production source. Creating it
 does not authorize deployment, a dependency change, or a commit.
