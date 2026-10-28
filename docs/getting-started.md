@@ -111,7 +111,11 @@ from git:
 
 `hallmark`, `impeccable`
 
-If either directory is missing, restore from `skills-lock.json`. This is
+`video-production` is also in that directory. It is harness-owned and
+optional. It is not listed in `skills-lock.json`, and the restore
+command above does not install it into a project.
+
+If `hallmark` or `impeccable` is missing, restore from `skills-lock.json`. This is
 **not** the skill-update command:
 
 ```bash
@@ -223,6 +227,24 @@ Installing Deployer does not deploy anything, does not configure a
 server, and does not authorize deployment. Supported profiles and
 server setup: [Deployer capability](contracts/features/deployer.md).
 
+Video production is separate. Bootstrap does not prompt for it and
+does not install it unless you pass `--with-video`. Add it later
+without re-running bootstrap:
+
+```bash
+"$AI_PLATFORM/scripts/install-video-production.sh" /path/to/your-project
+```
+
+A video-only studio, with no application framework:
+
+```bash
+"$AI_PLATFORM/scripts/init-video-studio.sh" /path/to/video-studio
+```
+
+Neither command renders a film or spends generation credits.
+Canonical reference:
+[Video production](contracts/features/video-production.md).
+
 If you run the script from the harness clone with no argument, it
 prompts for a target path.
 
@@ -246,6 +268,7 @@ prompts for a target path.
 | Application code, Composer, npm, WordPress plugins | Not modified / not installed, except optional Deployer may declare `deployer/deployer` in `require-dev` without running Composer |
 | Public submission protection | Not installed. New projects receive a `public-submissions.md` record to fill (`not applicable` is valid). Requirement: [spam and abuse protection](contracts/features/spam-and-abuse-protection.md) |
 | Optional Deployer | Prompt or `--with-deployer` / `--without-deployer`. Does not deploy. |
+| Optional video production | Off unless `--with-video` or `scripts/install-video-production.sh`. Does not render or publish. |
 
 Bootstrap is safe to re-run. Shared Cursor rules update immediately
 through those symlinks. A re-run also prunes retired managed skills,

@@ -16,6 +16,11 @@ following is true:
    browser inspection.
 2. `40-ui` classified the work as **significant UI** and a **bounded
    Mode B visual verification pass** is in scope (below).
+3. The current task is **local video frame rendering or preview** for
+   the optional video-production capability, limited to that project's
+   local film page. This does not authorize application browser QA.
+   Application browser QA does not authorize video rendering.
+   Contract: `docs/contracts/features/video-production.md`.
 
 This includes Playwright test suites, targeted Playwright tests,
 automated browser inspection, automated screenshots, visual regression

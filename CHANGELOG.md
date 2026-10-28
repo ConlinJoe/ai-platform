@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+Optional video production. An existing project can opt in, and a new
+directory can be initialized as a video studio. Both use one original
+local renderer (browser stage, system Chrome, FFmpeg). The Scenario
+Kinetic Film package is not redistributed: the tested zip has no
+license, and it is not the MIT kinetic music-video skill. Local
+renders do not spend Scenario credits. Paid generation stays behind a
+provider, a dry-run price, and explicit authorization. Ordinary
+bootstrap does not install the workspace. Decision: ADR 0010.
+Procedure: `.agents/skills/video-production/SKILL.md`.
+
 Substantial redesigns and authorized new expressive directions resolve
 creative direction, including motion, before the review comp. The agent
 infers what the project already decides and asks only when a

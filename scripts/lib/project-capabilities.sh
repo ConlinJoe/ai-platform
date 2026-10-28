@@ -119,6 +119,25 @@ project_is_conventional_wordpress() {
   [[ -f "$1/wp-config.php" || -f "$1/wp-config-sample.php" ]]
 }
 
+# A video-only project. Application profiles are detected first, so this
+# does not reclassify Laravel, Roots, Bedrock, or WordPress.
+project_is_video_studio() {
+  local file="$1/video/studio.json"
+  [[ -f "${file}" ]] || return 1
+  python3 - "${file}" <<'PY'
+import json, sys
+try:
+    data = json.load(open(sys.argv[1], encoding="utf-8"))
+except (OSError, json.JSONDecodeError):
+    sys.exit(1)
+ok = (
+    data.get("marker") == "ai-platform-video-production"
+    and data.get("mode") == "studio"
+)
+sys.exit(0 if ok else 1)
+PY
+}
+
 project_uses_livewire() {
   composer_has_package "$1" "livewire/livewire"
 }

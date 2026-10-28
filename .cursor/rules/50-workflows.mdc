@@ -351,6 +351,20 @@ Standalone installer (does not re-run bootstrap or adoption):
 
 Installing or configuring Deployer does not authorize deployment.
 
+## Optional video production
+
+Canonical contract: `docs/contracts/features/video-production.md`.
+
+```bash
+/path/to/ai-platform/scripts/install-video-production.sh /path/to/project
+/path/to/ai-platform/scripts/init-video-studio.sh /path/to/video-studio
+```
+
+Ordinary bootstrap does not install this workspace. Installing it does
+not render, publish, or spend generation credits. `--with-video` on
+bootstrap is an explicit opt-in for an existing project. There is no
+video prompt.
+
 ## Maintenance
 
 All contracts must be maintained in accordance with the `10-documentation`

@@ -18,7 +18,8 @@ Working mode and agent continuation live in `docs/working-mode.md`.
 ## Current phase
 
 Optional Deployer capability on the existing v1.2.x symlink/bootstrap
-architecture. Version 1.3.0.
+architecture. Version 1.3.0. Video production is recorded under
+Unreleased and is not a version bump.
 
 ## Progress
 
@@ -105,6 +106,13 @@ architecture. Version 1.3.0.
   required dependencies. Client-specific MCP configuration remains
   client-specific. Capability parity across agents is not the goal.
   Deployer follows the same principle: available, not required.
+- Video production: optional, not part of ordinary bootstrap, and not a
+  second design skill. Mode A installs a workspace into an existing
+  project. Mode B initializes a video-only studio. Both use the
+  harness renderer. The Scenario Kinetic Film engine is not vendored.
+  Local rendering does not spend Scenario credits and does not
+  authorize publication or paid generation. Canonical:
+  `docs/contracts/features/video-production.md`, ADR 0010.
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented
 - Existing-project reconciliation: bootstrap copies a draft

@@ -137,6 +137,7 @@ greenfield vs existing next steps:
 | UI standards | [.cursor/rules/40-ui.mdc](.cursor/rules/40-ui.mdc) |
 | Safety guardrails | [How the harness works](docs/how-it-works.md#verification-and-safety) |
 | Optional Deployer | [Deployer capability](docs/contracts/features/deployer.md) |
+| Optional video | [Video production](docs/contracts/features/video-production.md) |
 | Verification / QA | [Browser QA](docs/contracts/features/browser-qa.md) · `scripts/doctor.sh` · `scripts/check-guardrails.sh` |
 | Updating / maintaining | [Maintaining the harness](docs/maintaining.md) |
 | Troubleshooting | [Maintaining the harness](docs/maintaining.md#troubleshooting) |
@@ -167,8 +168,8 @@ core/agent-core.md portable always-on core (AGENTS.md / CLAUDE.md)
 core/adapters/     per-agent setup and capability matrix
 core/prompts/      adoption, resume, and Roots upgrade prompts
 .agents/skills/    locked skills (Impeccable, Hallmark)
-scripts/           bootstrap, doctor, Deployer installer, update-skills, export, guardrails
-templates/         docs copied into new projects; optional Deployer recipes
+scripts/           bootstrap, doctor, Deployer installer, video installer, update-skills, export, guardrails
+templates/         docs copied into new projects; optional Deployer recipes; optional video templates
 docs/              this harness's contracts and public guides
 mcp/               MCP ownership notes (not an installer)
 ```

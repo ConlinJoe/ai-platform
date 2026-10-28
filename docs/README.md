@@ -37,6 +37,7 @@ model and templates from `templates/docs/`.
 | `contracts/adrs/0007-optional-deployer-capability.md` | adr | accepted | Decision that Deployer is the standardized optional deployment foundation |
 | `contracts/adrs/0008-substantial-redesign-comp-approval.md` | adr | accepted | Decision that a substantial UI redesign requires an approved project-local review comp, including any motion treatment, before application UI changes |
 | `contracts/adrs/0009-roots-upgrade-procedure.md` | adr | accepted | Decision to keep Roots upgrades in one procedure without changing an existing project's generation |
+| `contracts/adrs/0010-optional-video-production.md` | adr | accepted | Decision that video production is one optional capability with an original local renderer |
 | `contracts/features/browser-qa.md` | feature | active | Browser QA policy, invocation, capability-aware visual verification, Playwright vs interactive distinction, applicability, isolation |
 | `contracts/features/copy-and-tailwind-guardrails.md` | feature | active | Mechanical em-dash and Tailwind arbitrary-value check, exceptions, DONE gating |
 | `contracts/features/deployer.md` | feature | active | Optional Deployer capability, installer, server configuration, deploy authorization |
@@ -44,6 +45,7 @@ model and templates from `templates/docs/`.
 | `contracts/features/work-item-lifecycle.md` | feature | active | Capture-don't-expand, Issues/PRs, approval boundaries, optional gh |
 | `contracts/features/spam-and-abuse-protection.md` | feature | active | Public submission spam and abuse protection, not-applicable recording, adoption inventory, safe rollout |
 | `contracts/features/roots-upgrade.md` | feature | active | Roots upgrade procedure for Bedrock, Sage, Radicle, Acorn, and Bud |
+| `contracts/features/video-production.md` | feature | active | Optional local video production for existing projects and standalone studios |
 
 ## Dependency Graph
 
@@ -68,6 +70,7 @@ flowchart TD
   deployerAdr[contracts/adrs/0007-optional-deployer-capability.md]
   compAdr[contracts/adrs/0008-substantial-redesign-comp-approval.md]
   rootsUpgradeAdr[contracts/adrs/0009-roots-upgrade-procedure.md]
+  videoAdr[contracts/adrs/0010-optional-video-production.md]
   browserQa[contracts/features/browser-qa.md]
   boost[contracts/features/laravel-boost.md]
   workItems[contracts/features/work-item-lifecycle.md]
@@ -75,6 +78,7 @@ flowchart TD
   deployer[contracts/features/deployer.md]
   spam[contracts/features/spam-and-abuse-protection.md]
   rootsUpgrade[contracts/features/roots-upgrade.md]
+  video[contracts/features/video-production.md]
 
   chatgpt --> philosophy
   chatgpt --> context
@@ -101,6 +105,8 @@ flowchart TD
   deployerAdr --> deployer
   compAdr --> designAdr
   rootsUpgradeAdr --> rootsUpgrade
+  videoAdr --> video
+  video --> browserQa
   compAdr --> browserQa
   browserQa --> browserAdr
   boost --> boostAdr
@@ -138,6 +144,7 @@ flowchart TD
 | Roots/Radicle/Sage profile | `core/project-profiles/roots-radicle.md` |
 | WordPress, Tailwind, and theme.json | `.cursor/rules/36-wordpress-theme.mdc` |
 | Roots upgrade / Roots security assessment | `contracts/features/roots-upgrade.md`, `../core/prompts/roots-upgrade.md`, `contracts/adrs/0009-roots-upgrade-procedure.md` |
+| Video production | `contracts/features/video-production.md`, `../.agents/skills/video-production/SKILL.md`, `contracts/adrs/0010-optional-video-production.md` |
 
 ## ChatGPT Export
 

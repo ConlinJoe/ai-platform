@@ -65,6 +65,18 @@ optional Deployer stack later without a full bootstrap:
 "$AI_PLATFORM/scripts/install-deployer.sh" /path/to/your-project
 ```
 
+Add the optional video workspace later, without rendering:
+
+```bash
+"$AI_PLATFORM/scripts/install-video-production.sh" /path/to/your-project
+```
+
+A video-only studio:
+
+```bash
+"$AI_PLATFORM/scripts/init-video-studio.sh" /path/to/video-studio
+```
+
 **Known limitation.** New versus existing is the presence of
 `docs/README.md`. After the first bootstrap of a new project that file
 exists, so a later re-run classifies the project as existing. It may

@@ -6,7 +6,8 @@ without duplicated rule sets.
 ```text
 core/agent-core.md          always-on portable core (identity, safety)
 .cursor/rules/*.mdc         canonical detailed rules (Cursor reference)
-.agents/skills/             canonical managed skills
+.agents/skills/             canonical managed skills, plus the optional
+                            harness-owned video-production skill
 AGENTS.md                   Codex / Grok / Hermes (and AGENTS.md-compatible agents)
 CLAUDE.md                   Claude Code (@AGENTS.md)
 .claude/skills/             symlinks → .agents/skills/
@@ -31,6 +32,13 @@ procedure in an adapter doc.
 Bootstrap installs safe lightweight adapters automatically. It does not
 detect which agents are installed and does not ask. A project may use
 more than one agent.
+
+The optional video-production skill is harness-owned. It is not in
+`skills-lock.json`. After a project opts in, the installer links it
+from `.agents/skills/video-production` and from the Claude and Grok
+skill directories. Cursor, Codex, and Hermes read `.agents/skills/`.
+Claude Code and Grok follow those links. The same skill text is the
+procedure for every adapter. It does not add an MCP server.
 
 MCP configuration is client-specific. Do not force identical MCP
 setups across agents merely for parity. Capability parity is not the goal;

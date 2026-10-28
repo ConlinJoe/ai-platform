@@ -13,6 +13,8 @@ AI_REPO="$(cd "${SCRIPT_DIR}/.." && pwd)"
 source "${SCRIPT_DIR}/lib/project-capabilities.sh"
 # shellcheck source=lib/deployer.sh
 source "${SCRIPT_DIR}/lib/deployer.sh"
+# shellcheck source=lib/video.sh
+source "${SCRIPT_DIR}/lib/video.sh"
 
 RULES_DIR="${AI_REPO}/.cursor/rules"
 SKILLS_LOCK="${AI_REPO}/skills-lock.json"
@@ -158,6 +160,16 @@ PY
   check_file "${AI_REPO}/core/prompts/roots-upgrade.md" "Roots upgrade prompt"
   check_file "${AI_REPO}/templates/docs/contracts/features/public-submissions.md" "Public submissions project template"
   check_file "${AI_REPO}/docs/contracts/adrs/0007-optional-deployer-capability.md" "Deployer ADR"
+  check_file "${AI_REPO}/docs/contracts/features/video-production.md" "Video production contract"
+  check_file "${AI_REPO}/docs/contracts/adrs/0010-optional-video-production.md" "Video production ADR"
+  check_file "${AI_REPO}/.agents/skills/video-production/SKILL.md" "Video production skill"
+  check_file "${AI_REPO}/core/project-profiles/video-studio.md" "Video studio profile"
+  check_file "${AI_REPO}/scripts/install-video-production.sh" "Video production installer"
+  check_file "${AI_REPO}/scripts/init-video-studio.sh" "Video studio initializer"
+  check_file "${AI_REPO}/scripts/video-render.sh" "Video render command"
+  check_file "${AI_REPO}/scripts/video-new-campaign.sh" "Video campaign command"
+  check_file "${AI_REPO}/scripts/video/render.mjs" "Video frame renderer"
+  check_file "${AI_REPO}/scripts/video/validate.py" "Video technical validator"
   check_file "${AI_REPO}/templates/deployer/laravel/deploy.php" "Laravel Deployer recipe"
   check_file "${AI_REPO}/templates/deployer/roots/deploy.php" "Roots Deployer recipe"
   check_file "${AI_REPO}/templates/deployer/bedrock/deploy.php" "Bedrock Deployer recipe"
@@ -209,7 +221,12 @@ PY
     "${AI_REPO}/scripts/export-chatgpt-context.sh" \
     "${AI_REPO}/scripts/update-skills.sh" \
     "${AI_REPO}/scripts/lib/project-capabilities.sh" \
-    "${AI_REPO}/scripts/lib/deployer.sh"
+    "${AI_REPO}/scripts/lib/deployer.sh" \
+    "${AI_REPO}/scripts/lib/video.sh" \
+    "${AI_REPO}/scripts/install-video-production.sh" \
+    "${AI_REPO}/scripts/init-video-studio.sh" \
+    "${AI_REPO}/scripts/video-render.sh" \
+    "${AI_REPO}/scripts/video-new-campaign.sh"
   do
     check_file "${script}" "Script $(basename "${script}")"
     if [[ -f "${script}" ]]; then
@@ -479,11 +496,13 @@ if [[ "${TARGET}" != "${AI_REPO}" ]]; then
   check_laravel_boost "${TARGET}"
   check_browser_qa "${TARGET}"
   deployer_doctor_report "${TARGET}"
+  video_doctor_report "${TARGET}"
 else
   echo "Target is the AI Platform repository. Skipping project-profile checks."
   echo "Playwright and Laravel Boost are not required here."
   echo "GitHub CLI is not required."
   echo "Deployer is not required of the harness clone."
+  echo "Video production is not required of the harness clone."
   echo ""
 fi
 

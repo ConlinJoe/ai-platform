@@ -641,6 +641,9 @@ default, then only the reference files its selected workflow requires.
   third opinion. Useful method from those sources is already reflected
   in `core/prompts/creative-direction.md`. The managed stack remains
   Impeccable plus Hallmark.
+- Video production is not part of this stack. A request for a film uses
+  the optional video-production capability. Do not route it through
+  Impeccable or Hallmark, and do not add it to `skills-lock.json`.
 
 For most significant application UI, use Impeccable plus the project
 design brief and system. Do not invoke a skill for every UI edit.

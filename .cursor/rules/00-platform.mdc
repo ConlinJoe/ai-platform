@@ -272,6 +272,14 @@ not make additional MCPs required bootstrap dependencies.
 Client-specific MCP configuration remains client-specific. Capability
 parity across agents is not the goal; reliable workflow behavior is.
 
+Video production is optional and off by default. It is not installed
+during ordinary bootstrap and it is not a design-stack skill. When a
+developer asks for a video, read `.agents/skills/video-production/SKILL.md`
+in this clone and offer the capability. Do not install it until they
+ask. Local rendering does not spend Scenario credits. Installing the
+workspace does not authorize publication or paid generation. Contract:
+`docs/contracts/features/video-production.md`.
+
 ## Project Identity Boundary
 
 Treat the currently open repository as a hard execution boundary. Before
@@ -345,6 +353,9 @@ Never:
     bootstrap or existing-project adoption. Inventory and recommend
     first. Requirement:
     `docs/contracts/features/spam-and-abuse-protection.md`.
+-   Treat video installation, a local render, or a preview as
+    permission to publish, upload, deploy, or spend generation
+    credits. Contract: `docs/contracts/features/video-production.md`.
 
 Before an authorized production deployment, verify a restorable production backup
 exists. If it cannot be verified, stop. Deployer availability is
@@ -375,7 +386,11 @@ available real-browser capability for that pass; do not treat it as
 Playwright execution.
 
 Do not run Playwright or other browser automation outside that exception
-unless the current task explicitly instructs it. If Playwright is
+unless the current task explicitly instructs it, or the task is local
+video frame rendering for the optional video-production capability
+(the local film page only; see `docs/contracts/features/video-production.md`).
+Video rendering does not authorize application browser QA, and
+application browser QA does not authorize video rendering. If Playwright is
 required but its browser binary is unavailable, do not silently
 downgrade the claim: report that Playwright was not executed and what
 interactive verification ran instead.

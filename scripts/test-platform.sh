@@ -156,6 +156,11 @@ for script in \
   "${AI_REPO}/scripts/update-skills.sh" \
   "${AI_REPO}/scripts/lib/project-capabilities.sh" \
   "${AI_REPO}/scripts/lib/deployer.sh" \
+  "${AI_REPO}/scripts/lib/video.sh" \
+  "${AI_REPO}/scripts/install-video-production.sh" \
+  "${AI_REPO}/scripts/init-video-studio.sh" \
+  "${AI_REPO}/scripts/video-render.sh" \
+  "${AI_REPO}/scripts/video-new-campaign.sh" \
   "${AI_REPO}/scripts/test-platform.sh"
 do
   if bash -n "${script}"; then
@@ -168,6 +173,11 @@ if python3 -m py_compile "${AI_REPO}/scripts/lib/check_guardrails.py"; then
   pass "python3 -m py_compile check_guardrails.py"
 else
   fail "python3 -m py_compile check_guardrails.py"
+fi
+if python3 -m py_compile "${AI_REPO}/scripts/video/validate.py"; then
+  pass "python3 -m py_compile validate.py"
+else
+  fail "python3 -m py_compile validate.py"
 fi
 
 echo ""
@@ -1585,6 +1595,10 @@ assert_grep "Laravel Boost is not required" ${LOGDIR}/boot-generic.log \
   "bootstrap does not require Boost for generic projects"
 assert_grep "Detected profile: none" ${LOGDIR}/boot-generic.log \
   "bootstrap does not assign laravel-webapp or roots-radicle to generic projects"
+assert_grep "Video production: not installed" ${LOGDIR}/boot-generic.log \
+  "ordinary bootstrap does not install video production"
+assert_missing "${GENERIC}/video/studio.json" \
+  "ordinary bootstrap does not create a video workspace"
 assert_grep "GitHub CLI \\(gh\\) is optional" ${LOGDIR}/boot-generic.log \
   "bootstrap states GitHub CLI is optional"
 assert_grep "does not copy or overwrite .github/" ${LOGDIR}/boot-generic.log \
@@ -2496,6 +2510,262 @@ assert_missing "${AI_REPO}/.build/chatgpt-context/.agents/skills/superdesign" \
   "export does not bundle Superdesign"
 assert_not_grep '@superdesign/cli' "${AI_REPO}/.build/chatgpt-context/README.md" \
   "export README has no Superdesign CLI setup"
+
+echo ""
+echo "--- Video production ---"
+
+assert_file "${AI_REPO}/docs/contracts/features/video-production.md" \
+  "video production contract exists"
+assert_file "${AI_REPO}/docs/contracts/adrs/0010-optional-video-production.md" \
+  "video production ADR exists"
+assert_file "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
+  "video production skill exists"
+assert_grep 'explicit authorization' "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
+  "video skill requires explicit authorization before paid generation"
+assert_grep 'dry run' "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
+  "video skill requires a dry run before paid generation"
+assert_grep 'No Scenario credits' "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
+  "video skill states local rendering spends no Scenario credits"
+assert_grep 'not permission to publish' "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
+  "video skill separates rendering from publication"
+assert_not_grep '"video-production"' "${AI_REPO}/skills-lock.json" \
+  "skills-lock does not pin video-production"
+assert_not_grep 'scenario-kinetic-film' "${AI_REPO}/skills-lock.json" \
+  "skills-lock does not pin Kinetic Film"
+assert_missing "${AI_REPO}/.agents/skills/scenario-kinetic-film" \
+  "Kinetic Film is not vendored as a skill"
+assert_grep 'width: 1920' "${AI_REPO}/templates/video/templates/ad-15/spec.js" \
+  "landscape advertisement template is 1920 wide"
+assert_grep 'height: 1080' "${AI_REPO}/templates/video/templates/ad-15/spec.js" \
+  "landscape advertisement template is 1080 tall"
+assert_grep 'width: 1080' "${AI_REPO}/templates/video/templates/ad-15-vertical/spec.js" \
+  "vertical advertisement template is 1080 wide"
+assert_grep 'height: 1920' "${AI_REPO}/templates/video/templates/ad-15-vertical/spec.js" \
+  "vertical advertisement template is 1920 tall"
+assert_grep 'local video frame rendering' "${AI_REPO}/.cursor/rules/60-browser-qa.mdc" \
+  "browser QA keeps video frame rendering as its own authorization"
+assert_grep 'The managed stack remains' "${AI_REPO}/.cursor/rules/40-ui.mdc" \
+  "Impeccable and Hallmark remain the managed design stack"
+
+VIDEO_APP="${WORKDIR}/video-app"
+VIDEO_FLAG="${WORKDIR}/video-flag"
+VIDEO_STUDIO="${WORKDIR}/video-studio"
+VIDEO_CONFLICT="${WORKDIR}/video-conflict"
+mkdir -p "${VIDEO_APP}" "${VIDEO_FLAG}" "${VIDEO_CONFLICT}/video"
+printf 'keep-me\n' > "${VIDEO_APP}/app.php"
+printf '{"name":"video-app","private":true}\n' > "${VIDEO_APP}/package.json"
+printf 'manual\n' > "${VIDEO_CONFLICT}/video/manual.txt"
+cp "${VIDEO_APP}/package.json" "${VIDEO_APP}/package.json.before"
+
+"${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer "${VIDEO_APP}" \
+  >"${LOGDIR}/boot-video-app.log" 2>&1
+assert_missing "${VIDEO_APP}/video/studio.json" \
+  "bootstrap of an application-shaped directory does not install video"
+assert_grep 'keep-me' "${VIDEO_APP}/app.php" \
+  "bootstrap preserved an existing source file"
+
+"${AI_REPO}/scripts/install-video-production.sh" "${VIDEO_APP}" \
+  >"${LOGDIR}/install-video-app.log" 2>&1
+assert_grep 'Video production installed \(integrated\)' "${LOGDIR}/install-video-app.log" \
+  "installer reports integrated mode"
+assert_grep 'does not spend Scenario credits' "${LOGDIR}/install-video-app.log" \
+  "installer states local rendering spends no Scenario credits"
+assert_grep '"mode": "integrated"' "${VIDEO_APP}/video/studio.json" \
+  "integrated install records integrated mode"
+assert_grep 'keep-me' "${VIDEO_APP}/app.php" \
+  "video install preserved application source"
+if cmp -s "${VIDEO_APP}/package.json" "${VIDEO_APP}/package.json.before"; then
+  pass "video install did not change package.json"
+else
+  fail "video install did not change package.json"
+fi
+assert_not_grep 'playwright' "${VIDEO_APP}/package.json" \
+  "video install did not add Playwright to the application"
+assert_missing "${VIDEO_APP}/video/.runtime" \
+  "video install did not create a render runtime"
+assert_file "${VIDEO_APP}/.agents/skills/video-production/SKILL.md" \
+  "integrated project links the video skill"
+if [[ -L "${VIDEO_APP}/.claude/skills/video-production" && -L "${VIDEO_APP}/.grok/skills/video-production" ]]; then
+  pass "Claude and Grok link the video skill"
+else
+  fail "Claude and Grok link the video skill"
+fi
+
+"${AI_REPO}/scripts/install-video-production.sh" "${VIDEO_APP}" \
+  >"${LOGDIR}/install-video-app-again.log" 2>&1
+assert_grep 'already present' "${LOGDIR}/install-video-app-again.log" \
+  "video install is idempotent"
+
+"${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" brand-a ad-15 \
+  >"${LOGDIR}/video-campaign-a.log" 2>&1
+"${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" brand-b ad-15 \
+  >"${LOGDIR}/video-campaign-b.log" 2>&1
+printf '\nname: UNIQUE_BRAND_ALPHA\n' >> "${VIDEO_APP}/video/campaigns/brand-a/brand.md"
+printf 'secret\n' > "${VIDEO_APP}/video/campaigns/brand-a/assets/secret.txt"
+assert_not_grep 'UNIQUE_BRAND_ALPHA' "${VIDEO_APP}/video/campaigns/brand-b/brand.md" \
+  "a second campaign does not inherit the first campaign brand"
+"${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" brand-c announcement \
+  >"${LOGDIR}/video-campaign-c.log" 2>&1
+assert_missing "${VIDEO_APP}/video/campaigns/brand-c/assets/secret.txt" \
+  "a new campaign does not copy another campaign's assets"
+assert_not_grep 'UNIQUE_BRAND_ALPHA' "${VIDEO_APP}/video/campaigns/brand-c/brand.md" \
+  "a new campaign does not copy another campaign's brand file"
+"${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" social-cut ad-15 --format social \
+  >"${LOGDIR}/video-campaign-social.log" 2>&1
+assert_grep 'width: 1080' "${VIDEO_APP}/video/campaigns/social-cut/film/spec.js" \
+  "social format sets a 1080-wide stage"
+assert_grep 'height: 1350' "${VIDEO_APP}/video/campaigns/social-cut/film/spec.js" \
+  "social format sets a 1350-tall stage"
+assert_grep "format: 'social'" "${VIDEO_APP}/video/campaigns/social-cut/film/spec.js" \
+  "social format is recorded on the spec"
+"${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" tall ad-15 --format vertical \
+  >"${LOGDIR}/video-campaign-vertical.log" 2>&1
+assert_grep 'width: 1080' "${VIDEO_APP}/video/campaigns/tall/film/spec.js" \
+  "vertical format is 1080 wide"
+assert_grep 'height: 1920' "${VIDEO_APP}/video/campaigns/tall/film/spec.js" \
+  "vertical format is 1920 tall and native"
+
+if "${AI_REPO}/scripts/video-render.sh" "${VIDEO_APP}/video/campaigns/brand-a" --scenario \
+  >"${LOGDIR}/video-paid.log" 2>&1; then
+  fail "paid generation flag is refused"
+else
+  status=$?
+  if [[ "${status}" -eq 2 ]] && grep -q 'will not spend credits' "${LOGDIR}/video-paid.log"; then
+    pass "paid generation flag is refused before a render"
+  else
+    fail "paid generation flag is refused before a render"
+  fi
+fi
+
+if "${AI_REPO}/scripts/install-video-production.sh" "${AI_REPO}" \
+  >"${LOGDIR}/install-video-self.log" 2>&1; then
+  fail "installer refuses the harness repository"
+else
+  pass "installer refuses the harness repository"
+fi
+
+"${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer "${VIDEO_CONFLICT}" \
+  >"${LOGDIR}/boot-video-conflict.log" 2>&1
+if "${AI_REPO}/scripts/install-video-production.sh" "${VIDEO_CONFLICT}" \
+  >"${LOGDIR}/install-video-conflict.log" 2>&1; then
+  fail "installer refuses an unmarked video directory"
+else
+  if grep -q 'Left it untouched' "${LOGDIR}/install-video-conflict.log" \
+    && grep -q 'manual' "${VIDEO_CONFLICT}/video/manual.txt"; then
+    pass "installer refuses an unmarked video directory"
+  else
+    fail "installer refuses an unmarked video directory"
+  fi
+fi
+
+"${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer --with-video "${VIDEO_FLAG}" \
+  >"${LOGDIR}/boot-video-flag.log" 2>&1
+assert_grep 'Video production installed \(integrated\)' "${LOGDIR}/boot-video-flag.log" \
+  "--with-video installs the workspace during bootstrap"
+assert_grep '"mode": "integrated"' "${VIDEO_FLAG}/video/studio.json" \
+  "--with-video records integrated mode"
+
+"${AI_REPO}/scripts/init-video-studio.sh" "${VIDEO_STUDIO}" \
+  >"${LOGDIR}/init-video-studio.log" 2>&1
+assert_grep 'Detected profile: video-studio' "${LOGDIR}/init-video-studio.log" \
+  "studio init reports the video-studio profile"
+assert_grep '"mode": "studio"' "${VIDEO_STUDIO}/video/studio.json" \
+  "studio init records studio mode"
+assert_missing "${VIDEO_STUDIO}/package.json" \
+  "studio init does not create an application package.json"
+assert_missing "${VIDEO_STUDIO}/composer.json" \
+  "studio init does not create Composer metadata"
+"${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer "${VIDEO_STUDIO}" \
+  >"${LOGDIR}/boot-video-studio-again.log" 2>&1
+assert_grep 'Detected profile: video-studio' "${LOGDIR}/boot-video-studio-again.log" \
+  "a later bootstrap still detects the video studio"
+assert_grep 'Video production: installed \(studio\)' "${LOGDIR}/boot-video-studio-again.log" \
+  "a later bootstrap leaves the studio installed"
+
+VIDEO_LARAVEL="${WORKDIR}/video-laravel"
+mkdir -p "${VIDEO_LARAVEL}"
+write_laravel_composer "${VIDEO_LARAVEL}"
+"${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer "${VIDEO_LARAVEL}" \
+  >"${LOGDIR}/boot-video-laravel.log" 2>&1
+if "${AI_REPO}/scripts/install-video-production.sh" --studio "${VIDEO_LARAVEL}" \
+  >"${LOGDIR}/install-video-studio-on-app.log" 2>&1; then
+  fail "studio mode is refused on an application project"
+else
+  if grep -q 'application project' "${LOGDIR}/install-video-studio-on-app.log"; then
+    pass "studio mode is refused on an application project"
+  else
+    fail "studio mode is refused on an application project"
+  fi
+fi
+"${AI_REPO}/scripts/install-video-production.sh" "${VIDEO_LARAVEL}" \
+  >"${LOGDIR}/install-video-laravel.log" 2>&1
+assert_grep '"mode": "integrated"' "${VIDEO_LARAVEL}/video/studio.json" \
+  "an application project can opt into integrated video"
+"${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer "${VIDEO_LARAVEL}" \
+  >"${LOGDIR}/boot-video-laravel-again.log" 2>&1
+assert_grep 'Detected profile: laravel-webapp' "${LOGDIR}/boot-video-laravel-again.log" \
+  "video opt-in does not replace the Laravel profile"
+assert_not_grep 'Detected profile: video-studio' "${LOGDIR}/boot-video-laravel-again.log" \
+  "an application project is not reclassified as a video studio"
+
+VIDEO_MEDIA="${WORKDIR}/video-media"
+mkdir -p "${VIDEO_MEDIA}"
+ffmpeg -y -v error -f lavfi -i "color=c=0x1e4d3a:s=1920x1080:r=30" -frames:v 30 \
+  -c:v libx264 -pix_fmt yuv420p -profile:v high -level 4.2 \
+  -x264-params colorprim=bt709:transfer=bt709:colormatrix=bt709 \
+  -color_primaries bt709 -color_trc bt709 -colorspace bt709 -color_range tv \
+  -movflags +faststart -an "${VIDEO_MEDIA}/calm.mp4"
+if python3 "${AI_REPO}/scripts/video/validate.py" \
+  --video "${VIDEO_MEDIA}/calm.mp4" \
+  --expect-width 1920 --expect-height 1080 --expect-fps 30 --expect-frames 30 \
+  --expect-audio no --report "${VIDEO_MEDIA}/calm.json" \
+  >"${LOGDIR}/video-validate-calm.log" 2>&1; then
+  if grep -q 'TECHNICAL PASS' "${LOGDIR}/video-validate-calm.log"; then
+    pass "a calm silent master passes technical validation"
+  else
+    fail "a calm silent master passes technical validation"
+  fi
+else
+  fail "a calm silent master passes technical validation"
+fi
+ffmpeg -y -v error -f lavfi -i "color=c=black:s=1280x720:r=30" -frames:v 30 \
+  -c:v libx264 -pix_fmt yuv420p -an "${VIDEO_MEDIA}/wrong.mp4"
+if python3 "${AI_REPO}/scripts/video/validate.py" \
+  --video "${VIDEO_MEDIA}/wrong.mp4" \
+  --expect-width 1920 --expect-height 1080 --expect-fps 30 --expect-frames 30 \
+  --expect-audio no --report "${VIDEO_MEDIA}/wrong.json" \
+  >"${LOGDIR}/video-validate-wrong.log" 2>&1; then
+  fail "wrong dimensions fail technical validation"
+else
+  if grep -q 'TECHNICAL FAIL' "${LOGDIR}/video-validate-wrong.log"; then
+    pass "wrong dimensions fail technical validation"
+  else
+    fail "wrong dimensions fail technical validation"
+  fi
+fi
+
+if [[ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]]; then
+  "${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_STUDIO}" smoke smoke \
+    >"${LOGDIR}/video-smoke-campaign.log" 2>&1
+  if "${AI_REPO}/scripts/video-render.sh" "${VIDEO_STUDIO}/video/campaigns/smoke" \
+    >"${LOGDIR}/video-smoke-render.log" 2>&1; then
+    if grep -q 'No Scenario credits' "${LOGDIR}/video-smoke-render.log" \
+      && grep -q 'TECHNICAL PASS' "${LOGDIR}/video-smoke-render.log" \
+      && [[ -f "${VIDEO_STUDIO}/video/campaigns/smoke/renders/masters/smoke-640x360-10.mp4" ]]; then
+      pass "synthetic local render passed without Scenario"
+    else
+      fail "synthetic local render passed without Scenario"
+    fi
+  else
+    fail "synthetic local render passed without Scenario"
+  fi
+  assert_missing "${VIDEO_STUDIO}/package.json" \
+    "the smoke render did not create an application package.json"
+  assert_dir "${VIDEO_STUDIO}/video/.runtime/node_modules/playwright" \
+    "Playwright was installed only under video/.runtime"
+else
+  pass "synthetic render skipped because Google Chrome is not installed"
+fi
 
 echo ""
 echo "--- Summary ---"

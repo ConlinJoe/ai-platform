@@ -11,11 +11,14 @@ SKILLS_LOCK="${AI_REPO}/skills-lock.json"
 source "${SCRIPT_DIR}/lib/project-capabilities.sh"
 # shellcheck source=lib/deployer.sh
 source "${SCRIPT_DIR}/lib/deployer.sh"
+# shellcheck source=lib/video.sh
+source "${SCRIPT_DIR}/lib/video.sh"
 
 REQUIRED_SKILLS=()
 MISSING_SKILLS=()
 PRESENT_SKILLS=()
 DEPLOYER_MODE=""
+VIDEO_MODE=""
 
 if [[ ! -d "${RULES_DIR}" ]] || [[ ! -f "${RULES_DIR}/00-platform.mdc" ]]; then
   echo "Error: AI Platform rules not found." >&2
@@ -26,18 +29,23 @@ fi
 
 usage() {
   cat <<EOF
-Usage: $0 [--with-deployer|--without-deployer] [project-path]
+Usage: $0 [--with-deployer|--without-deployer] [--with-video|--without-video] [project-path]
 
 Installs AI Development Harness infrastructure into a project.
 Does not deploy. Installing Deployer does not authorize deployment.
+Does not render video. Installing video production does not authorize
+publication or paid generation.
 
   --with-deployer       Install the optional Deployer stack (no prompt)
   --without-deployer    Skip the optional Deployer stack (no prompt)
+  --with-video          Install the optional video workspace (no prompt)
+  --without-video       Skip video (the default; accepted for explicit runs)
 
-Without either flag, interactive bootstrap prompts:
+Without a Deployer flag, interactive bootstrap prompts:
   ${DEPLOYER_PROMPT}
 Default is N. Non-interactive runs skip Deployer unless --with-deployer
 is set (AI_BOOTSTRAP_NONINTERACTIVE=1 also skips).
+Video is never prompted. It stays off unless --with-video is passed.
 EOF
 }
 
@@ -61,6 +69,20 @@ for arg in "$@"; do
         exit 1
       fi
       DEPLOYER_MODE="without"
+      ;;
+    --with-video)
+      if [[ "${VIDEO_MODE}" == "without" ]]; then
+        echo "Error: --with-video and --without-video cannot be combined." >&2
+        exit 1
+      fi
+      VIDEO_MODE="with"
+      ;;
+    --without-video)
+      if [[ "${VIDEO_MODE}" == "with" ]]; then
+        echo "Error: --with-video and --without-video cannot be combined." >&2
+        exit 1
+      fi
+      VIDEO_MODE="without"
       ;;
     -h|--help)
       usage
@@ -1137,6 +1159,11 @@ report_capabilities() {
       echo "Install ACF Pro when authenticated installation is available; otherwise report the credential blocker and continue."
       echo "Do not commit license keys or secrets."
     fi
+  elif project_is_video_studio "${TARGET_PROJECT}"; then
+    echo "Detected profile: video-studio"
+    echo "Playwright Mode A is not required."
+    echo "Laravel Boost is not required."
+    echo "This is a video studio. It does not use an application framework."
   else
     echo "Detected profile: none (not Laravel or Roots/Radicle/Sage)."
     echo "Playwright Mode A is not required."
@@ -1147,6 +1174,13 @@ report_capabilities() {
   echo "GitHub CLI (gh) is optional. Bootstrap does not install or authenticate it."
   echo "Bootstrap does not copy or overwrite .github/ Issue or PR templates."
   echo "Deployer is an optional capability. Installing it does not authorize deployment."
+  if video_is_harness_managed "${TARGET_PROJECT}"; then
+    echo "Video production: installed ($(video_mode_of "${TARGET_PROJECT}"))."
+    echo "Local rendering does not spend Scenario credits and does not authorize publication."
+  else
+    echo "Video production: not installed (optional)."
+    echo "Install later with: ${AI_REPO}/scripts/install-video-production.sh ${TARGET_PROJECT}"
+  fi
 
   echo ""
   if [[ "${BOOTSTRAP_MODE}" == "existing" ]]; then
@@ -1176,5 +1210,8 @@ ensure_roots_resources_images
 restore_skills
 provision_agent_adapters
 deployer_offer_or_install "${TARGET_PROJECT}" "${DEPLOYER_MODE}"
+if [[ "${VIDEO_MODE}" == "with" ]]; then
+  video_install "${TARGET_PROJECT}" "integrated"
+fi
 report_capabilities
 run_verification

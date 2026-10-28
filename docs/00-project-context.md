@@ -122,6 +122,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | Multi-agent adapters | `core/adapters/README.md` |
 | Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Optional Deployer | `contracts/features/deployer.md`, ADR 0007 |
+| Video production | `contracts/features/video-production.md`, ADR 0010, `../.agents/skills/video-production/SKILL.md` |
 | Issues / PRs / discovered work | `contracts/features/work-item-lifecycle.md` |
 | Browser QA | `contracts/features/browser-qa.md` |
 | Public submission protection | `contracts/features/spam-and-abuse-protection.md` |

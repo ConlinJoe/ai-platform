@@ -99,6 +99,8 @@ DNS changes, or destructive data operations. The catastrophic-operation
 guardrail applies to deployment scripts the same way it applies to
 commands executed directly. Details:
 `docs/contracts/features/deployer.md` in the AI Platform clone.
+Installing the optional video-production workspace does not authorize
+publication, upload, deployment, or paid media generation.
 Do not install, enable, or deploy public-submission protection during
 bootstrap or existing-project adoption. Inventory and recommend first.
 Requirement: `docs/contracts/features/spam-and-abuse-protection.md`
@@ -152,6 +154,7 @@ up front):
 | Browser QA | `.cursor/rules/60-browser-qa.mdc` |
 | Issues, PRs, discovered work | `.cursor/rules/70-work-items.mdc` |
 | Deployment / Deployer | `docs/contracts/features/deployer.md` in the AI Platform clone; project `docs/contracts/features/deployment.md` when the optional stack is installed |
+| Video production | `.agents/skills/video-production/SKILL.md` and `docs/contracts/features/video-production.md` in the AI Platform clone. Optional. A local render does not authorize publication or paid generation. |
 | Public submission protection | `docs/contracts/features/spam-and-abuse-protection.md` in the AI Platform clone; project `docs/contracts/features/public-submissions.md` records applicability |
 | Project-specific | `.cursor/rules/90-*.mdc` if present |
 
@@ -160,11 +163,15 @@ Do not apply a framework profile to a project that is not that stack.
 ## Skills
 
 Canonical skill copies: `.agents/skills/` (`impeccable`, `hallmark`).
-For significant product/application UI, use Impeccable. Use Hallmark for
+The optional `video-production` skill is harness-owned and is not part
+of that design stack. It is not pinned in `skills-lock.json`. Load it
+when the developer asks for a video. For significant product/application
+UI, use Impeccable. Use Hallmark for
 expressive marketing, campaign/editorial, reference-study, and alternate
-art-direction work. Load one by default and do not invoke a skill for
-every UI edit. Detailed routing lives in `40-ui`. Skills do not authorize
-general browser automation.
+art-direction work. Load one design skill by default and do not invoke a
+skill for every UI edit. Detailed routing lives in `40-ui`. Skills do not
+authorize general browser automation. Video frame rendering is a separate
+authorization, scoped to the local film page.
 
 ## UI design preferences
 

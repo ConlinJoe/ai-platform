@@ -76,6 +76,9 @@ browser console inspection unless one of the following is true:
    browser inspection.
 2. `40-ui` classified the work as **significant UI** and a **bounded
    Mode B visual verification pass** of that UI is in scope.
+3. The current task is local video frame rendering or preview for the
+   optional video-production capability, limited to that project's
+   local film page. That activity is not Mode A and not Mode B.
 
 Do not infer **general** authorization from: Playwright being installed,
 existing browser tests, Playwright MCP, a browser-QA contract, frontend

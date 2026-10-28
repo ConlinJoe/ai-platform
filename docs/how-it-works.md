@@ -62,6 +62,7 @@ canonical project context and shared standards.
 | Locked skills in `.agents/skills/` (Impeccable, Hallmark) | Application source, dependencies, and architecture |
 | Bootstrap, doctor, export, guardrail, Deployer-installer scripts | Project-native tooling (Laravel Boost, Playwright, CI) |
 | Optional Deployer templates (`templates/deployer/`) | `deploy.php` / `deploy/hosts.yaml` when the developer installs the capability |
+| Optional video renderer, skill, and templates (`templates/video/`) | Campaign briefs, brand files, assets, and renders when the developer opts in |
 | Templates copied **once** into new projects | Anything already present; bootstrap does not overwrite docs |
 
 Projects inherit global rules through **symlinks** into this clone.
@@ -94,6 +95,12 @@ Other supported agents get the portable core via `AGENTS.md` /
 Optional Deployer behavior lives in
 [docs/contracts/features/deployer.md](contracts/features/deployer.md).
 It is not a Cursor-only rule file.
+
+Optional video production lives in
+[docs/contracts/features/video-production.md](contracts/features/video-production.md).
+The agent procedure is
+[`.agents/skills/video-production/SKILL.md`](../.agents/skills/video-production/SKILL.md).
+Ordinary bootstrap does not install it.
 
 Public submission protection lives in
 [docs/contracts/features/spam-and-abuse-protection.md](contracts/features/spam-and-abuse-protection.md).
