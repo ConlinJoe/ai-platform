@@ -53,10 +53,13 @@ is an audit or review, architecture changed, operations require it,
 something failed or is blocked, the next decision needs the detail, or
 another contract requires it.
 
-For applicable frontend or public-facing work, verification includes
-`scripts/check-guardrails.sh`. Lint, tests, and build passing do not
-imply that check ran. A failed guardrail check is not a green
-completion.
+When the task changes public-facing copy, templates, components, or
+styling, verification includes `scripts/check-guardrails.sh`. Lint,
+tests, build, and a passing check do not prove architecture compliance.
+When views, components, data preparation, or styling change, include the
+short architecture review from
+`docs/contracts/features/stack-native-architecture.md`. A failed
+guardrail check is not a green completion.
 
 Details: `.cursor/rules/10-documentation.mdc`.
 
@@ -113,6 +116,16 @@ model memory. Use the installed stack's native capabilities before
 custom implementations or new packages. Details:
 `.cursor/rules/00-platform.mdc`.
 
+Follow the responsibility boundaries of the project's actual languages,
+frameworks, and architecture. Detect the stack before applying a
+framework profile. Template views render prepared data; component
+frameworks follow their own conventions; Tailwind composition applies
+only where Tailwind is the styling system in use. Appearance and visual
+fidelity do not waive those boundaries. A familiar stack is not the
+default. When detection is uncertain, report it. Details:
+`.cursor/rules/21-stack-architecture.mdc` and
+`docs/contracts/features/stack-native-architecture.md` (ADR 0011).
+
 ## Capability-on-demand
 
 External tools are **capability-on-demand, not capability-by-default**.
@@ -145,6 +158,7 @@ up front):
 | --- | --- |
 | Documentation work | `.cursor/rules/10-documentation.mdc` |
 | Application code | `.cursor/rules/20-coding.mdc` |
+| Views, components, or styling | `.cursor/rules/21-stack-architecture.mdc` |
 | Laravel web app | `.cursor/rules/30-laravel.mdc` |
 | Roots/Radicle/Sage | `.cursor/rules/35-roots.mdc` |
 | Roots upgrade, or a security assessment of Bedrock, Sage, Radicle, Acorn, or Bud | `docs/contracts/features/roots-upgrade.md` and `core/prompts/roots-upgrade.md` in the AI Platform clone. A routine single-package update inside the current constraint does not use the full procedure. |

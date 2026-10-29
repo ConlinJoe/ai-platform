@@ -49,12 +49,17 @@ is an audit or review, architecture changed, operations require it,
 something failed or is blocked, the next decision needs the detail, or
 another contract requires it.
 
-For applicable frontend or public-facing work, verification includes
-`scripts/check-guardrails.sh`. Lint, tests, and build passing do not
-imply that check ran. A failed guardrail check is not a green
-completion.
+When the task changes public-facing copy, templates, components, or
+styling, verification includes `scripts/check-guardrails.sh`. Lint, tests, and build passing do not
+imply that check ran, and they do not prove architecture compliance.
+When views, components, data preparation, or styling change, the
+completion includes the short architecture review in
+`docs/contracts/features/stack-native-architecture.md`. A failed
+guardrail check is not a green completion.
 
-Details: `10-documentation`, `docs/contracts/features/copy-and-tailwind-guardrails.md`.
+Details: `10-documentation`,
+`docs/contracts/features/copy-and-tailwind-guardrails.md`,
+`docs/contracts/features/stack-native-architecture.md`.
 
 ## Development
 
@@ -227,6 +232,49 @@ conflict, surface it.
 Do not treat scattered misuse of the stack as a convention to copy.
 Apply this to new and touched code; do not mass-refactor unless that is
 the task.
+
+## Stack-native architecture
+
+Follow the established best practices and responsibility boundaries of
+the project's actual languages, frameworks, libraries, and architecture.
+Profile detail is `21-stack-architecture.mdc`. The check, exceptions,
+and baseline are `docs/contracts/features/stack-native-architecture.md`
+(ADR 0011).
+
+Before applying a framework-specific rule:
+
+- Detect the installed stack and versions from repository evidence.
+- Read applicable project contracts and intentional architectural decisions.
+- Use existing framework-native patterns and supported capabilities.
+- Apply only the relevant profile. A familiar stack is not the default.
+- When detection is uncertain, report the uncertainty. Do not apply an unrelated profile.
+
+Appearance requests, design references, and visual fidelity do not waive
+this standard. Translate the approved design into the stack's proper
+implementation.
+
+Template and MVC-style views render prepared data. Presentation
+conditions, loops, formatting, components, and class selection are
+allowed. Queries, persistence, business decisions, substantial data
+transformation, content parsing, and service orchestration belong in
+the framework's own preparation layer. Do not impose Laravel terminology
+on other frameworks. Do not treat every template expression or helper
+call as prohibited logic.
+
+React and similar component architectures follow their own component,
+hook, rendering, and data-access conventions. Do not apply MVC view
+restrictions to components.
+
+Tailwind utility composition applies only where Tailwind is actually the
+styling system for that file. Do not relocate utility-supported styling
+into semantic classes, custom declarations, or `@apply` wrappers. Plain
+CSS, Bootstrap, CSS Modules, CSS-in-JS, and other systems keep their own
+conventions. A Tailwind dependency does not mean every file uses Tailwind.
+
+Run `scripts/check-guardrails.sh` for these changes. Fix blocking
+findings. Do not add an architecture suppression or baseline entry merely
+to pass. The command cannot prove every architectural decision; the
+completion review covers what it cannot check.
 
 ## Capability-on-Demand
 
@@ -493,6 +541,10 @@ Automatically determine the primary discipline for each request and use the appr
 Determine the correct expertise automatically.
 
 The user should not need to remember or specify which skills or tools to use.
+
+Before applying framework-specific architecture or styling rules, detect
+the stack and follow `21-stack-architecture.mdc` for the matching profile
+only. This does not depend on the task prompt restating those standards.
 
 This does not grant general Playwright or browser-automation authorization.
 See Browser automation above and `60-browser-qa`. It also does not

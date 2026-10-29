@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-13
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - Updating the harness clone and propagating changes
   - Skill update and restore
@@ -37,7 +37,9 @@ git pull
 ```
 
 Shared Cursor rules (`00`–`70`) in bootstrapped projects are **symlinks**
-into this clone. They pick up rule changes as soon as the clone updates.
+into this clone. Edits to a rule that is already linked show up as soon
+as the clone updates. A newly added rule file, such as
+`21-stack-architecture.mdc`, is linked the next time bootstrap runs.
 You do not edit each project's copies of the shared rules.
 
 ## Re-run bootstrap on a project
@@ -135,10 +137,15 @@ Bootstrapped project:
 /path/to/your-project/scripts/doctor.sh
 ```
 
-For frontend or public-facing application work in a project, run
+For copy, template, component, or styling work in a project, run
 `scripts/check-guardrails.sh` from that project before treating the
 task as done. Lint, tests, and build passing do not imply that check
-ran.
+ran, and a passing check does not prove architecture compliance.
+Historical architecture findings can be recorded with
+`scripts/check-guardrails.sh --write-architecture-baseline` after review.
+That file is project-owned. Do not write it just to make a current task
+pass. Contract:
+[stack-native architecture](contracts/features/stack-native-architecture.md).
 
 ## Troubleshooting
 

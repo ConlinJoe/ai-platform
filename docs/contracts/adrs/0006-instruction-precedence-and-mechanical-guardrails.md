@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-08-28
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - Decision that project and platform rules outrank conflicting secondary skill, MCP, plugin, vendor, and tool guidance
   - Decision that em-dash and Tailwind arbitrary-value rules are mechanically checked on changed application sources
@@ -10,6 +10,7 @@ depends_on:
   - ../features/copy-and-tailwind-guardrails.md
 referenced_by:
   - ../features/copy-and-tailwind-guardrails.md
+  - 0011-stack-native-architecture.md
   - ../../../.cursor/rules/00-platform.mdc
   - ../../../.cursor/rules/20-coding.mdc
   - ../../../.cursor/rules/40-ui.mdc

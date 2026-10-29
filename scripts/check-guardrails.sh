@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Mechanical copy and Tailwind guardrails for application sources.
+# Copy, Tailwind, and stack-native architecture checks for application sources.
 # Default: git-changed and untracked files. Does not scan vendor or history.
 
 set -euo pipefail
@@ -12,17 +12,25 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${SCRIPT_PATH}")" && pwd)"
 AI_REPO="$(cd "${SCRIPT_DIR}/.." && pwd)"
 SCANNER="${SCRIPT_DIR}/lib/check_guardrails.py"
+ARCH_SCANNER="${SCRIPT_DIR}/lib/check_architecture.py"
 
 usage() {
   cat <<'EOF'
 Usage: check-guardrails.sh [TARGET] [--all] [--since REF] [--files FILE ...]
+       check-guardrails.sh [TARGET] --write-architecture-baseline
 
-Scan public-facing / frontend sources for:
+Scan application sources for:
   - em dashes in generated copy (—, &mdash;, &#8212;, &#x2014;)
   - arbitrary Tailwind utilities such as text-[...], mt-[...], max-w-[...]
+  - high-confidence template architecture violations when that profile applies
+  - utility-replaceable custom CSS when a file is in a Tailwind scope
+
+The command reports which profiles and checks ran. It does not prove
+architecture compliance. Lint, tests, and build do not prove it either.
 
 Default scope is git-changed files (tracked diffs vs HEAD plus untracked
-files). This is the agent DONE path for applicable frontend/copy work.
+files). This is the agent DONE path for applicable copy, template,
+component, and styling work.
 
 Options:
   TARGET     Project root. Defaults like doctor.sh: argument, else $PWD
@@ -31,16 +39,24 @@ Options:
              as a default on existing projects; historical files may fail.
   --since R  Scan files changed since git ref R (plus untracked files).
   --files    Scan only these paths (relative to TARGET or absolute).
+  --write-architecture-baseline
+             Write docs/architecture-baseline.txt from committed findings.
+             Does not accept a file subset and does not baseline uncommitted
+             violations. Review the file before committing it.
   -h, --help Show this help.
 
 Exceptions (do not weaken the rule globally):
   Same line or previous line:
     guardrail-allow-em-dash
     guardrail-allow-arbitrary
+    guardrail-allow-architecture: <concrete limitation>
   First 30 lines of a file:
     guardrail-allow-file: em-dash
     guardrail-allow-file: arbitrary
     guardrail-allow-file: em-dash, arbitrary
+
+guardrail-allow-file cannot exempt architecture findings.
+A file-level or generic architecture marker does not suppress a finding.
 
 Lint, tests, and build passing do not imply this check ran.
 A failed check is not a green completion.
@@ -51,10 +67,15 @@ if [[ ! -f "${SCANNER}" ]]; then
   echo "Error: scanner not found at ${SCANNER}" >&2
   exit 2
 fi
+if [[ ! -f "${ARCH_SCANNER}" ]]; then
+  echo "Error: architecture scanner not found at ${ARCH_SCANNER}" >&2
+  exit 2
+fi
 
 TARGET=""
 SCAN_ALL=0
 SINCE=""
+WRITE_BASELINE=0
 FILES=()
 
 while [[ $# -gt 0 ]]; do
@@ -65,6 +86,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --all)
       SCAN_ALL=1
+      shift
+      ;;
+    --write-architecture-baseline)
+      WRITE_BASELINE=1
       shift
       ;;
     --since)
@@ -123,6 +148,44 @@ resolve_target() {
 
 PROJECT_ROOT="$(resolve_target)"
 
+if [[ "${WRITE_BASELINE}" -eq 1 ]]; then
+  if [[ "${SCAN_ALL}" -eq 1 || -n "${SINCE}" || ${#FILES[@]} -gt 0 ]]; then
+    echo "Error: --write-architecture-baseline does not take --all, --since, or --files." >&2
+    exit 2
+  fi
+  exec python3 "${ARCH_SCANNER}" "${PROJECT_ROOT}" --write-baseline
+fi
+
+run_scanners() {
+  local copy_status=0
+  local arch_status=0
+  set +e
+  if [[ "${1:-}" == "--all" ]]; then
+    python3 "${SCANNER}" "${PROJECT_ROOT}" --all
+    copy_status=$?
+    python3 "${ARCH_SCANNER}" "${PROJECT_ROOT}" --all
+    arch_status=$?
+  elif [[ "$#" -eq 0 ]]; then
+    python3 "${SCANNER}" "${PROJECT_ROOT}" --files
+    copy_status=$?
+    python3 "${ARCH_SCANNER}" "${PROJECT_ROOT}" --files
+    arch_status=$?
+  else
+    python3 "${SCANNER}" "${PROJECT_ROOT}" --files "$@"
+    copy_status=$?
+    python3 "${ARCH_SCANNER}" "${PROJECT_ROOT}" --files "$@"
+    arch_status=$?
+  fi
+  set -e
+  if [[ "${copy_status}" -eq 2 || "${arch_status}" -eq 2 ]]; then
+    return 2
+  fi
+  if [[ "${copy_status}" -ne 0 || "${arch_status}" -ne 0 ]]; then
+    return 1
+  fi
+  return 0
+}
+
 collect_git_files() {
   local root="$1"
   local since_ref="${2:-}"
@@ -159,11 +222,13 @@ collect_git_files() {
 }
 
 if [[ ${#FILES[@]} -gt 0 ]]; then
-  exec python3 "${SCANNER}" "${PROJECT_ROOT}" --files "${FILES[@]}"
+  run_scanners "${FILES[@]}"
+  exit $?
 fi
 
 if [[ "${SCAN_ALL}" -eq 1 ]]; then
-  exec python3 "${SCANNER}" "${PROJECT_ROOT}" --all
+  run_scanners --all
+  exit $?
 fi
 
 set +e
@@ -182,7 +247,9 @@ if [[ -n "${file_list}" ]]; then
 fi
 
 if [[ ${#CHANGED[@]} -eq 0 ]]; then
-  exec python3 "${SCANNER}" "${PROJECT_ROOT}" --files
+  run_scanners
+  exit $?
 fi
 
-exec python3 "${SCANNER}" "${PROJECT_ROOT}" --files "${CHANGED[@]}"
+run_scanners "${CHANGED[@]}"
+exit $?

@@ -194,9 +194,13 @@ override it. Do not treat a Hallmark audit or slop-test result as a
 pass condition that reverses this rule.
 
 Before reporting DONE on work that writes or modifies public-facing
-copy or Tailwind markup, run `scripts/check-guardrails.sh`. This applies
-to small UI and copy-only work, not only significant UI. Lint, tests,
-and build passing do not replace it.
+copy, templates, components, or styling, run `scripts/check-guardrails.sh`.
+This applies to small UI and copy-only work, not only significant UI.
+Lint, tests, and build passing do not replace it. A passing check does
+not prove architecture compliance. When views, components, data
+preparation, or styling change, include the short architecture review
+from `docs/contracts/features/stack-native-architecture.md`. Visual
+fidelity does not waive `21-stack-architecture`.
 
 ### Generic AI/template decoration
 
@@ -581,7 +585,9 @@ Creating it does not authorize deployment, a dependency change, or a
 commit.
 
 After approval, implement only that direction with the project's
-framework, components, and tokens. Implementation follows `20-coding`.
+framework, components, and tokens. Implementation follows `20-coding`
+and `21-stack-architecture`. Appearance of the comp does not waive
+those engineering boundaries.
 Do not pixel-match the comp with arbitrary Tailwind values. If
 implementation must depart from the approved comp, stop and say why.
 Then run the bounded Mode B visual pass and the project checks,

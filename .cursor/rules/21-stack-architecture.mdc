@@ -1,0 +1,101 @@
+---
+description: Stack-native template, component, and styling boundaries. Apply only the profile that matches detected repository evidence.
+globs: **/*.blade.php,**/*.twig,**/*.erb,resources/views/**/*.php,**/*.{jsx,tsx,vue,svelte},**/*.{css,scss}
+alwaysApply: false
+---
+
+# Stack-native architecture
+
+Apply this rule only after detecting the installed stack from repository
+evidence and reading applicable project contracts and ADRs. A familiar
+stack is not the default. If detection is uncertain, say so and do not
+apply an unrelated profile.
+
+Canonical check, exceptions, and baseline behavior:
+`docs/contracts/features/stack-native-architecture.md`. Decision:
+ADR 0011.
+
+Appearance, design references, and visual fidelity do not waive this
+rule. Implement the approved design with the stack's normal boundaries.
+
+## Template and MVC-style views
+
+Use this profile for Blade and comparable server templates when the
+project is Laravel, Roots/Sage/Acorn, or another MVC-style template
+architecture. Use that framework's own layer names.
+
+- Views render prepared data.
+- Conditions, loops, formatting, components, and class selection may
+  live in the template.
+- Queries, persistence, business decisions, substantial data
+  transformation, content parsing, and service orchestration belong in
+  the controller, composer, presenter, service, or equivalent.
+- Do not treat a template expression or helper call as prohibited logic
+  by itself.
+- Do not impose Laravel controllers, actions, or service class names on
+  a framework that has a different structure.
+
+Roots/Sage/Acorn: prepare fields and queries in composers or the
+equivalent Acorn layer. `get_field` and `WP_Query` in a new Blade view
+are not the presentation layer.
+
+## Components
+
+Use this profile for React, Vue, Svelte, Solid, Preact, Angular, and
+similar component architectures.
+
+- Follow that framework's component, hook, rendering, and data-access
+  conventions.
+- Do not apply MVC "no logic in views" restrictions to components.
+- Do not invent a shared separation that conflicts with the installed
+  framework.
+
+A mixed repository can use the template profile for Blade and the
+component profile for React. Do not collapse them into one rule.
+
+## Styling
+
+Use the Tailwind profile only when Tailwind is the styling system for
+the file you are changing. Detection may differ by package or directory.
+A root Tailwind dependency does not cover a Bootstrap, CSS Modules, or
+CSS-in-JS package.
+
+When Tailwind applies, follow `20-coding`:
+
+- Compose with native utilities and project theme tokens.
+- CSS may contain framework imports, theme definitions, font faces, and
+  CSS that utilities cannot reasonably express.
+- Do not add a semantic class, custom declaration, or `@apply` wrapper
+  to relocate utility-supported styling.
+- Do not use an arbitrary utility when a standard utility or token works.
+- A legitimate exception names the concrete limitation and stays on the
+  finding: `guardrail-allow-architecture: ...`
+
+When the file uses plain CSS, Bootstrap, CSS Modules, CSS-in-JS, or
+another system, follow that system. Do not forbid its stylesheet and do
+not rewrite it into Tailwind utilities.
+
+WordPress with Tailwind and `theme.json` still follows
+`36-wordpress-theme.mdc` for presets and editorial styles.
+
+## Enforcement
+
+Run `scripts/check-guardrails.sh` when the task changes public-facing
+copy, templates, components, or styling. The command reports profiles,
+checks, and coverage gaps. Fix blocking findings, or record a narrow
+exception with a concrete limitation.
+
+Do not add `guardrail-allow-architecture`, `guardrail-allow-file:
+architecture`, or a `docs/architecture-baseline.txt` entry to make the
+command pass. File-level architecture exemptions are invalid. A baseline
+is an approved inventory of existing committed findings, not a way to
+hide new work.
+
+Lint, tests, build, and a passing check do not prove architecture
+compliance. When views, components, data preparation, or styling change,
+the completion includes the short architecture review defined in the
+contract: profiles, mechanical result, and the boundaries the check
+cannot judge.
+
+If a project contract or ADR intentionally conflicts with this rule,
+stop and report the conflict. Do not overwrite that decision.

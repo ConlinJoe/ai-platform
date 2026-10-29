@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-15
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - Human overview of new versus existing project adoption
   - What bootstrap changes in a project
@@ -116,6 +116,14 @@ The agent should establish or update project context, architecture,
 ADRs, applicable contracts, roadmap/status, `90-*.mdc` rules when
 needed, and
 `docs/contracts/foundational/platform-reconciliation.md`.
+
+Re-run bootstrap after a harness update so newly added shared rules,
+including `21-stack-architecture.mdc`, are linked. The guardrail script
+itself updates through its existing symlink. Inventory architecture
+findings with `scripts/check-guardrails.sh --all`. Do not fix them during
+adoption. Write `docs/architecture-baseline.txt` only after the developer
+approves that explicit baseline. Contract:
+[stack-native architecture](contracts/features/stack-native-architecture.md).
 
 Findings use A/B/C/D:
 

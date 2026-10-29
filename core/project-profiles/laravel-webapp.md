@@ -25,6 +25,8 @@ implementation):
     selected ecosystem (Current-First Engineering in `00-platform`).
 -   Follow Framework-Native First in `00-platform`.
 -   Keep controllers thin.
+-   Blade views render prepared data. Queries and data preparation belong
+    outside the template (`21-stack-architecture`).
 -   Place business logic in services or domain classes.
 -   Keep models focused on persistence and relationships.
 -   Prefer dependency injection.

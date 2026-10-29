@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-13
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - First-time clone and harness setup
   - Prerequisites, doctor, bootstrap, and bootstrap verification
@@ -270,8 +270,14 @@ prompts for a target path.
 | Optional Deployer | Prompt or `--with-deployer` / `--without-deployer`. Does not deploy. |
 | Optional video production | Off unless `--with-video` or `scripts/install-video-production.sh`. Does not render or publish. |
 
+Bootstrap does not write `docs/architecture-baseline.txt`. New projects
+run stack-native checks through the linked `scripts/check-guardrails.sh`
+with no baseline. See
+[stack-native architecture](contracts/features/stack-native-architecture.md).
+
 Bootstrap is safe to re-run. Shared Cursor rules update immediately
-through those symlinks. A re-run also prunes retired managed skills,
+through those symlinks. A newly added rule file is linked on the next
+bootstrap. A re-run also prunes retired managed skills,
 refreshes Claude/Grok skill adapter links, applies current
 bootstrap-managed project configuration, and adds current ignore entries
 for Hallmark, Impeccable ephemeral artifacts, `.DS_Store`, and `.ai/`.

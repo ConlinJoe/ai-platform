@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-15
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - Model-neutral support seed for installing, troubleshooting, and extending the harness
 depends_on:
@@ -114,6 +114,8 @@ Where to look (confirm these paths still exist)
 - Optional Deployer: scripts/install-deployer.sh and docs/contracts/features/deployer.md
 - Public submission protection: docs/contracts/features/spam-and-abuse-protection.md
 - Guardrails: scripts/check-guardrails.sh
+- Stack-native architecture: docs/contracts/features/stack-native-architecture.md,
+  .cursor/rules/21-stack-architecture.mdc, ADR 0011
 - Skill updates: scripts/update-skills.sh
 - Agent adapters: core/adapters/
 - MCP ownership (not an installer): mcp/README.md

@@ -126,6 +126,13 @@ Inspect, as applicable:
   GitHub Actions tied to PRs
 - Design system, tokens, component conventions, existing UI rules,
   accessibility conventions, and browser/visual QA capabilities
+- Stack-native architecture findings. Run `scripts/check-guardrails.sh --all`
+  and record blocking findings. Do not fix them during adoption, and do
+  not write `docs/architecture-baseline.txt` unless the developer approves
+  that baseline. The check's contract is
+  `docs/contracts/features/stack-native-architecture.md` in the harness clone.
+  If a project ADR conflicts with a finding, record the conflict. Do not
+  overwrite the project decision and do not suppress the finding to pass.
 - Public submission endpoints (contact, lead, quote, registration,
   comments, and any other route that creates a record, sends mail, or
   triggers costly work). Note the current server-side protection, rate

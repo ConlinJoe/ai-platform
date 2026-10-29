@@ -26,6 +26,9 @@ at `core/project-profiles/roots-radicle.md`.
   locations, menu items, hierarchy, labels, and URLs.
 - Navi adapts WordPress navigation into structured data for Sage/Blade.
 - Sage/Blade owns presentation. Frontend layout remains code-owned.
+- Blade renders prepared data. Queries, ACF reads, and content assembly
+  belong in composers or the equivalent Acorn layer, not in the template.
+  See `21-stack-architecture`.
 - ACF Pro is the preferred structured-content layer. WordPress owns
   native content; ACF owns intentional structured metadata. ACF is not
   a page builder.

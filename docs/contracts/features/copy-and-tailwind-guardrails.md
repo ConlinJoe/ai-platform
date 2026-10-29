@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-28
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - Mechanical em-dash and Tailwind arbitrary-value guardrail check
   - Exception markers and invocation for consuming projects and agents
@@ -8,6 +8,7 @@ depends_on:
   - ../adrs/0006-instruction-precedence-and-mechanical-guardrails.md
 referenced_by:
   - ../adrs/0006-instruction-precedence-and-mechanical-guardrails.md
+  - stack-native-architecture.md
   - ../../../.cursor/rules/00-platform.mdc
   - ../../../.cursor/rules/20-coding.mdc
   - ../../../.cursor/rules/40-ui.mdc
@@ -108,3 +109,8 @@ exception marker and explain why.
 
 Hallmark slop-test or audit output is not a pass condition for these
 standards.
+
+The same command also runs the stack-native architecture check. Profile
+detection, template and CSS findings, review items, and baselines are
+owned by `stack-native-architecture.md` (ADR 0011). A passing run of
+either check does not prove architecture compliance.

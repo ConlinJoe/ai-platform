@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-26
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -33,6 +33,16 @@ Unreleased and is not a version bump.
 - Current-First Engineering and Framework-Native First: platform-wide in
   `00-platform.mdc`; Tailwind composition is the CSS specialization in
   `20-coding.mdc`
+- Stack-native architecture: agents follow the detected stack. Template
+  views render prepared data; component frameworks keep their own
+  conventions; Tailwind composition applies only in a Tailwind scope.
+  `scripts/check-guardrails.sh` fails high-confidence template and
+  utility-CSS findings and prints coverage it cannot prove. Existing
+  projects can commit `docs/architecture-baseline.txt` after an explicit
+  inventory. New projects start with the checks and no baseline.
+  Canonical: `docs/contracts/features/stack-native-architecture.md`,
+  ADR 0011. Re-run bootstrap once so doctor links
+  `21-stack-architecture.mdc`.
 - Copy and Tailwind guardrails: generated public-facing copy must not
   use em dashes; Tailwind standard utilities/tokens are preferred over
   arbitrary values; project/platform rules outrank conflicting

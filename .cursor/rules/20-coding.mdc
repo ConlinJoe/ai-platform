@@ -29,6 +29,18 @@ and consistent with the existing codebase.
     bugs, refactors, and features as work items (`70-work-items`).
 -   Optimize for readability over cleverness.
 
+## Stack-native architecture
+
+Detect the stack before applying a framework profile. Follow
+`21-stack-architecture.mdc`.
+
+Template views render prepared data. Conditions, loops, formatting, and
+class selection may stay in the template. Queries, persistence, substantial
+transformation, content parsing, and service orchestration belong in the
+framework's own preparation layer. Do not impose Laravel layer names on
+other frameworks, and do not apply MVC view restrictions to React or
+similar components.
+
 ## Tailwind
 
 A specialization of Framework-Native First in `00-platform`.
@@ -97,7 +109,21 @@ Do not create extra documentation for every legitimate exception.
 - Do not add custom CSS or a semantic class merely because several
   utilities appear together. Prefer `container max-w-5xl` over a one-off
   `.narrow-wrap` class for that combination.
+- Do not add a semantic class, custom declaration, or `@apply` wrapper
+  to relocate styling that utilities already express.
+- CSS may contain framework imports, theme definitions, font faces, and
+  CSS that cannot reasonably be done with utilities. That includes
+  vendor or integration selectors that utilities cannot target.
+- A legitimate exception names the concrete limitation on the finding
+  or the previous line: `guardrail-allow-architecture: ...`
+  Do not use an arbitrary utility instead when a standard utility or
+  token works.
 - Avoid custom CSS when native composition already solves the problem.
+- This Tailwind section applies only when Tailwind is the styling system
+  for the file being changed. Plain CSS, Bootstrap, CSS Modules, and
+  CSS-in-JS keep their own conventions. A Tailwind dependency elsewhere
+  in the repository does not make those files Tailwind files. Scope and
+  the mechanical check: `docs/contracts/features/stack-native-architecture.md`.
 
 Default site content wrapper: prefer `container`, with the site's normal
 container behavior configured centrally, over reconstructing
@@ -139,11 +165,15 @@ Before considering a task complete:
     escalate visual or frontend changes into Playwright or browser
     automation unless `60-browser-qa` authorizes it (explicit request, or
     the bounded significant-UI Mode B visual pass in `40-ui`).
--   For work that writes or modifies public-facing copy or Tailwind
-    markup, run `scripts/check-guardrails.sh` before reporting DONE.
-    Lint, tests, and build passing do not imply that check ran. A
-    failed check is not a green completion: fix the violation, or use
-    the documented exception marker and explain why.
+-   For work that writes or modifies public-facing copy, templates,
+    components, or styling, run `scripts/check-guardrails.sh` before
+    reporting DONE. Lint, tests, and build passing do not imply that
+    check ran, and a passing check does not prove architecture
+    compliance. A failed check is not a green completion: fix the
+    violation, or use the documented exception marker and explain the
+    concrete limitation. When views, components, data preparation, or
+    styling change, include the short architecture review from
+    `docs/contracts/features/stack-native-architecture.md`.
 -   Load relevant documentation contracts via `docs/README.md` (not the full
     documentation tree).
 -   Resolve the documentation outcome: update affected contracts, explicitly

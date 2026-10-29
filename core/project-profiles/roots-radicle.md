@@ -46,6 +46,8 @@ intentional alternatives.
   locations, menu items, hierarchy, labels, and URLs.
 - Navi adapts WordPress navigation into structured data for Sage/Blade.
 - Sage/Blade owns presentation. Frontend layout remains code-owned.
+- Prepare queries and ACF data in composers or the equivalent Acorn
+  layer. Do not assemble that data in Blade (`21-stack-architecture`).
 - ACF Pro is the preferred structured-content layer. WordPress owns
   native content; ACF owns intentional structured metadata. ACF is not
   a page builder.

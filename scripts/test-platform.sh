@@ -174,6 +174,11 @@ if python3 -m py_compile "${AI_REPO}/scripts/lib/check_guardrails.py"; then
 else
   fail "python3 -m py_compile check_guardrails.py"
 fi
+if python3 -m py_compile "${AI_REPO}/scripts/lib/check_architecture.py"; then
+  pass "python3 -m py_compile check_architecture.py"
+else
+  fail "python3 -m py_compile check_architecture.py"
+fi
 if python3 -m py_compile "${AI_REPO}/scripts/video/validate.py"; then
   pass "python3 -m py_compile validate.py"
 else
@@ -1428,6 +1433,490 @@ else
 fi
 
 echo ""
+echo "--- Stack-native architecture ---"
+assert_file "${AI_REPO}/.cursor/rules/21-stack-architecture.mdc" \
+  "21-stack-architecture rule exists"
+assert_file "${AI_REPO}/docs/contracts/features/stack-native-architecture.md" \
+  "stack-native architecture contract exists"
+assert_file "${AI_REPO}/docs/contracts/adrs/0011-stack-native-architecture.md" \
+  "stack-native architecture ADR exists"
+assert_grep 'alwaysApply: false' \
+  "${AI_REPO}/.cursor/rules/21-stack-architecture.mdc" \
+  "stack architecture profile is not always applied"
+assert_grep 'Detect the installed stack' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "always-on platform rule requires stack detection"
+assert_grep 'do not prove architecture compliance' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "always-on platform rule refuses to treat lint or a passing check as architecture proof"
+assert_grep '21-stack-architecture.mdc' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core points at the stack architecture profile"
+assert_grep 'Views, components, or styling' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core loads the stack architecture profile for those surfaces"
+assert_grep 'does not prove architecture compliance' \
+  "${AI_REPO}/docs/contracts/features/stack-native-architecture.md" \
+  "architecture contract says the check does not prove compliance"
+assert_grep 'write-architecture-baseline' \
+  "${AI_REPO}/scripts/check-guardrails.sh" \
+  "guardrail script exposes the explicit architecture baseline command"
+
+ARCH="${WORKDIR}/architecture"
+mkdir -p \
+  "${ARCH}/lux/resources/views" \
+  "${ARCH}/lux/resources/css" \
+  "${ARCH}/lux/resources/js" \
+  "${ARCH}/lux/app/Http/Controllers" \
+  "${ARCH}/lux/app/View/Composers" \
+  "${ARCH}/react/src" \
+  "${ARCH}/bootstrap-site/css" \
+  "${ARCH}/plain" \
+  "${ARCH}/mixed/apps/web/resources/views" \
+  "${ARCH}/mixed/apps/web/resources/js" \
+  "${ARCH}/mixed/apps/marketing/css" \
+  "${ARCH}/roots/resources/views" \
+  "${ARCH}/uncertain" \
+  "${ARCH}/markers/resources/views" \
+  "${ARCH}/baseline/resources/views" \
+  "${ARCH}/bad-baseline/resources/views"
+
+cat > "${ARCH}/lux/composer.json" <<'EOF'
+{"require":{"laravel/framework":"^11.0"}}
+EOF
+cat > "${ARCH}/lux/package.json" <<'EOF'
+{"dependencies":{"react":"^19.0.0"},"devDependencies":{"tailwindcss":"^4.0.0"}}
+EOF
+cat > "${ARCH}/lux/resources/views/estates.blade.php" <<'EOF'
+@php
+    $estates = \App\Models\Estate::where('published', true)->with('region')->get();
+    $regions = $estates->pluck('region')->unique('id')->values();
+    $cards = [];
+    foreach ($estates as $estate) {
+        $cards[] = ['name' => $estate->name];
+    }
+@endphp
+EOF
+cat > "${ARCH}/lux/resources/views/presentation.blade.php" <<'EOF'
+@php
+    $isOpen = $location->is_open;
+    $statusClass = $isOpen ? 'text-emerald-700' : 'text-stone-500';
+@endphp
+<span @class([$statusClass])>{{ $location->name }}</span>
+@if ($locations->isEmpty())
+    <p>None yet</p>
+@endif
+@foreach ($locations as $location)
+    <p>{{ number_format($location->price, 2) }}</p>
+@endforeach
+<p>{{ get_field('hero') }}</p>
+EOF
+cat > "${ARCH}/lux/resources/css/violations.css" <<'EOF'
+.estate-grid {
+  display: grid;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.estate-card {
+  @apply rounded-lg bg-white p-6 shadow-md;
+}
+EOF
+cat > "${ARCH}/lux/resources/css/necessary.css" <<'EOF'
+@import "tailwindcss";
+
+@theme {
+  --text-display: 2.35rem;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("/fonts/source-serif.woff2") format("woff2");
+}
+
+.map-canvas {
+  background-image: url("/maps/base.png");
+  clip-path: inset(0);
+}
+EOF
+cat > "${ARCH}/lux/resources/css/review.css" <<'EOF'
+.hero {
+  display: flex;
+  background-image: url("/images/hero.jpg");
+}
+EOF
+cat > "${ARCH}/lux/resources/css/exception.css" <<'EOF'
+/* guardrail-allow-architecture: vendor widget requires the class name .vendor-slot */
+.vendor-slot {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+EOF
+cat > "${ARCH}/lux/resources/js/EstateList.tsx" <<'EOF'
+import { useMemo, useState } from "react";
+
+type Estate = { id: string; name: string; published: boolean };
+
+export function EstateList({ estates }: { estates: Estate[] }) {
+  const [open, setOpen] = useState(false);
+  const visible = useMemo(
+    () => estates.filter((estate) => estate.published),
+    [estates],
+  );
+  // Post::where('published', true)->get()
+  return (
+    <ul className="grid gap-6">
+      {visible.map((estate) => (
+        <li key={estate.id}>{open ? estate.name : estate.id}</li>
+      ))}
+    </ul>
+  );
+}
+EOF
+cat > "${ARCH}/lux/app/Http/Controllers/EstateController.php" <<'EOF'
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Estate;
+
+class EstateController
+{
+    public function index()
+    {
+        return view('estates.index', [
+            'estates' => Estate::where('published', true)->get(),
+        ]);
+    }
+}
+EOF
+cat > "${ARCH}/lux/app/View/Composers/EstateComposer.php" <<'EOF'
+<?php
+
+namespace App\View\Composers;
+
+use App\Models\Estate;
+
+class EstateComposer
+{
+    public function compose($view): void
+    {
+        $view->with('estates', Estate::where('published', true)->get());
+    }
+}
+EOF
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/lux" --files \
+  resources/views/estates.blade.php >"${LOGDIR}/arch-lux-query.log" 2>&1; then
+  fail "Lux Terra-style template query fails the architecture check"
+else
+  pass "Lux Terra-style template query fails the architecture check"
+fi
+assert_grep 'resources/views/estates.blade.php:2: template-query' \
+  "${LOGDIR}/arch-lux-query.log" \
+  "Lux Terra-style query failure names the file and line"
+assert_grep 'template-preparation' "${LOGDIR}/arch-lux-query.log" \
+  "Lux Terra-style preparation block fails the architecture check"
+assert_grep 'does not prove architecture compliance' \
+  "${LOGDIR}/arch-lux-query.log" \
+  "architecture output refuses a compliance claim"
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/lux" --files \
+  resources/css/violations.css >"${LOGDIR}/arch-lux-css.log" 2>&1; then
+  fail "Lux Terra-style utility CSS and @apply fail the architecture check"
+else
+  pass "Lux Terra-style utility CSS and @apply fail the architecture check"
+fi
+assert_grep 'tailwind-utility-css: grid gap-6 p-8' \
+  "${LOGDIR}/arch-lux-css.log" \
+  "utility-replaceable custom CSS names the standard utilities"
+assert_grep 'tailwind-apply' "${LOGDIR}/arch-lux-css.log" \
+  "@apply relocation fails the architecture check"
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/lux" --files \
+  resources/views/presentation.blade.php \
+  resources/js/EstateList.tsx \
+  app/Http/Controllers/EstateController.php \
+  app/View/Composers/EstateComposer.php \
+  resources/css/necessary.css \
+  resources/css/exception.css \
+  >"${LOGDIR}/arch-lux-ok.log" 2>&1; then
+  pass "presentation Blade, React, controllers, composers, and necessary CSS pass"
+else
+  fail "presentation Blade, React, controllers, composers, and necessary CSS pass"
+  cat "${LOGDIR}/arch-lux-ok.log"
+fi
+assert_grep 'MVC template restrictions were not used' \
+  "${LOGDIR}/arch-lux-ok.log" \
+  "React component is not judged by MVC view rules"
+assert_not_grep 'FAIL .*template-query' "${LOGDIR}/arch-lux-ok.log" \
+  "controller and composer queries are not template violations"
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/lux" --files \
+  resources/css/review.css >"${LOGDIR}/arch-review.log" 2>&1; then
+  pass "mixed custom CSS is a review item and not a failure"
+else
+  fail "mixed custom CSS is a review item and not a failure"
+  cat "${LOGDIR}/arch-review.log"
+fi
+assert_grep 'REVIEW' "${LOGDIR}/arch-review.log" \
+  "mixed custom CSS is reported for architectural review"
+
+cat > "${ARCH}/react/package.json" <<'EOF'
+{"dependencies":{"react":"^19.0.0","react-dom":"^19.0.0"}}
+EOF
+cat > "${ARCH}/react/src/Card.tsx" <<'EOF'
+import { useState } from "react";
+export function Card({ title }: { title: string }) {
+  const [open, setOpen] = useState(false);
+  const items = ["a", "b"].filter((item) => item !== "b");
+  return <button onClick={() => setOpen(!open)}>{title}{items.length}</button>;
+}
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/react" --files \
+  src/Card.tsx >"${LOGDIR}/arch-react.log" 2>&1; then
+  pass "React hooks and filtering do not trigger MVC restrictions"
+else
+  fail "React hooks and filtering do not trigger MVC restrictions"
+  cat "${LOGDIR}/arch-react.log"
+fi
+assert_grep 'template: not applicable' "${LOGDIR}/arch-react.log" \
+  "React project does not receive the template profile"
+assert_grep 'tailwind: not applicable' "${LOGDIR}/arch-react.log" \
+  "React project without Tailwind does not receive Tailwind rules"
+
+cat > "${ARCH}/bootstrap-site/package.json" <<'EOF'
+{"dependencies":{"bootstrap":"5.3.3"}}
+EOF
+cat > "${ARCH}/bootstrap-site/css/site.css" <<'EOF'
+.btn-primary {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/bootstrap-site" --files \
+  css/site.css >"${LOGDIR}/arch-bootstrap.log" 2>&1; then
+  pass "Bootstrap custom CSS does not trigger Tailwind rules"
+else
+  fail "Bootstrap custom CSS does not trigger Tailwind rules"
+  cat "${LOGDIR}/arch-bootstrap.log"
+fi
+assert_grep 'without Tailwind' "${LOGDIR}/arch-bootstrap.log" \
+  "Bootstrap package is reported as outside the Tailwind scope"
+assert_not_grep 'tailwind-utility-css' "${LOGDIR}/arch-bootstrap.log" \
+  "Bootstrap ruleset is not reported as a Tailwind violation"
+
+cat > "${ARCH}/plain/styles.css" <<'EOF'
+.panel {
+  display: flex;
+  padding: 1rem;
+}
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/plain" --files \
+  styles.css >"${LOGDIR}/arch-plain.log" 2>&1; then
+  pass "plain CSS project does not trigger Tailwind rules"
+else
+  fail "plain CSS project does not trigger Tailwind rules"
+  cat "${LOGDIR}/arch-plain.log"
+fi
+assert_grep 'tailwind: not applicable' "${LOGDIR}/arch-plain.log" \
+  "plain CSS project reports Tailwind as not applicable"
+
+cat > "${ARCH}/mixed/apps/web/composer.json" <<'EOF'
+{"require":{"laravel/framework":"^11.31"}}
+EOF
+cat > "${ARCH}/mixed/apps/web/package.json" <<'EOF'
+{"dependencies":{"react":"^19.0.0"},"devDependencies":{"tailwindcss":"^4.1.0"}}
+EOF
+cat > "${ARCH}/mixed/apps/web/resources/views/estates.blade.php" <<'EOF'
+<div>{{ \App\Models\Estate::where('published', true)->first() }}</div>
+EOF
+cat > "${ARCH}/mixed/apps/web/resources/js/List.tsx" <<'EOF'
+export function List() { return <p>Ready</p>; }
+EOF
+cat > "${ARCH}/mixed/apps/marketing/package.json" <<'EOF'
+{"dependencies":{"bootstrap":"5.3.3"}}
+EOF
+cat > "${ARCH}/mixed/apps/marketing/css/site.css" <<'EOF'
+.promo {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/mixed" --files \
+  apps/web/resources/views/estates.blade.php \
+  apps/web/resources/js/List.tsx \
+  apps/marketing/css/site.css \
+  >"${LOGDIR}/arch-mixed.log" 2>&1; then
+  fail "mixed repository still fails the Tailwind app's template query"
+else
+  pass "mixed repository still fails the Tailwind app's template query"
+fi
+assert_grep 'apps/web/resources/views/estates.blade.php:1: template-query' \
+  "${LOGDIR}/arch-mixed.log" \
+  "mixed repository scopes the template failure to the Laravel app"
+assert_grep 'apps/marketing uses bootstrap' "${LOGDIR}/arch-mixed.log" \
+  "mixed repository does not apply Tailwind rules to the Bootstrap package"
+assert_not_grep 'tailwind-utility-css' "${LOGDIR}/arch-mixed.log" \
+  "Bootstrap CSS in a mixed repository is not a Tailwind violation"
+assert_grep 'MVC template restrictions were not used' \
+  "${LOGDIR}/arch-mixed.log" \
+  "mixed repository does not apply MVC restrictions to the React file"
+
+cat > "${ARCH}/roots/composer.json" <<'EOF'
+{"require":{"roots/acorn":"^5.0"}}
+EOF
+cat > "${ARCH}/roots/resources/views/hero.blade.php" <<'EOF'
+<h1>{{ get_field('hero_title') }}</h1>
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/roots" --files \
+  resources/views/hero.blade.php >"${LOGDIR}/arch-roots.log" 2>&1; then
+  fail "Roots/Sage get_field in Blade fails the architecture check"
+else
+  pass "Roots/Sage get_field in Blade fails the architecture check"
+fi
+
+cat > "${ARCH}/uncertain/page.blade.php" <<'EOF'
+@php
+    $posts = \App\Models\Post::where('status', 'published')->get();
+@endphp
+<p>{{ get_field('hero') }}</p>
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/uncertain" --files \
+  page.blade.php >"${LOGDIR}/arch-uncertain.log" 2>&1; then
+  fail "uncertain Blade still fails an Eloquent query"
+else
+  pass "uncertain Blade still fails an Eloquent query"
+fi
+assert_grep 'template: uncertain' "${LOGDIR}/arch-uncertain.log" \
+  "Blade without a framework package is reported as uncertain"
+assert_not_grep 'get_field' "${LOGDIR}/arch-uncertain.log" \
+  "uncertain Blade does not fail WordPress template tags"
+
+cat > "${ARCH}/markers/composer.json" <<'EOF'
+{"require":{"laravel/framework":"^11.0"}}
+EOF
+cat > "${ARCH}/markers/resources/views/good.blade.php" <<'EOF'
+@php
+    // guardrail-allow-architecture: preview partial is rendered outside HTTP and has no composed data
+    $estates = \App\Models\Estate::where('published', true)->get();
+@endphp
+EOF
+cat > "${ARCH}/markers/resources/views/bad.blade.php" <<'EOF'
+@php
+    // guardrail-allow-architecture: legacy
+    $estates = \App\Models\Estate::where('published', true)->get();
+@endphp
+EOF
+cat > "${ARCH}/markers/resources/views/file.blade.php" <<'EOF'
+{{-- guardrail-allow-file: architecture --}}
+@php
+    $estates = \App\Models\Estate::where('published', true)->get();
+@endphp
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/markers" --files \
+  resources/views/good.blade.php >"${LOGDIR}/arch-marker-good.log" 2>&1; then
+  pass "specific architecture exception marker passes"
+else
+  fail "specific architecture exception marker passes"
+  cat "${LOGDIR}/arch-marker-good.log"
+fi
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/markers" --files \
+  resources/views/bad.blade.php >"${LOGDIR}/arch-marker-bad.log" 2>&1; then
+  fail "generic architecture exception marker does not suppress a query"
+else
+  pass "generic architecture exception marker does not suppress a query"
+fi
+assert_grep 'marker was rejected' "${LOGDIR}/arch-marker-bad.log" \
+  "generic architecture marker is reported as rejected"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/markers" --files \
+  resources/views/file.blade.php >"${LOGDIR}/arch-marker-file.log" 2>&1; then
+  fail "file-level architecture exemption does not suppress a query"
+else
+  pass "file-level architecture exemption does not suppress a query"
+fi
+assert_grep 'invalid-suppression' "${LOGDIR}/arch-marker-file.log" \
+  "file-level architecture exemption is an invalid suppression"
+assert_grep 'template-query' "${LOGDIR}/arch-marker-file.log" \
+  "file-level architecture exemption still reports the query"
+
+cat > "${ARCH}/baseline/composer.json" <<'EOF'
+{"require":{"laravel/framework":"^11.0"}}
+EOF
+cat > "${ARCH}/baseline/resources/views/estates.blade.php" <<'EOF'
+@php
+    $estates = \App\Models\Estate::where('published', true)->get();
+@endphp
+EOF
+git init -q -b main "${ARCH}/baseline"
+git -C "${ARCH}/baseline" add composer.json resources/views/estates.blade.php
+GIT_AUTHOR_NAME='Platform Test' GIT_AUTHOR_EMAIL='test@example.com' \
+  GIT_COMMITTER_NAME='Platform Test' GIT_COMMITTER_EMAIL='test@example.com' \
+  git -C "${ARCH}/baseline" commit -q -m "existing violation"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/baseline" \
+  --write-architecture-baseline >"${LOGDIR}/arch-baseline-write.log" 2>&1; then
+  pass "explicit baseline command records committed findings"
+else
+  fail "explicit baseline command records committed findings"
+  cat "${LOGDIR}/arch-baseline-write.log"
+fi
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/baseline" --files \
+  resources/views/estates.blade.php >"${LOGDIR}/arch-baseline-old.log" 2>&1; then
+  pass "baselined existing query does not fail"
+else
+  fail "baselined existing query does not fail"
+  cat "${LOGDIR}/arch-baseline-old.log"
+fi
+cat > "${ARCH}/baseline/resources/views/estates.blade.php" <<'EOF'
+@php
+    $estates = \App\Models\Estate::where('published', true)->get();
+    $also = \App\Models\Region::where('active', true)->get();
+@endphp
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/baseline" --files \
+  resources/views/estates.blade.php >"${LOGDIR}/arch-baseline-new.log" 2>&1; then
+  fail "new query in a baselined file still fails"
+else
+  pass "new query in a baselined file still fails"
+fi
+assert_grep 'resources/views/estates.blade.php:3: template-query' \
+  "${LOGDIR}/arch-baseline-new.log" \
+  "new query in a touched file is the finding that fails"
+assert_not_grep 'resources/views/estates.blade.php:2:' \
+  "${LOGDIR}/arch-baseline-new.log" \
+  "baselined query line is not reported as a new failure"
+assert_grep 'Baselined: 1' "${LOGDIR}/arch-baseline-new.log" \
+  "existing query in the touched file stays baselined"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/baseline" \
+  --write-architecture-baseline >"${LOGDIR}/arch-baseline-rewrite.log" 2>&1; then
+  pass "baseline rewrite does not absorb the uncommitted query"
+else
+  fail "baseline rewrite does not absorb the uncommitted query"
+fi
+assert_not_grep 'Region::where' "${ARCH}/baseline/docs/architecture-baseline.txt" \
+  "baseline file does not gain the uncommitted query"
+
+cat > "${ARCH}/bad-baseline/composer.json" <<'EOF'
+{"require":{"laravel/framework":"^11.0"}}
+EOF
+cat > "${ARCH}/bad-baseline/resources/views/ok.blade.php" <<'EOF'
+<p>{{ $title }}</p>
+EOF
+mkdir -p "${ARCH}/bad-baseline/docs"
+printf 'resources/views/ok.blade.php\n' > "${ARCH}/bad-baseline/docs/architecture-baseline.txt"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/bad-baseline" --files \
+  resources/views/ok.blade.php >"${LOGDIR}/arch-bad-baseline.log" 2>&1; then
+  fail "bare-path baseline entry is invalid"
+else
+  pass "bare-path baseline entry is invalid"
+fi
+assert_grep 'invalid-baseline' "${LOGDIR}/arch-bad-baseline.log" \
+  "bare-path baseline entry is reported and does not suppress findings"
+
+echo ""
 echo "--- Capability-on-demand and motion ---"
 assert_grep 'capability-on-demand, not capability-by-default' \
   "${AI_REPO}/.cursor/rules/00-platform.mdc" \
@@ -1661,6 +2150,12 @@ if [[ -L "${GENERIC}/.cursor/rules/70-work-items.mdc" ]] && [[ "$(readlink "${GE
   pass "generic received 70-work-items rule link"
 else
   fail "generic received 70-work-items rule link"
+fi
+
+if [[ -L "${GENERIC}/.cursor/rules/21-stack-architecture.mdc" ]] && [[ "$(readlink "${GENERIC}/.cursor/rules/21-stack-architecture.mdc")" == "${AI_REPO}/.cursor/rules/21-stack-architecture.mdc" ]]; then
+  pass "generic received 21-stack-architecture rule link"
+else
+  fail "generic received 21-stack-architecture rule link"
 fi
 
 if [[ -L "${GENERIC}/scripts/check-guardrails.sh" ]] && [[ "$(readlink "${GENERIC}/scripts/check-guardrails.sh")" == "${AI_REPO}/scripts/check-guardrails.sh" ]]; then

@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-26
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - Public conceptual model of the harness
   - Global versus project-owned files
@@ -213,8 +213,13 @@ Verification is layered:
 
 - Project lint, tests, and build as the stack already uses them
 - `scripts/doctor.sh` for harness and bootstrap integrity
-- `scripts/check-guardrails.sh` for public-facing copy and Tailwind
-  markup on changed application sources
+- `scripts/check-guardrails.sh` for public-facing copy, Tailwind
+  markup, and stack-native architecture findings on changed application
+  sources. The command reports which profiles it applied. A passing run
+  does not prove architecture compliance. When views, components, data
+  preparation, or styling change, the completion includes the short
+  architecture review in
+  [stack-native architecture](contracts/features/stack-native-architecture.md).
 - Browser QA only when authorized (`60-browser-qa`). Significant UI
   authorizes a bounded visual pass of that UI only (`40-ui`), using the
   best available real-browser capability. That pass is not Playwright

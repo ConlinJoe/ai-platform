@@ -92,6 +92,7 @@ check_platform() {
   check_file "${RULES_DIR}/00-platform.mdc" "Rule 00-platform.mdc"
   check_file "${RULES_DIR}/10-documentation.mdc" "Rule 10-documentation.mdc"
   check_file "${RULES_DIR}/20-coding.mdc" "Rule 20-coding.mdc"
+  check_file "${RULES_DIR}/21-stack-architecture.mdc" "Rule 21-stack-architecture.mdc"
   check_file "${RULES_DIR}/30-laravel.mdc" "Rule 30-laravel.mdc"
   check_file "${RULES_DIR}/35-roots.mdc" "Rule 35-roots.mdc"
   check_file "${RULES_DIR}/36-wordpress-theme.mdc" "Rule 36-wordpress-theme.mdc"
@@ -236,6 +237,7 @@ PY
   done
 
   check_file "${AI_REPO}/scripts/lib/check_guardrails.py" "Guardrail scanner"
+  check_file "${AI_REPO}/scripts/lib/check_architecture.py" "Architecture scanner"
 
   if [[ ! -s "${AI_REPO}/scripts/doctor.sh" ]]; then
     fail "doctor.sh is empty"

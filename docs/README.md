@@ -38,8 +38,10 @@ model and templates from `templates/docs/`.
 | `contracts/adrs/0008-substantial-redesign-comp-approval.md` | adr | accepted | Decision that a substantial UI redesign requires an approved project-local review comp, including any motion treatment, before application UI changes |
 | `contracts/adrs/0009-roots-upgrade-procedure.md` | adr | accepted | Decision to keep Roots upgrades in one procedure without changing an existing project's generation |
 | `contracts/adrs/0010-optional-video-production.md` | adr | accepted | Decision that video production is one optional capability with an original local renderer |
+| `contracts/adrs/0011-stack-native-architecture.md` | adr | accepted | Decision that architecture and styling checks follow the detected stack and run on the guardrail path |
 | `contracts/features/browser-qa.md` | feature | active | Browser QA policy, invocation, capability-aware visual verification, Playwright vs interactive distinction, applicability, isolation |
 | `contracts/features/copy-and-tailwind-guardrails.md` | feature | active | Mechanical em-dash and Tailwind arbitrary-value check, exceptions, DONE gating |
+| `contracts/features/stack-native-architecture.md` | feature | active | Stack detection, architecture and styling profiles, mechanical check, baseline, completion review |
 | `contracts/features/deployer.md` | feature | active | Optional Deployer capability, installer, server configuration, deploy authorization |
 | `contracts/features/laravel-boost.md` | feature | active | Boost capability, detection, bootstrap/doctor |
 | `contracts/features/work-item-lifecycle.md` | feature | active | Capture-don't-expand, Issues/PRs, approval boundaries, optional gh |
@@ -71,10 +73,12 @@ flowchart TD
   compAdr[contracts/adrs/0008-substantial-redesign-comp-approval.md]
   rootsUpgradeAdr[contracts/adrs/0009-roots-upgrade-procedure.md]
   videoAdr[contracts/adrs/0010-optional-video-production.md]
+  stackAdr[contracts/adrs/0011-stack-native-architecture.md]
   browserQa[contracts/features/browser-qa.md]
   boost[contracts/features/laravel-boost.md]
   workItems[contracts/features/work-item-lifecycle.md]
   guardrails[contracts/features/copy-and-tailwind-guardrails.md]
+  stackArch[contracts/features/stack-native-architecture.md]
   deployer[contracts/features/deployer.md]
   spam[contracts/features/spam-and-abuse-protection.md]
   rootsUpgrade[contracts/features/roots-upgrade.md]
@@ -112,6 +116,9 @@ flowchart TD
   boost --> boostAdr
   workItems --> workAdr
   guardrails --> guardrailAdr
+  stackAdr --> stackArch
+  stackAdr --> guardrailAdr
+  stackArch --> guardrails
   deployer --> deployerAdr
   rootsUpgrade --> rootsUpgradeAdr
 ```
@@ -133,6 +140,7 @@ flowchart TD
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, `contracts/adrs/0004-design-stack-and-ui-visual-verification.md` |
 | Substantial UI redesign | `.cursor/rules/40-ui.mdc`, `../core/prompts/ui-comp-approval.md`, `../core/prompts/creative-direction.md`, `contracts/adrs/0008-substantial-redesign-comp-approval.md` |
 | Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
+| Stack-native architecture | `contracts/features/stack-native-architecture.md`, `.cursor/rules/21-stack-architecture.mdc`, ADR 0011 |
 | Multi-agent adapters | `core/adapters/README.md` |
 | Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
 | Optional Deployer | `contracts/features/deployer.md`, ADR 0007 |

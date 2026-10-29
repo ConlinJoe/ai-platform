@@ -42,6 +42,10 @@ after approval.
     infrastructure or extra packages.
 -   Keep controllers responsible only for HTTP request and response
     handling.
+-   Blade views render prepared data. Queries, persistence, content
+    parsing, and service orchestration belong in controllers, actions,
+    composers, or services. Presentation conditions, loops, formatting,
+    and class selection may stay in Blade. See `21-stack-architecture`.
 -   Place business logic in services or domain classes.
 -   Keep models focused on persistence, relationships, casts, and
     scopes.
@@ -157,6 +161,8 @@ in `00-platform`):
     selected ecosystem (Current-First Engineering in `00-platform`).
 -   Follow Framework-Native First in `00-platform`.
 -   Keep controllers thin.
+-   Keep Blade free of queries and data preparation. See
+    `21-stack-architecture`.
 -   Place business logic in services or domain classes.
 -   Keep models focused on persistence and relationships.
 -   Prefer dependency injection.

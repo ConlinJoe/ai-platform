@@ -4,8 +4,9 @@ What changed and why.
 
 ## Verification
 
-Tests or checks run. For frontend or public-facing copy, include
-`scripts/check-guardrails.sh`.
+Tests or checks run. For copy, templates, components, or styling, include
+`scripts/check-guardrails.sh` and the short architecture review. Lint,
+tests, and build do not prove architecture compliance.
 
 ## Documentation
 

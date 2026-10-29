@@ -92,9 +92,11 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   cannot silently override project or platform rules. Clear conflicts
   follow the higher-authority rule; genuine ambiguity stops for
   clarification (ADR 0006).
-- For applicable frontend or public-facing work, `scripts/check-guardrails.sh`
-  is part of DONE validation. Lint, tests, and build passing do not
-  imply it ran.
+- For copy, template, component, or styling work, `scripts/check-guardrails.sh`
+  is part of DONE validation. It also reports stack-native architecture
+  findings for the detected profile. Lint, tests, build, and a passing
+  check do not prove architecture compliance. Contract:
+  `contracts/features/stack-native-architecture.md` (ADR 0011).
 - User-global Cursor MCP (Playwright MCP, BrowserMCP) is configured in
   Cursor, not by bootstrap. Additional MCPs are not bootstrap
   dependencies. See `mcp/README.md`.
@@ -118,6 +120,7 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
 | UI / design preferences | `.cursor/rules/40-ui.mdc`, ADR 0004 |
 | Substantial UI redesign | `.cursor/rules/40-ui.mdc`, `../core/prompts/ui-comp-approval.md`, `../core/prompts/creative-direction.md`, ADR 0008 |
 | Copy / Tailwind guardrails | `contracts/features/copy-and-tailwind-guardrails.md`, ADR 0006 |
+| Stack-native architecture | `contracts/features/stack-native-architecture.md`, ADR 0011 |
 | Fresh agent / resume | `working-mode.md`, `../core/prompts/resume.md` |
 | Multi-agent adapters | `core/adapters/README.md` |
 | Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
