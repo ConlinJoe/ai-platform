@@ -21,8 +21,12 @@ rule. Implement the approved design with the stack's normal boundaries.
 ## Template and MVC-style views
 
 Use this profile for Blade and comparable server templates when the
-project is Laravel, Roots/Sage/Acorn, or another MVC-style template
-architecture. Use that framework's own layer names.
+file's package is Laravel, Roots/Sage/Acorn, or another MVC-style
+template architecture. Choose that package from the file's ancestor
+Composer manifest. A sibling package does not apply, and a nested
+`package.json` does not hide the Composer framework. Use that
+framework's own layer names. A PHP view with no such package is
+uncertain: say so, and do not apply Roots field rules to it.
 
 - Views render prepared data.
 - Conditions, loops, formatting, components, and class selection may

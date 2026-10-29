@@ -2,6 +2,9 @@
 
 # Copy, Tailwind, and stack-native architecture checks for application sources.
 # Default: git-changed and untracked files. Does not scan vendor or history.
+# Tailwind-specific checks run only inside a detected Tailwind scope.
+# CI uses scripts/ci-guardrails.sh with an explicit base revision. A clean
+# checkout's empty HEAD diff is not a scan of the pull request.
 
 set -euo pipefail
 

@@ -119,10 +119,14 @@ needed, and
 
 Re-run bootstrap after a harness update so newly added shared rules,
 including `21-stack-architecture.mdc`, are linked. The guardrail script
-itself updates through its existing symlink. Inventory architecture
-findings with `scripts/check-guardrails.sh --all`. Do not fix them during
-adoption. Write `docs/architecture-baseline.txt` only after the developer
-approves that explicit baseline. Contract:
+itself updates through its existing symlink. If
+`.github/workflows/guardrails.yml` is missing, copy
+`templates/github/workflows/guardrails.yml` from the harness clone into
+that path and commit it. Do not overwrite other workflow files, and do
+not point CI at the project's `scripts/check-guardrails.sh` symlink.
+Inventory architecture findings with `scripts/check-guardrails.sh --all`.
+Do not fix them during adoption. Write `docs/architecture-baseline.txt`
+only after the developer approves that explicit baseline. Contract:
 [stack-native architecture](contracts/features/stack-native-architecture.md).
 
 Findings use A/B/C/D:

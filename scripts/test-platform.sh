@@ -151,6 +151,7 @@ for script in \
   "${AI_REPO}/scripts/install-deployer.sh" \
   "${AI_REPO}/scripts/doctor.sh" \
   "${AI_REPO}/scripts/check-guardrails.sh" \
+  "${AI_REPO}/scripts/ci-guardrails.sh" \
   "${AI_REPO}/scripts/link-rules.sh" \
   "${AI_REPO}/scripts/export-chatgpt-context.sh" \
   "${AI_REPO}/scripts/update-skills.sh" \
@@ -178,6 +179,11 @@ if python3 -m py_compile "${AI_REPO}/scripts/lib/check_architecture.py"; then
   pass "python3 -m py_compile check_architecture.py"
 else
   fail "python3 -m py_compile check_architecture.py"
+fi
+if python3 -m py_compile "${AI_REPO}/scripts/lib/stack_scope.py"; then
+  pass "python3 -m py_compile stack_scope.py"
+else
+  fail "python3 -m py_compile stack_scope.py"
 fi
 if python3 -m py_compile "${AI_REPO}/scripts/video/validate.py"; then
   pass "python3 -m py_compile validate.py"
@@ -1289,6 +1295,9 @@ assert_grep 'Do not plan' \
 
 GUARD_FIXTURES="${WORKDIR}/guardrail-fixtures"
 mkdir -p "${GUARD_FIXTURES}/resources/views" "${GUARD_FIXTURES}/resources/css"
+cat > "${GUARD_FIXTURES}/package.json" <<'EOF'
+{"devDependencies":{"tailwindcss":"^4.0.0"}}
+EOF
 
 cat > "${GUARD_FIXTURES}/resources/views/em-dash.blade.php" <<'EOF'
 <p>Quality salt — harvested by hand.</p>
@@ -1916,6 +1925,535 @@ fi
 assert_grep 'invalid-baseline' "${LOGDIR}/arch-bad-baseline.log" \
   "bare-path baseline entry is reported and does not suppress findings"
 
+mkdir -p \
+  "${ARCH}/at-rules" \
+  "${ARCH}/packages/apps/cms/resources/views" \
+  "${ARCH}/packages/apps/web/resources/views" \
+  "${ARCH}/packages/apps/web/src" \
+  "${ARCH}/packages/apps/laravel/resources/views" \
+  "${ARCH}/packages/apps/plain/resources/views" \
+  "${ARCH}/arbitrary/tailwind-app" \
+  "${ARCH}/arbitrary/bootstrap-app" \
+  "${ARCH}/arbitrary/plain" \
+  "${ARCH}/arbitrary/nested/resources/views" \
+  "${ARCH}/arbitrary/nested/apps/marketing" \
+  "${ARCH}/arbitrary/uncertain/apps/web" \
+  "${ARCH}/arbitrary/uncertain/shared"
+
+cat > "${ARCH}/at-rules/package.json" <<'EOF'
+{"devDependencies":{"tailwindcss":"^4.0.0"}}
+EOF
+cat > "${ARCH}/at-rules/resources.css" <<'EOF'
+.card {
+  display: grid;
+  padding: 2rem;
+}
+
+@media (min-width: 768px) {
+  .media-card {
+    display: grid;
+    padding: 2rem;
+  }
+  .media-apply {
+    @apply grid p-8;
+  }
+}
+
+@supports (display: grid) {
+  .supports-card {
+    display: grid;
+    padding: 2rem;
+  }
+}
+
+@layer components {
+  .layer-card {
+    display: grid;
+    padding: 2rem;
+  }
+}
+
+@media screen /* pause; */ {
+  .comment-card {
+    display: flex;
+    padding: 1rem;
+  }
+}
+
+.after-wrappers {
+  display: grid;
+  padding: 2rem;
+}
+
+@theme {
+  --text-display: 2.35rem;
+}
+
+@font-face {
+  font-family: "Semi; Colon";
+  src: url("/fonts/a.woff2") format("woff2");
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.after-exclusions {
+  display: flex;
+  padding: 1rem;
+}
+EOF
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/at-rules" --files \
+  resources.css >"${LOGDIR}/arch-at-rules.log" 2>&1; then
+  fail "utility CSS inside at-rule wrappers fails the architecture check"
+else
+  pass "utility CSS inside at-rule wrappers fails the architecture check"
+fi
+assert_grep 'tailwind-apply' "${LOGDIR}/arch-at-rules.log" \
+  "@apply inside a media query fails the architecture check"
+assert_grep 'tailwind-utility-css: grid p-8' "${LOGDIR}/arch-at-rules.log" \
+  "wrapped grid and padding declarations fail the architecture check"
+assert_grep 'tailwind-utility-css: flex p-4' "${LOGDIR}/arch-at-rules.log" \
+  "a rule after an at-rule wrapper still fails the architecture check"
+
+if PYTHONPATH="${AI_REPO}/scripts/lib" python3 - "${ARCH}/at-rules/resources.css" <<'PY'
+import sys
+from check_architecture import scan_css
+
+path = sys.argv[1]
+text = open(path, encoding="utf-8").read()
+
+def legacy_resume(source, token):
+    """Previous parser: a prelude that is not an immediate block jumps to the next semicolon."""
+    index = source.find(token)
+    cursor = index + len(token)
+    while cursor < len(source) and source[cursor].isspace():
+        cursor += 1
+    if source[cursor] == "{":
+        raise SystemExit(f"legacy fixture no longer reproduces the prelude bug for {token}")
+    semi = source.find(";", index)
+    return semi + 1
+
+media_resume = legacy_resume(text, "@media")
+supports_resume = legacy_resume(text, "@supports")
+layer_resume = legacy_resume(text, "@layer")
+assert text.find(".media-card") < media_resume < text.find(".supports-card")
+assert text.find(".supports-card") < supports_resume < text.find(".layer-card")
+assert text.find(".layer-card") < layer_resume < text.find(".comment-card")
+
+def line_of(source, needle):
+    return source[: source.find(needle)].count("\n") + 1
+
+findings = scan_css("resources.css", text)
+found_lines = {(finding.kind, finding.line) for finding in findings}
+expected = {
+    ("tailwind-utility-css", line_of(text, ".card")),
+    ("tailwind-utility-css", line_of(text, ".media-card")),
+    ("tailwind-apply", line_of(text, "@apply")),
+    ("tailwind-utility-css", line_of(text, ".supports-card")),
+    ("tailwind-utility-css", line_of(text, ".layer-card")),
+    ("tailwind-utility-css", line_of(text, ".comment-card")),
+    ("tailwind-utility-css", line_of(text, ".after-wrappers")),
+    ("tailwind-utility-css", line_of(text, ".after-exclusions")),
+}
+missing = expected - found_lines
+if missing:
+    raise SystemExit(f"missing wrapped findings: {missing}")
+excluded = {line_of(text, "@theme"), line_of(text, "@font-face"), line_of(text, "@keyframes")}
+if any(finding.line in excluded for finding in findings):
+    raise SystemExit("theme, font-face, or keyframes produced a finding")
+print("at-rule regression ok")
+PY
+then
+  pass "previous at-rule parser misses wrapped rules and the current parser reports them"
+else
+  fail "previous at-rule parser misses wrapped rules and the current parser reports them"
+fi
+
+cat > "${ARCH}/packages/apps/cms/composer.json" <<'EOF'
+{"require":{"roots/acorn":"^5.0"}}
+EOF
+cat > "${ARCH}/packages/apps/cms/resources/views/hero.blade.php" <<'EOF'
+<h1>{{ get_field('hero_title') }}</h1>
+EOF
+cat > "${ARCH}/packages/apps/web/package.json" <<'EOF'
+{"dependencies":{"react":"^19.0.0"}}
+EOF
+cat > "${ARCH}/packages/apps/web/resources/views/page.blade.php" <<'EOF'
+<p>{{ get_field('hero') }}</p>
+<p>{{ \App\Models\Post::where('status', 'published')->first() }}</p>
+EOF
+cat > "${ARCH}/packages/apps/web/src/App.tsx" <<'EOF'
+import { useState } from "react";
+export function App() {
+  const [open, setOpen] = useState(false);
+  // Post::where('status', 'published')
+  return <button onClick={() => setOpen(!open)}>{open ? "open" : "closed"}</button>;
+}
+EOF
+cat > "${ARCH}/packages/apps/laravel/composer.json" <<'EOF'
+{"require":{"laravel/framework":"^11.0"}}
+EOF
+cat > "${ARCH}/packages/apps/laravel/resources/package.json" <<'EOF'
+{"private":true,"dependencies":{"alpinejs":"3.14.0"}}
+EOF
+cat > "${ARCH}/packages/apps/laravel/resources/views/home.blade.php" <<'EOF'
+<p>{{ get_field('hero') }}</p>
+<p>{{ \App\Models\Estate::where('published', true)->first() }}</p>
+EOF
+cat > "${ARCH}/packages/apps/plain/resources/views/note.php" <<'EOF'
+<?php
+$posts = \App\Models\Post::where('status', 'published')->get();
+echo get_field('hero');
+EOF
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/packages" --files \
+  apps/cms/resources/views/hero.blade.php \
+  apps/web/resources/views/page.blade.php \
+  apps/web/src/App.tsx \
+  apps/laravel/resources/views/home.blade.php \
+  apps/plain/resources/views/note.php \
+  >"${LOGDIR}/arch-packages.log" 2>&1; then
+  fail "package-scoped template checks still fail queries in their own packages"
+else
+  pass "package-scoped template checks still fail queries in their own packages"
+fi
+assert_grep 'apps/cms/resources/views/hero.blade.php:1: template-query: field read' \
+  "${LOGDIR}/arch-packages.log" \
+  "Roots field checks apply inside the Roots package"
+assert_grep 'apps/web/resources/views/page.blade.php:2: template-query' \
+  "${LOGDIR}/arch-packages.log" \
+  "an unrelated Blade package still fails an Eloquent query"
+assert_not_grep 'apps/web/resources/views/page.blade.php:1:' \
+  "${LOGDIR}/arch-packages.log" \
+  "an unrelated Blade package does not inherit Roots field checks"
+assert_grep 'apps/laravel/resources/views/home.blade.php:2: template-query' \
+  "${LOGDIR}/arch-packages.log" \
+  "a nested npm manifest does not erase the Composer framework boundary"
+assert_not_grep 'apps/laravel/resources/views/home.blade.php:1:' \
+  "${LOGDIR}/arch-packages.log" \
+  "Laravel package does not inherit a sibling Roots field check"
+assert_grep 'laravel/framework \^11.0 declared' \
+  "${LOGDIR}/arch-packages.log" \
+  "nested npm package still reports the ancestor Laravel framework"
+assert_grep 'template: uncertain' \
+  "${LOGDIR}/arch-packages.log" \
+  "Blade without framework evidence stays uncertain"
+assert_grep 'apps/plain/resources/views/note.php:2: template-query' \
+  "${LOGDIR}/arch-packages.log" \
+  "a standalone PHP view without framework evidence still fails an Eloquent query"
+assert_not_grep 'apps/plain/resources/views/note.php:3:' \
+  "${LOGDIR}/arch-packages.log" \
+  "a standalone PHP view does not fail WordPress field tags"
+assert_grep 'WordPress template tags: not failed' \
+  "${LOGDIR}/arch-packages.log" \
+  "uncertain template coverage says WordPress tags were not failed"
+assert_grep 'MVC template restrictions were not used' \
+  "${LOGDIR}/arch-packages.log" \
+  "React components stay exempt from MVC template restrictions"
+assert_not_grep 'FAIL .*App.tsx' "${LOGDIR}/arch-packages.log" \
+  "React component logic is not an MVC finding"
+
+if PYTHONPATH="${AI_REPO}/scripts/lib" python3 - "${ARCH}/packages" <<'PY'
+import sys
+from check_architecture import scan_template, template_mode_for
+from stack_scope import detect
+
+root = sys.argv[1]
+detection = detect(root)
+
+def legacy_template_mode(found):
+    """Previous behavior: one mode for every package in the repository."""
+    laravel = any(pkg.laravel for pkg in found.packages)
+    roots = any(pkg.roots for pkg in found.packages)
+    if laravel and roots:
+        return "laravel+roots"
+    if roots:
+        return "roots"
+    if laravel:
+        return "laravel"
+    return "uncertain"
+
+legacy = legacy_template_mode(detection)
+if legacy != "laravel+roots":
+    raise SystemExit(f"legacy mode was {legacy}, expected laravel+roots")
+home = "apps/laravel/resources/views/home.blade.php"
+web = "apps/web/resources/views/page.blade.php"
+plain = "apps/plain/resources/views/note.php"
+cms = "apps/cms/resources/views/hero.blade.php"
+mode_home, _ = template_mode_for(detection, home)
+mode_web, _ = template_mode_for(detection, web)
+mode_plain, _ = template_mode_for(detection, plain)
+mode_cms, _ = template_mode_for(detection, cms)
+if (mode_home, mode_web, mode_plain, mode_cms) != ("laravel", "uncertain", "uncertain", "roots"):
+    raise SystemExit(f"per-file modes were {(mode_home, mode_web, mode_plain, mode_cms)}")
+home_text = open(f"{root}/{home}", encoding="utf-8").read()
+legacy_findings = scan_template(home, home_text, legacy)
+current_findings = scan_template(home, home_text, mode_home)
+if not any("field read" in finding.detail for finding in legacy_findings):
+    raise SystemExit("legacy repository mode did not flag get_field in the Laravel package")
+if any("field read" in finding.detail for finding in current_findings):
+    raise SystemExit("current per-file mode flagged get_field in the Laravel package")
+print("package scope regression ok")
+PY
+then
+  pass "previous repository-wide template mode leaks Roots checks and the current mode does not"
+else
+  fail "previous repository-wide template mode leaks Roots checks and the current mode does not"
+fi
+
+cat > "${ARCH}/arbitrary/tailwind-app/package.json" <<'EOF'
+{"devDependencies":{"tailwindcss":"^4.0.0"}}
+EOF
+cat > "${ARCH}/arbitrary/tailwind-app/index.html" <<'EOF'
+<h1 class="text-[1.2rem]">Headline</h1>
+EOF
+cat > "${ARCH}/arbitrary/tailwind-app/Widget.module.css" <<'EOF'
+.widget { padding: 13px; }
+.widget { width: p-[13px]; }
+EOF
+printf '.widget { color: red; }\n.token { width: 1px; } /* p-[13px] */\n' > "${ARCH}/arbitrary/tailwind-app/Widget.module.css"
+cat > "${ARCH}/arbitrary/bootstrap-app/package.json" <<'EOF'
+{"dependencies":{"bootstrap":"5.3.3"}}
+EOF
+cat > "${ARCH}/arbitrary/bootstrap-app/index.html" <<'EOF'
+<button class="p-[13px]">Go</button>
+EOF
+cat > "${ARCH}/arbitrary/bootstrap-app/copy.html" <<'EOF'
+<p>Quality salt — harvested by hand.</p>
+EOF
+cat > "${ARCH}/arbitrary/plain/index.html" <<'EOF'
+<div class="mt-[17px]">Panel</div>
+EOF
+cat > "${ARCH}/arbitrary/nested/package.json" <<'EOF'
+{"devDependencies":{"tailwindcss":"^4.0.0"}}
+EOF
+cat > "${ARCH}/arbitrary/nested/resources/package.json" <<'EOF'
+{"private":true}
+EOF
+cat > "${ARCH}/arbitrary/nested/resources/views/home.blade.php" <<'EOF'
+<h1 class="text-[1.2rem]">Headline</h1>
+EOF
+cat > "${ARCH}/arbitrary/nested/apps/marketing/package.json" <<'EOF'
+{"dependencies":{"bootstrap":"5.3.3"}}
+EOF
+cat > "${ARCH}/arbitrary/nested/apps/marketing/index.html" <<'EOF'
+<div class="p-[13px]">Promo</div>
+EOF
+cat > "${ARCH}/arbitrary/uncertain/apps/web/package.json" <<'EOF'
+{"devDependencies":{"tailwindcss":"^4.0.0"}}
+EOF
+cat > "${ARCH}/arbitrary/uncertain/shared/page.html" <<'EOF'
+<div class="p-[13px]">Shared</div>
+EOF
+
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/arbitrary/tailwind-app" --files \
+  index.html >"${LOGDIR}/arb-tailwind.log" 2>&1; then
+  fail "arbitrary utility in a Tailwind package fails the guardrail check"
+else
+  pass "arbitrary utility in a Tailwind package fails the guardrail check"
+fi
+assert_grep 'text-\[1\.2rem\]' "${LOGDIR}/arb-tailwind.log" \
+  "Tailwind-scoped arbitrary utility names the class"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/arbitrary/tailwind-app" --files \
+  Widget.module.css >"${LOGDIR}/arb-module.log" 2>&1; then
+  pass "CSS Modules file does not receive the arbitrary Tailwind check"
+else
+  fail "CSS Modules file does not receive the arbitrary Tailwind check"
+  cat "${LOGDIR}/arb-module.log"
+fi
+assert_grep 'CSS Modules' "${LOGDIR}/arb-module.log" \
+  "CSS Modules scope is reported"
+assert_not_grep 'arbitrary Tailwind utility' "${LOGDIR}/arb-module.log" \
+  "CSS Modules content is not an arbitrary Tailwind failure"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/arbitrary/bootstrap-app" --files \
+  index.html >"${LOGDIR}/arb-bootstrap.log" 2>&1; then
+  pass "Bootstrap package does not receive the arbitrary Tailwind check"
+else
+  fail "Bootstrap package does not receive the arbitrary Tailwind check"
+  cat "${LOGDIR}/arb-bootstrap.log"
+fi
+assert_grep 'without Tailwind' "${LOGDIR}/arb-bootstrap.log" \
+  "Bootstrap arbitrary-utility skip names the styling system"
+assert_not_grep 'arbitrary Tailwind utility' "${LOGDIR}/arb-bootstrap.log" \
+  "Bootstrap markup is not an arbitrary Tailwind failure"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/arbitrary/bootstrap-app" --files \
+  copy.html >"${LOGDIR}/arb-bootstrap-copy.log" 2>&1; then
+  fail "em dash in a Bootstrap file still fails the copy check"
+else
+  pass "em dash in a Bootstrap file still fails the copy check"
+fi
+assert_grep 'em dash' "${LOGDIR}/arb-bootstrap-copy.log" \
+  "copy checks stay independent of Tailwind scope"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/arbitrary/plain" --files \
+  index.html >"${LOGDIR}/arb-plain.log" 2>&1; then
+  pass "plain CSS project does not receive the arbitrary Tailwind check"
+else
+  fail "plain CSS project does not receive the arbitrary Tailwind check"
+  cat "${LOGDIR}/arb-plain.log"
+fi
+assert_grep 'not applied' "${LOGDIR}/arb-plain.log" \
+  "plain project reports that the arbitrary Tailwind check was not applied"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/arbitrary/nested" --files \
+  resources/views/home.blade.php >"${LOGDIR}/arb-nested-inherit.log" 2>&1; then
+  fail "nested npm manifest does not erase an ancestor Tailwind scope"
+else
+  pass "nested npm manifest does not erase an ancestor Tailwind scope"
+fi
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/arbitrary/nested" --files \
+  apps/marketing/index.html >"${LOGDIR}/arb-nested-bootstrap.log" 2>&1; then
+  pass "nested Bootstrap package does not inherit ancestor Tailwind rules"
+else
+  fail "nested Bootstrap package does not inherit ancestor Tailwind rules"
+  cat "${LOGDIR}/arb-nested-bootstrap.log"
+fi
+assert_not_grep 'arbitrary Tailwind utility' "${LOGDIR}/arb-nested-bootstrap.log" \
+  "nested Bootstrap markup is not an arbitrary Tailwind failure"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/arbitrary/uncertain" --files \
+  shared/page.html >"${LOGDIR}/arb-uncertain.log" 2>&1; then
+  pass "a file outside every Tailwind package does not silently take Tailwind rules"
+else
+  fail "a file outside every Tailwind package does not silently take Tailwind rules"
+  cat "${LOGDIR}/arb-uncertain.log"
+fi
+assert_grep 'uncertain' "${LOGDIR}/arb-uncertain.log" \
+  "Tailwind scope outside a Tailwind package is reported as uncertain"
+assert_not_grep 'arbitrary Tailwind utility' "${LOGDIR}/arb-uncertain.log" \
+  "uncertain Tailwind scope does not fail an arbitrary utility"
+
+if PYTHONPATH="${AI_REPO}/scripts/lib" python3 - <<'PY'
+from check_guardrails import ARBITRARY_RE
+
+line = '<button class="p-[13px]">Go</button>'
+if ARBITRARY_RE.search(line) is None:
+    raise SystemExit("previous unconditional pattern no longer matches the Bootstrap fixture")
+print("unconditional arbitrary pattern still matches")
+PY
+then
+  pass "previous unconditional arbitrary pattern matches a Bootstrap fixture the scoped check allows"
+else
+  fail "previous unconditional arbitrary pattern matches a Bootstrap fixture the scoped check allows"
+fi
+
+CI_SRC="${ARCH}/ci-range"
+mkdir -p "${CI_SRC}/resources/views"
+printf '# Base\n' > "${CI_SRC}/README.md"
+git init -q -b main "${CI_SRC}"
+git -C "${CI_SRC}" add README.md
+GIT_AUTHOR_NAME='Platform Test' GIT_AUTHOR_EMAIL='test@example.com' \
+  GIT_COMMITTER_NAME='Platform Test' GIT_COMMITTER_EMAIL='test@example.com' \
+  git -C "${CI_SRC}" commit -q -m "base"
+BASE_SHA="$(git -C "${CI_SRC}" rev-parse HEAD)"
+cat > "${CI_SRC}/composer.json" <<'EOF'
+{"require":{"laravel/framework":"^11.0"}}
+EOF
+cat > "${CI_SRC}/resources/views/estates.blade.php" <<'EOF'
+@php
+    $estates = \App\Models\Estate::where('published', true)->get();
+@endphp
+EOF
+git -C "${CI_SRC}" add composer.json resources/views/estates.blade.php
+GIT_AUTHOR_NAME='Platform Test' GIT_AUTHOR_EMAIL='test@example.com' \
+  GIT_COMMITTER_NAME='Platform Test' GIT_COMMITTER_EMAIL='test@example.com' \
+  git -C "${CI_SRC}" commit -q -m "existing query"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${CI_SRC}" \
+  --write-architecture-baseline >"${LOGDIR}/ci-baseline-write.log" 2>&1; then
+  pass "CI fixture baseline records only the committed query"
+else
+  fail "CI fixture baseline records only the committed query"
+  cat "${LOGDIR}/ci-baseline-write.log"
+fi
+git -C "${CI_SRC}" add docs/architecture-baseline.txt
+GIT_AUTHOR_NAME='Platform Test' GIT_AUTHOR_EMAIL='test@example.com' \
+  GIT_COMMITTER_NAME='Platform Test' GIT_COMMITTER_EMAIL='test@example.com' \
+  git -C "${CI_SRC}" commit -q -m "baseline"
+BASELINE_SHA="$(git -C "${CI_SRC}" rev-parse HEAD)"
+cat > "${CI_SRC}/resources/views/estates.blade.php" <<'EOF'
+@php
+    $estates = \App\Models\Estate::where('published', true)->get();
+    $also = \App\Models\Region::where('active', true)->get();
+@endphp
+EOF
+git -C "${CI_SRC}" add resources/views/estates.blade.php
+GIT_AUTHOR_NAME='Platform Test' GIT_AUTHOR_EMAIL='test@example.com' \
+  GIT_COMMITTER_NAME='Platform Test' GIT_COMMITTER_EMAIL='test@example.com' \
+  git -C "${CI_SRC}" commit -q -m "new query"
+CI_CLEAN="${ARCH}/ci-clean"
+git clone -q "${CI_SRC}" "${CI_CLEAN}"
+if "${AI_REPO}/scripts/check-guardrails.sh" "${CI_CLEAN}" >"${LOGDIR}/ci-clean-default.log" 2>&1; then
+  pass "a clean checkout's default HEAD diff does not see committed changes"
+else
+  fail "a clean checkout's default HEAD diff does not see committed changes"
+  cat "${LOGDIR}/ci-clean-default.log"
+fi
+assert_not_grep 'FAIL .*template-query' "${LOGDIR}/ci-clean-default.log" \
+  "default clean-checkout scan misses the committed query"
+if "${AI_REPO}/scripts/ci-guardrails.sh" "${CI_CLEAN}" "${BASELINE_SHA}" "${AI_REPO}" \
+  >"${LOGDIR}/ci-range.log" 2>&1; then
+  fail "CI range scan fails the new committed query"
+else
+  pass "CI range scan fails the new committed query"
+fi
+assert_grep 'Changed paths in range: 1' "${LOGDIR}/ci-range.log" \
+  "CI range scan names the committed change set"
+assert_grep 'resources/views/estates.blade.php:3: template-query' \
+  "${LOGDIR}/ci-range.log" \
+  "CI range scan reports the new query in the clean checkout"
+assert_not_grep 'resources/views/estates.blade.php:2:' "${LOGDIR}/ci-range.log" \
+  "CI range scan does not absorb the baselined query"
+assert_grep 'Baselined: 1' "${LOGDIR}/ci-range.log" \
+  "CI range scan keeps the narrow baseline match"
+assert_not_grep 'Region::where' "${CI_CLEAN}/docs/architecture-baseline.txt" \
+  "CI scan does not rewrite the baseline"
+if "${AI_REPO}/scripts/ci-guardrails.sh" "${CI_CLEAN}" \
+  "0000000000000000000000000000000000000000" "${AI_REPO}" \
+  >"${LOGDIR}/ci-zero.log" 2>&1; then
+  fail "missing push base refuses to scan"
+else
+  status=$?
+  if [[ "${status}" -eq 2 ]]; then
+    pass "missing push base refuses to scan"
+  else
+    fail "missing push base refuses to scan"
+  fi
+fi
+assert_grep 'Refusing to report success' "${LOGDIR}/ci-zero.log" \
+  "missing base explains that the scan did not run"
+if "${AI_REPO}/scripts/ci-guardrails.sh" "${CI_CLEAN}" "${BASE_SHA}" "${CI_CLEAN}" \
+  >"${LOGDIR}/ci-symlink.log" 2>&1; then
+  fail "CI refuses a project checkout that is not the harness"
+else
+  pass "CI refuses a project checkout that is not the harness"
+fi
+assert_grep 'absolute symlink' "${LOGDIR}/ci-symlink.log" \
+  "CI error names the absolute project symlink"
+
+EXISTING_CI="${WORKDIR}/existing-no-ci"
+mkdir -p "${EXISTING_CI}/docs"
+printf '# Existing\n' > "${EXISTING_CI}/docs/README.md"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${EXISTING_CI}" >"${LOGDIR}/boot-existing-no-ci.log" 2>&1
+assert_missing "${EXISTING_CI}/.github/workflows/guardrails.yml" \
+  "existing non-Laravel project did not receive the guardrail workflow"
+if "${AI_REPO}/scripts/doctor.sh" "${EXISTING_CI}" >"${LOGDIR}/doctor-existing-no-ci.log" 2>&1; then
+  pass "doctor on an existing project without guardrail CI still exits 0"
+else
+  fail "doctor on an existing project without guardrail CI still exits 0"
+  cat "${LOGDIR}/doctor-existing-no-ci.log"
+fi
+assert_grep 'Guardrail CI workflow is missing' "${LOGDIR}/doctor-existing-no-ci.log" \
+  "doctor reports missing guardrail CI without overwriting workflows"
+
+KEEP_NEW="${WORKDIR}/new-with-workflow"
+mkdir -p "${KEEP_NEW}/.github/workflows"
+printf 'name: Keep\n' > "${KEEP_NEW}/.github/workflows/keep.yml"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${KEEP_NEW}" >"${LOGDIR}/boot-new-workflow.log" 2>&1
+assert_grep 'name: Keep' "${KEEP_NEW}/.github/workflows/keep.yml" \
+  "new project bootstrap keeps an existing unrelated workflow"
+assert_file "${KEEP_NEW}/.github/workflows/guardrails.yml" \
+  "new project bootstrap adds the guardrail workflow beside an existing workflow"
+
 echo ""
 echo "--- Capability-on-demand and motion ---"
 assert_grep 'capability-on-demand, not capability-by-default' \
@@ -2094,8 +2632,16 @@ assert_grep "does not copy or overwrite .github/" ${LOGDIR}/boot-generic.log \
   "bootstrap does not copy GitHub templates"
 assert_missing "${GENERIC}/.github/PULL_REQUEST_TEMPLATE.md" \
   "generic did not receive a GitHub PR template"
-assert_missing "${GENERIC}/.github" \
-  "generic did not receive a .github directory"
+assert_file "${GENERIC}/.github/workflows/guardrails.yml" \
+  "new project received the guardrail CI workflow"
+assert_grep 'ci-guardrails.sh' "${GENERIC}/.github/workflows/guardrails.yml" \
+  "guardrail workflow runs the harness CI entrypoint"
+assert_grep 'ConlinJoe/ai-platform' "${GENERIC}/.github/workflows/guardrails.yml" \
+  "guardrail workflow checks out the harness repository"
+assert_grep 'fetch-depth: 0' "${GENERIC}/.github/workflows/guardrails.yml" \
+  "guardrail workflow fetches the base revision"
+assert_not_grep '/Users/' "${GENERIC}/.github/workflows/guardrails.yml" \
+  "guardrail workflow does not embed a developer checkout path"
 assert_grep '^\.hallmark/' "${GENERIC}/.gitignore" \
   "generic gitignore ignores Hallmark operational artifacts"
 assert_grep '^# impeccable-ignore-start$' "${GENERIC}/.gitignore" \
@@ -2176,6 +2722,8 @@ assert_grep "Boost not applicable" ${LOGDIR}/doctor-generic.log \
   "doctor does not require Boost on generic projects"
 assert_grep "Guardrail check script linked" ${LOGDIR}/doctor-generic.log \
   "doctor reports the guardrail script is linked"
+assert_grep "Guardrail CI workflow present" ${LOGDIR}/doctor-generic.log \
+  "doctor reports the guardrail CI workflow on a new project"
 assert_grep "Deployer not installed" ${LOGDIR}/doctor-generic.log \
   "doctor treats Deployer absence as valid on generic projects"
 assert_missing "${GENERIC}/deploy.php" \
@@ -2485,6 +3033,8 @@ cat > "${EXISTING_GH}/docs/README.md" <<'EOF'
 EOF
 printf 'UNIQUE_PR_TEMPLATE_MARKER\n' > "${EXISTING_GH}/.github/PULL_REQUEST_TEMPLATE.md"
 printf 'UNIQUE_ISSUE_TEMPLATE_MARKER\n' > "${EXISTING_GH}/.github/ISSUE_TEMPLATE/bug.md"
+mkdir -p "${EXISTING_GH}/.github/workflows"
+printf 'name: Keep\n' > "${EXISTING_GH}/.github/workflows/keep.yml"
 printf 'UNIQUE_WORKING_MODE_MARKER\n' > "${EXISTING_GH}/docs/working-mode.md"
 printf 'UNIQUE_GITIGNORE_MARKER\n' > "${EXISTING_GH}/.gitignore"
 
@@ -2506,6 +3056,14 @@ assert_grep '^\.ai/?$' "${EXISTING_GH}/.gitignore" \
   "existing-project gitignore gained .ai/"
 assert_grep "does not copy or overwrite .github/" ${LOGDIR}/boot-existing-github.log \
   "existing-project bootstrap states it does not overwrite GitHub templates"
+assert_grep 'name: Keep' "${EXISTING_GH}/.github/workflows/keep.yml" \
+  "existing workflow was not overwritten"
+assert_missing "${EXISTING_GH}/.github/workflows/guardrails.yml" \
+  "existing project did not receive a guardrail workflow automatically"
+assert_grep 'Integration step:' ${LOGDIR}/boot-existing-github.log \
+  "existing project bootstrap prints the guardrail CI integration step"
+assert_grep 'not writing it' ${LOGDIR}/boot-existing-github.log \
+  "existing project bootstrap does not write the missing guardrail workflow"
 assert_not_grep 'gh auth' ${LOGDIR}/boot-existing-github.log \
   "bootstrap does not authenticate GitHub CLI"
 

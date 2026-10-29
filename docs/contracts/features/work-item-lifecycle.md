@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-08-23
+last_reviewed: 2026-10-29
 source_of_truth_for:
   - Provider-neutral work-item lifecycle
   - Capture-don't-expand-scope behavior during coding sessions
@@ -243,4 +243,6 @@ approval rules (for example agent auto-merge, or agents that commit and
 push by default), surface the difference during reconciliation.
 
 Do not create GitHub infrastructure merely because the project was
-adopted. Do not overwrite existing GitHub files during bootstrap.
+adopted. Do not overwrite existing GitHub files during bootstrap. A new
+project may receive the guardrail workflow when that one file is missing.
+An existing project is given the copy step instead of the file.

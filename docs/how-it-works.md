@@ -215,10 +215,13 @@ Verification is layered:
 - `scripts/doctor.sh` for harness and bootstrap integrity
 - `scripts/check-guardrails.sh` for public-facing copy, Tailwind
   markup, and stack-native architecture findings on changed application
-  sources. The command reports which profiles it applied. A passing run
-  does not prove architecture compliance. When views, components, data
-  preparation, or styling change, the completion includes the short
-  architecture review in
+  sources. Tailwind checks apply only in a detected Tailwind scope.
+  Template checks follow the file's package. The command reports which
+  profiles it applied, including uncertain coverage. A passing run does
+  not prove architecture compliance. New projects also receive a workflow
+  that runs `scripts/ci-guardrails.sh` on the pull request or push range.
+  When views, components, data preparation, or styling change, the
+  completion includes the short architecture review in
   [stack-native architecture](contracts/features/stack-native-architecture.md).
 - Browser QA only when authorized (`60-browser-qa`). Significant UI
   authorizes a bounded visual pass of that UI only (`40-ui`), using the

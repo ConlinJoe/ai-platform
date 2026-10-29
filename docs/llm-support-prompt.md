@@ -113,7 +113,7 @@ Where to look (confirm these paths still exist)
 - Doctor: scripts/doctor.sh
 - Optional Deployer: scripts/install-deployer.sh and docs/contracts/features/deployer.md
 - Public submission protection: docs/contracts/features/spam-and-abuse-protection.md
-- Guardrails: scripts/check-guardrails.sh
+- Guardrails: scripts/check-guardrails.sh locally; scripts/ci-guardrails.sh in CI, from a harness checkout, on the revision range
 - Stack-native architecture: docs/contracts/features/stack-native-architecture.md,
   .cursor/rules/21-stack-architecture.mdc, ADR 0011
 - Skill updates: scripts/update-skills.sh

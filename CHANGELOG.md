@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+Stack-native checks follow each file's package. Nested `@media`,
+`@supports`, and `@layer` rules are scanned. Arbitrary Tailwind utilities
+use that same scope, and em dashes stay universal. New projects receive
+a guardrail workflow that checks out this harness and scans the pull
+request or push range. Existing projects are told how to add that file;
+other workflows are not overwritten.
+
 Optional video production. An existing project can opt in, and a new
 directory can be initialized as a video studio. Both use one original
 local renderer (browser stage, system Chrome, FFmpeg). The Scenario

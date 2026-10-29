@@ -133,6 +133,12 @@ Inspect, as applicable:
   `docs/contracts/features/stack-native-architecture.md` in the harness clone.
   If a project ADR conflicts with a finding, record the conflict. Do not
   overwrite the project decision and do not suppress the finding to pass.
+- Guardrail CI. If `.github/workflows/guardrails.yml` is missing, the
+  integration step is to copy `templates/github/workflows/guardrails.yml`
+  from the harness clone into that path and commit it. Do not overwrite
+  other workflow files. Do not point CI at the project's absolute
+  `scripts/check-guardrails.sh` symlink. Bootstrap and doctor report this
+  gap; they do not write the file into an existing project.
 - Public submission endpoints (contact, lead, quote, registration,
   comments, and any other route that creates a record, sends mail, or
   triggers costly work). Note the current server-side protection, rate

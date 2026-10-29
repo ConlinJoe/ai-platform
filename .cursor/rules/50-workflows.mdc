@@ -69,6 +69,12 @@ Running bootstrap on a target project:
     `21-stack-architecture.mdc`. The guardrail script updates through its
     existing symlink. Historical findings are baselined only with the
     explicit command in `docs/contracts/features/stack-native-architecture.md`.
+-   New projects receive `.github/workflows/guardrails.yml` when that file
+    is missing. The workflow checks out the harness repository and runs
+    `scripts/ci-guardrails.sh` on the pull request or push range. It does
+    not call the project's absolute `scripts/check-guardrails.sh` symlink.
+    Existing projects do not receive the file automatically. Bootstrap and
+    doctor print the copy step and do not overwrite other workflow files.
 -   Copies documentation templates when `docs/README.md` does not exist
 -   For existing projects (docs index already present): does not overwrite
     docs; may add missing draft templates (working mode, status, browser QA,
@@ -111,8 +117,10 @@ It does not install MCP servers or make additional MCPs required
 bootstrap dependencies. Client-specific MCP configuration remains
 client-specific.
 It does not install or authenticate GitHub CLI (`gh`).
-It does not copy `.github/` templates or overwrite existing GitHub
-Issue/PR/Actions files.
+It does not copy `.github/` Issue or PR templates. It does not overwrite
+existing GitHub Actions files. A new project receives the guardrail
+workflow when `.github/workflows/guardrails.yml` is missing. An existing
+project is told how to add that file and is not given it automatically.
 It does not analyze the repository or adopt it into the platform.
 That work belongs to Project Adoption.
 It does not deploy to any environment.

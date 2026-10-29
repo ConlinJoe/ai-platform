@@ -37,12 +37,16 @@ Unreleased and is not a version bump.
   views render prepared data; component frameworks keep their own
   conventions; Tailwind composition applies only in a Tailwind scope.
   `scripts/check-guardrails.sh` fails high-confidence template and
-  utility-CSS findings and prints coverage it cannot prove. Existing
-  projects can commit `docs/architecture-baseline.txt` after an explicit
-  inventory. New projects start with the checks and no baseline.
-  Canonical: `docs/contracts/features/stack-native-architecture.md`,
-  ADR 0011. Re-run bootstrap once so doctor links
-  `21-stack-architecture.mdc`.
+  utility-CSS findings, including rules nested in `@media`, `@supports`,
+  and `@layer`, and prints coverage it cannot prove. Template and
+  Tailwind scope follow the file's package. Existing projects can commit
+  `docs/architecture-baseline.txt` after an explicit inventory. New
+  projects start with the checks, no baseline, and
+  `.github/workflows/guardrails.yml` when that file is missing. Existing
+  projects copy that workflow themselves; bootstrap does not overwrite
+  other workflows. Canonical:
+  `docs/contracts/features/stack-native-architecture.md`, ADR 0011.
+  Re-run bootstrap once so doctor links `21-stack-architecture.mdc`.
 - Copy and Tailwind guardrails: generated public-facing copy must not
   use em dashes; Tailwind standard utilities/tokens are preferred over
   arbitrary values; project/platform rules outrank conflicting

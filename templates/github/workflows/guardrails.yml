@@ -1,0 +1,28 @@
+name: Guardrails
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout harness
+        uses: actions/checkout@v4
+        with:
+          repository: ConlinJoe/ai-platform
+          path: .ai-platform-ci
+
+      - name: Scan the pull request or push range
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: bash .ai-platform-ci/scripts/ci-guardrails.sh "$GITHUB_WORKSPACE" "$BASE_SHA" "$GITHUB_WORKSPACE/.ai-platform-ci"

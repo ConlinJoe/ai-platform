@@ -238,6 +238,8 @@ PY
 
   check_file "${AI_REPO}/scripts/lib/check_guardrails.py" "Guardrail scanner"
   check_file "${AI_REPO}/scripts/lib/check_architecture.py" "Architecture scanner"
+  check_file "${AI_REPO}/scripts/lib/stack_scope.py" "Stack scope detection"
+  check_file "${AI_REPO}/scripts/ci-guardrails.sh" "CI guardrail entrypoint"
 
   if [[ ! -s "${AI_REPO}/scripts/doctor.sh" ]]; then
     fail "doctor.sh is empty"
@@ -297,6 +299,26 @@ check_project_links() {
     ok "Guardrail check script linked"
   else
     warn "Guardrail check script not linked to AI Platform"
+  fi
+
+  local guardrail_workflow="${target}/.github/workflows/guardrails.yml"
+  local guardrail_template="${AI_REPO}/templates/github/workflows/guardrails.yml"
+  if [[ -f "${guardrail_workflow}" ]]; then
+    ok "Guardrail CI workflow present"
+  else
+    warn "Guardrail CI workflow is missing: ${guardrail_workflow}"
+    warn "Integration step: copy ${guardrail_template} to ${guardrail_workflow} and commit that file. Do not overwrite other workflow files."
+    warn "CI checks out https://github.com/ConlinJoe/ai-platform and runs scripts/ci-guardrails.sh. Do not call the project's absolute check-guardrails.sh symlink."
+  fi
+
+  local guardrail_workflow="${target}/.github/workflows/guardrails.yml"
+  local guardrail_template="${AI_REPO}/templates/github/workflows/guardrails.yml"
+  if [[ -f "${guardrail_workflow}" ]]; then
+    ok "Guardrail CI workflow present"
+  else
+    warn "Guardrail CI workflow is missing: ${guardrail_workflow}"
+    warn "Integration step: copy ${guardrail_template} to ${guardrail_workflow} and commit that file. Do not overwrite other workflow files."
+    warn "CI checks out https://github.com/ConlinJoe/ai-platform and runs scripts/ci-guardrails.sh. Do not call the project's absolute check-guardrails.sh symlink."
   fi
 
   if [[ -e "${target}/AGENTS.md" || -L "${target}/AGENTS.md" ]]; then

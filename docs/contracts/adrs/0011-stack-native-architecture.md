@@ -73,9 +73,18 @@ by exempting a whole file.
    files, or a whole modified file. New projects start with no baseline.
 9. The check uses the Python already required by the guardrail script. It
    does not install framework-specific tooling into unrelated projects.
-   Bootstrap does not add a GitHub Actions workflow. Projects that already
-   run `scripts/check-guardrails.sh` locally or in CI get the new checks
-   through that command.
+   Template mode is chosen per file from that file's ancestor Composer
+   package. A nested npm manifest does not hide that package, and a
+   sibling package does not leak into it.
+10. Local verification stays `scripts/check-guardrails.sh`. New bootstraps
+    add `.github/workflows/guardrails.yml` when it is missing. The workflow
+    checks out this harness and runs `scripts/ci-guardrails.sh` on the pull
+    request or push range. It does not follow the project's absolute
+    symlink. Existing projects are not given that file automatically.
+    Bootstrap and doctor report the missing file and the copy step, and
+    they do not overwrite other workflow files. A missing base revision
+    fails the job. It does not treat a clean checkout's empty `HEAD` diff
+    as a successful scan.
 
 ## Consequences
 
@@ -97,6 +106,9 @@ by exempting a whole file.
 - Projects need one bootstrap re-run before doctor links the new
   `21-stack-architecture.mdc` rule file. The always-on rules and the
   guardrail script update through existing symlinks
+- Existing projects do not gain the CI workflow until someone copies and
+  commits `templates/github/workflows/guardrails.yml`. That is deliberate:
+  bootstrap must not overwrite workflows the project already has
 
 ## Alternatives considered
 

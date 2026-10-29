@@ -191,7 +191,7 @@ def line_is_allowed(lines: list[str], index: int, pattern: re.Pattern[str]) -> b
     return bool(pattern.search(current) or pattern.search(previous))
 
 
-def scan_text(rel_path: str, text: str) -> list[Finding]:
+def scan_text(rel_path: str, text: str, *, check_arbitrary: bool = True) -> list[Finding]:
     lines = text.splitlines()
     allow_em_file, allow_arbitrary_file = file_level_allows(lines)
     findings: list[Finding] = []
@@ -208,7 +208,7 @@ def scan_text(rel_path: str, text: str) -> list[Finding]:
                         detail=match.group(0),
                     )
                 )
-        if allow_arbitrary_file or line_is_allowed(lines, index, ALLOW_ARBITRARY_RE):
+        if not check_arbitrary or allow_arbitrary_file or line_is_allowed(lines, index, ALLOW_ARBITRARY_RE):
             continue
         for match in ARBITRARY_RE.finditer(line):
             token = f"{match.group(1)}-[{match.group(2)}]"
@@ -313,8 +313,14 @@ def main(argv: list[str] | None = None) -> int:
         print("Failures: 0")
         return 0
 
+    from stack_scope import detect, tailwind_scope
+
+    detection = detect(root)
     findings: list[Finding] = []
     scanned = 0
+    applicable = 0
+    not_applied: list[str] = []
+    uncertain: list[str] = []
     for rel in rel_paths:
         full = os.path.join(root, rel)
         if not os.path.isfile(full):
@@ -323,7 +329,30 @@ def main(argv: list[str] | None = None) -> int:
         if text is None:
             continue
         scanned += 1
-        findings.extend(scan_text(rel, text))
+        status, reason = tailwind_scope(detection, rel, text)
+        check_arbitrary = status == "applicable"
+        if status == "applicable":
+            applicable += 1
+        elif status == "uncertain":
+            uncertain.append(f"{rel}: {reason}")
+        else:
+            not_applied.append(f"{rel}: {reason}")
+        findings.extend(scan_text(rel, text, check_arbitrary=check_arbitrary))
+
+    print(
+        "Tailwind arbitrary utilities: "
+        f"applicable {applicable}, not applied {len(not_applied)}, uncertain {len(uncertain)}"
+    )
+    print("Em dashes are checked in every in-scope file. Uncertain Tailwind scope does not apply Tailwind rules.")
+    if not_applied:
+        print("Tailwind rules not applied:")
+        for note in not_applied:
+            print(f"  {note}")
+    if uncertain:
+        print("Uncertain Tailwind scope (rules not applied):")
+        for note in uncertain:
+            print(f"  {note}")
+    print("")
 
     if not findings:
         print(f"OK    {scanned} file(s) scanned, no violations")

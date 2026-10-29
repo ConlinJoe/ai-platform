@@ -8,15 +8,24 @@ do not. A clean result does not prove the architecture is correct.
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import re
 import subprocess
 import sys
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from check_guardrails import iter_all_files, path_is_in_scope, path_is_skipped, read_text
+from check_guardrails import iter_all_files, path_is_in_scope, read_text
+from stack_scope import (
+    Detection,
+    Pkg,
+    composer_mode,
+    detect,
+    package_other_styling,
+    package_uses_tailwind,
+    styling_label,
+    tailwind_scope,
+)
 
 BASELINE_REL = "docs/architecture-baseline.txt"
 KINDS = {
@@ -27,24 +36,6 @@ KINDS = {
     "tailwind-apply",
     "tailwind-utility-css",
 }
-OTHER_STYLING = {
-    "bootstrap",
-    "styled-components",
-    "@emotion/react",
-    "@emotion/styled",
-    "@mui/material",
-    "bulma",
-}
-COMPONENT_PACKAGES = {
-    "react": "react",
-    "react-dom": "react",
-    "preact": "preact",
-    "vue": "vue",
-    "svelte": "svelte",
-    "solid-js": "solid",
-    "@angular/core": "angular",
-}
-ROOTS_PACKAGES = {"roots/acorn", "roots/sage", "roots/radicle"}
 SKIP_AT_BLOCKS = {
     "theme",
     "font-face",
@@ -165,9 +156,6 @@ LOOP_RE = re.compile(r"\b(?:foreach|for|while)\b")
 APPEND_RE = re.compile(r"\$\w+\s*\[\s*\]\s*=|\barray_push\s*\(")
 ALLOW_RE = re.compile(r"guardrail-allow-architecture\s*:\s*(.*)$", re.IGNORECASE)
 FILE_ALLOW_RE = re.compile(r"guardrail-allow-file:\s*([^\n]+)", re.IGNORECASE)
-TAILWIND_ENTRY_RE = re.compile(
-    r"""@import\s+["']tailwindcss["']|@tailwind\s+(?:base|components|utilities)\b|@theme\b"""
-)
 SINGLE_CLASS_RE = re.compile(r"\.[_A-Za-z][\w-]*")
 SPACING_STEPS = {
     0,
@@ -242,26 +230,6 @@ class Finding:
     severity: str = "fail"
 
 
-@dataclass
-class Pkg:
-    rel: str
-    tailwind: str | None = None
-    bootstrap: str | None = None
-    other_styling: list[str] = field(default_factory=list)
-    components: dict[str, str] = field(default_factory=dict)
-    laravel: str | None = None
-    roots: list[str] = field(default_factory=list)
-    tailwind_config: bool = False
-
-
-@dataclass
-class Detection:
-    packages: list[Pkg] = field(default_factory=list)
-    has_blade: bool = False
-    unsupported_templates: set[str] = field(default_factory=set)
-    has_component_file: bool = False
-
-
 def normalize_snippet(line: str) -> str:
     collapsed = re.sub(r"\s+", " ", line.replace("\t", " ")).strip()
     return collapsed[:160]
@@ -303,190 +271,6 @@ def file_allow_architecture(lines: list[str]) -> int | None:
     return None
 
 
-def load_json(path: str) -> dict | None:
-    try:
-        with open(path, encoding="utf-8") as handle:
-            data = json.load(handle)
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
-        return None
-    return data if isinstance(data, dict) else None
-
-
-def dep_version(deps: dict, name: str) -> str | None:
-    value = deps.get(name)
-    if value is None:
-        return None
-    return str(value)
-
-
-def merged_deps(data: dict) -> dict:
-    merged: dict = {}
-    for key in ("dependencies", "devDependencies", "peerDependencies"):
-        section = data.get(key)
-        if isinstance(section, dict):
-            merged.update(section)
-    return merged
-
-
-def detect(root: str) -> Detection:
-    detection = Detection()
-    by_rel: dict[str, Pkg] = {}
-
-    def pkg_for(rel_dir: str) -> Pkg:
-        rel = "" if rel_dir == "." else rel_dir.replace("\\", "/")
-        pkg = by_rel.get(rel)
-        if pkg is None:
-            pkg = Pkg(rel=rel)
-            by_rel[rel] = pkg
-        return pkg
-
-    for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [name for name in dirnames if name not in {
-            ".git",
-            ".build",
-            ".agents",
-            ".cursor",
-            ".claude",
-            ".grok",
-            ".hallmark",
-            ".svn",
-            "node_modules",
-            "vendor",
-            "dist",
-            "storage",
-        }]
-        rel_dir = os.path.relpath(dirpath, root)
-        if rel_dir != "." and path_is_skipped(rel_dir):
-            dirnames[:] = []
-            continue
-        for filename in filenames:
-            rel = os.path.relpath(os.path.join(dirpath, filename), root).replace("\\", "/")
-            lower = rel.lower()
-            if lower.endswith(".blade.php"):
-                detection.has_blade = True
-            for suffix in UNSUPPORTED_TEMPLATE_SUFFIXES:
-                if lower.endswith(suffix):
-                    detection.unsupported_templates.add(suffix)
-            if lower.endswith(COMPONENT_SUFFIXES):
-                detection.has_component_file = True
-            if filename in {
-                "tailwind.config.js",
-                "tailwind.config.ts",
-                "tailwind.config.cjs",
-                "tailwind.config.mjs",
-            }:
-                pkg_for(rel_dir).tailwind_config = True
-            if filename == "package.json":
-                data = load_json(os.path.join(dirpath, filename))
-                if data is None:
-                    continue
-                pkg = pkg_for(rel_dir)
-                deps = merged_deps(data)
-                pkg.tailwind = pkg.tailwind or dep_version(deps, "tailwindcss")
-                pkg.bootstrap = pkg.bootstrap or dep_version(deps, "bootstrap")
-                for name in OTHER_STYLING:
-                    if name in deps and name not in pkg.other_styling and name != "bootstrap":
-                        pkg.other_styling.append(name)
-                for name, label in COMPONENT_PACKAGES.items():
-                    version = dep_version(deps, name)
-                    if version is not None:
-                        pkg.components.setdefault(label, version)
-            if filename == "composer.json":
-                data = load_json(os.path.join(dirpath, filename))
-                if data is None:
-                    continue
-                pkg = pkg_for(rel_dir)
-                require: dict = {}
-                for key in ("require", "require-dev"):
-                    section = data.get(key)
-                    if isinstance(section, dict):
-                        require.update(section)
-                pkg.laravel = pkg.laravel or dep_version(require, "laravel/framework")
-                for name in sorted(ROOTS_PACKAGES):
-                    version = dep_version(require, name)
-                    if version is not None and name not in pkg.roots:
-                        pkg.roots.append(f"{name} {version}")
-
-    detection.packages = [by_rel[key] for key in sorted(by_rel)]
-    return detection
-
-
-def template_mode(detection: Detection) -> str:
-    laravel = any(pkg.laravel for pkg in detection.packages)
-    roots = any(pkg.roots for pkg in detection.packages)
-    if laravel and roots:
-        return "laravel+roots"
-    if roots:
-        return "roots"
-    if laravel:
-        return "laravel"
-    if detection.has_blade:
-        return "uncertain"
-    return "none"
-
-
-def nearest_pkg(detection: Detection, rel_path: str) -> Pkg | None:
-    best: Pkg | None = None
-    for pkg in detection.packages:
-        root = pkg.rel
-        if root == "" or rel_path == root or rel_path.startswith(root + "/"):
-            if best is None or len(root) > len(best.rel):
-                best = pkg
-    return best
-
-
-def styling_label(pkg: Pkg) -> str:
-    parts: list[str] = []
-    if pkg.tailwind or pkg.tailwind_config:
-        declared = pkg.tailwind or "config"
-        parts.append(f"tailwindcss {declared}")
-    if pkg.bootstrap:
-        parts.append(f"bootstrap {pkg.bootstrap}")
-    parts.extend(pkg.other_styling)
-    return ", ".join(parts) if parts else "no styling package"
-
-
-def package_uses_tailwind(pkg: Pkg) -> bool:
-    return bool(pkg.tailwind or pkg.tailwind_config)
-
-
-def package_other_styling(pkg: Pkg) -> bool:
-    return bool(pkg.bootstrap or pkg.other_styling)
-
-
-def tailwind_scope(detection: Detection, rel_path: str, text: str | None) -> tuple[bool, str]:
-    if rel_path.endswith(".module.css") or rel_path.endswith(".module.scss"):
-        return False, "CSS Modules file; Tailwind custom-CSS check not applied"
-    pkg = nearest_pkg(detection, rel_path)
-    if pkg is not None and package_uses_tailwind(pkg):
-        where = pkg.rel or "."
-        return True, f"package {where} ({styling_label(pkg)})"
-    if pkg is not None and package_other_styling(pkg) and not package_uses_tailwind(pkg):
-        where = pkg.rel or "."
-        return False, f"package {where} uses {styling_label(pkg)} without Tailwind"
-    # Inherit an ancestor Tailwind package when no nearer package picks another system.
-    rel_dir = os.path.dirname(rel_path)
-    while True:
-        ancestor = nearest_pkg(detection, rel_dir if rel_dir not in ("", ".") else ".")
-        if ancestor is not None and ancestor.rel != (pkg.rel if pkg else None):
-            if package_uses_tailwind(ancestor) and not (
-                pkg is not None and package_other_styling(pkg)
-            ):
-                where = ancestor.rel or "."
-                return True, f"ancestor package {where} ({styling_label(ancestor)})"
-            if package_other_styling(ancestor) and not package_uses_tailwind(ancestor):
-                break
-        if rel_dir in ("", "."):
-            break
-        parent = os.path.dirname(rel_dir)
-        if parent == rel_dir:
-            break
-        rel_dir = parent
-    if text is not None and TAILWIND_ENTRY_RE.search(text):
-        return True, "this file is a Tailwind entry or theme file"
-    return False, "no Tailwind package, config, or entry file covers this CSS"
-
-
 def is_template(rel_path: str) -> bool:
     lower = rel_path.replace("\\", "/").lower()
     if "/view/composers/" in lower or "/view/components/" in f"/{lower}":
@@ -504,6 +288,35 @@ def is_template(rel_path: str) -> bool:
 def is_component_file(rel_path: str) -> bool:
     lower = rel_path.lower()
     return lower.endswith(COMPONENT_SUFFIXES)
+
+
+def template_mode_for(detection: Detection, rel_path: str) -> tuple[str, str]:
+    """Return the template mode and the package boundary that selected it.
+
+    The walk uses Composer framework evidence only. A nested package.json
+    does not erase an ancestor laravel/framework or Roots package. A sibling
+    package is not an ancestor, so its framework does not apply here.
+    """
+    rel_path = rel_path.replace("\\", "/")
+    by_rel = {pkg.rel: pkg for pkg in detection.packages}
+    current = os.path.dirname(rel_path)
+    while True:
+        key = "" if current in ("", ".") else current
+        pkg = by_rel.get(key)
+        if pkg is not None:
+            mode = composer_mode(pkg)
+            if mode is not None:
+                return mode, (key or ".")
+        if key == "":
+            break
+        parent = os.path.dirname(key)
+        if parent == current:
+            break
+        current = parent
+    if is_template(rel_path):
+        boundary = os.path.dirname(rel_path) or "."
+        return "uncertain", boundary
+    return "none", "."
 
 
 def blank_span(chars: list[str], start: int, end: int) -> None:
@@ -1077,6 +890,52 @@ def skip_css_ws(text: str, index: int, end: int) -> int:
     return index
 
 
+def skip_string_bounded(text: str, index: int, end: int) -> int:
+    quote = text[index]
+    index += 1
+    while index < end:
+        if text[index] == "\\":
+            index = min(end, index + 2)
+            continue
+        if text[index] == quote:
+            return index + 1
+        index += 1
+    return end
+
+
+def css_at_boundary(text: str, index: int, end: int) -> tuple[str, int]:
+    """Find the end of an at-rule prelude, respecting strings, comments, and parentheses.
+
+    Returns ("block", index of "{") or ("statement", index after ";").
+    A prelude such as `@media (min-width: 768px)` is not treated as a statement
+    merely because a later declaration contains a semicolon.
+    """
+    depth = 0
+    while index < end:
+        if text.startswith("/*", index):
+            stop = text.find("*/", index + 2)
+            index = end if stop < 0 else min(end, stop + 2)
+            continue
+        char = text[index]
+        if char in ("'", '"'):
+            index = skip_string_bounded(text, index, end)
+            continue
+        if char == "(":
+            depth += 1
+            index += 1
+            continue
+        if char == ")" and depth > 0:
+            depth -= 1
+            index += 1
+            continue
+        if depth == 0 and char == "{":
+            return "block", index
+        if depth == 0 and char == ";":
+            return "statement", index + 1
+        index += 1
+    return "statement", end
+
+
 def scan_css_range(
     text: str,
     start: int,
@@ -1100,11 +959,10 @@ def scan_css_range(
                 continue
             name = match.group(1).lower()
             cursor = index + match.end()
-            cursor = skip_css_ws(text, cursor, end)
-            if name == "apply" and not in_keyframes:
-                semi = text.find(";", cursor)
-                apply_end = end if semi < 0 else semi
-                utilities = text[cursor:apply_end].strip()
+            kind, boundary = css_at_boundary(text, cursor, end)
+            if name == "apply" and not in_keyframes and kind == "statement":
+                stop = boundary - 1 if boundary > cursor and text[boundary - 1 : boundary] == ";" else boundary
+                utilities = text[cursor:stop].strip()
                 findings.append(
                     Finding(
                         path=rel_path,
@@ -1113,14 +971,14 @@ def scan_css_range(
                         detail=f"@apply {utilities}".strip(),
                     )
                 )
-                index = end if semi < 0 else semi + 1
+                index = boundary
                 continue
-            if cursor < end and text[cursor] == "{":
-                body, after = read_css_block(text, cursor)
+            if kind == "block":
+                _body, after = read_css_block(text, boundary)
                 if name not in SKIP_AT_BLOCKS:
                     scan_css_range(
                         text,
-                        cursor + 1,
+                        boundary + 1,
                         after - 1,
                         rel_path,
                         in_keyframes or name == "keyframes",
@@ -1128,8 +986,7 @@ def scan_css_range(
                     )
                 index = after
                 continue
-            semi = text.find(";", index)
-            index = end if semi < 0 else semi + 1
+            index = boundary
             continue
         selector_start = index
         selector_chars: list[str] = []
@@ -1223,21 +1080,56 @@ def component_summary(detection: Detection) -> str:
     return "not applicable"
 
 
-def template_summary(detection: Detection, mode: str) -> str:
+def template_summary(mode: str, pkg: Pkg | None = None) -> str:
     if mode == "laravel":
-        versions = sorted({pkg.laravel for pkg in detection.packages if pkg.laravel})
-        return "applicable (laravel/framework " + ", ".join(versions) + " declared)"
+        version = pkg.laravel if pkg is not None and pkg.laravel else "declared"
+        return f"applicable (laravel/framework {version} declared)"
     if mode == "roots":
-        roots = sorted(item for pkg in detection.packages for item in pkg.roots)
-        return "applicable (" + ", ".join(roots) + ")"
+        roots = ", ".join(pkg.roots) if pkg is not None and pkg.roots else "Roots/Sage/Acorn"
+        return f"applicable ({roots})"
     if mode == "laravel+roots":
         return "applicable (Laravel and Roots/Sage packages declared)"
     if mode == "uncertain":
         return (
-            "uncertain (Blade templates found, no Laravel or Roots package detected); "
+            "uncertain (Blade or PHP view found, no Laravel or Roots package in this package or an ancestor); "
             "Eloquent and DB query checks still run; WordPress template tags were not failed"
         )
     return "not applicable"
+
+
+def template_profile_lines(detection: Detection, rel_paths: list[str]) -> tuple[list[str], set[str]]:
+    template_paths = [rel for rel in rel_paths if is_template(rel)]
+    if not template_paths:
+        frameworks = [(pkg, composer_mode(pkg)) for pkg in detection.packages if composer_mode(pkg)]
+        if not frameworks and not detection.has_blade:
+            return ["template: not applicable"], {"none"}
+        if not frameworks:
+            return [
+                "template: uncertain (Blade templates exist outside this scan); no template files in this scan"
+            ], {"uncertain"}
+        lines: list[str] = []
+        modes: set[str] = set()
+        for pkg, mode in frameworks:
+            if mode is None or mode in modes:
+                continue
+            modes.add(mode)
+            where = pkg.rel or "."
+            lines.append(
+                f"template: {template_summary(mode, pkg)} at {where}; no template files in this scan"
+            )
+        return lines, modes
+    lines = []
+    modes = set()
+    seen: set[tuple[str, str]] = set()
+    for rel in template_paths:
+        mode, boundary = template_mode_for(detection, rel)
+        modes.add(mode)
+        if (mode, boundary) in seen:
+            continue
+        seen.add((mode, boundary))
+        pkg = next((item for item in detection.packages if (item.rel or ".") == boundary), None)
+        lines.append(f"template: {template_summary(mode, pkg)} at {boundary}")
+    return lines, modes
 
 
 def tailwind_summary(detection: Detection) -> str:
@@ -1401,16 +1293,17 @@ def format_finding(finding: Finding) -> str:
     )
 
 
-def scan_file(rel_path: str, text: str, detection: Detection, mode: str) -> tuple[list[Finding], str | None]:
+def scan_file(rel_path: str, text: str, detection: Detection) -> tuple[list[Finding], str | None]:
     if is_component_file(rel_path):
         return [], None
     findings: list[Finding] = []
     skip_reason = None
+    mode, _boundary = template_mode_for(detection, rel_path)
     if is_template(rel_path) and mode != "none":
         findings.extend(scan_template(rel_path, text, mode))
     if rel_path.lower().endswith((".css", ".scss")):
-        in_scope, reason = tailwind_scope(detection, rel_path, text)
-        if in_scope:
+        status, reason = tailwind_scope(detection, rel_path, text)
+        if status == "applicable":
             findings.extend(scan_css(rel_path, text))
         else:
             skip_reason = reason
@@ -1434,13 +1327,14 @@ def collect_paths(root: str, explicit: list[str] | None, scan_all: bool) -> tupl
     return paths, "explicit files"
 
 
-def print_header(root: str, detection: Detection, mode: str, scope: str, count: int) -> None:
+def print_header(root: str, detection: Detection, profile_lines: list[str], scope: str, count: int) -> None:
     print("=== Stack-native architecture ===")
     print(f"Target: {root}")
     print(f"Scope: {scope} ({count} files)")
     print("")
     print("Profiles:")
-    print(f"  template: {template_summary(detection, mode)}")
+    for line in profile_lines:
+        print(f"  {line}")
     print(f"  component: {component_summary(detection)}")
     print(f"  tailwind: {tailwind_summary(detection)}")
     print("")
@@ -1448,19 +1342,21 @@ def print_header(root: str, detection: Detection, mode: str, scope: str, count: 
 
 def print_coverage(
     detection: Detection,
-    mode: str,
+    modes: set[str],
     template_files: int,
     component_files: int,
     css_checked: int,
     css_skipped: list[str],
+    tailwind_uncertain: list[str],
 ) -> None:
     print("Checks:")
-    if mode == "none":
-        print("  template-query: not applicable")
-        print("  template-preparation: not applicable")
-    elif template_files == 0:
-        print("  template-query: no template files in this scan")
-        print("  template-preparation: no template files in this scan")
+    if template_files == 0 or modes <= {"none"}:
+        if template_files == 0 and modes <= {"none"}:
+            print("  template-query: not applicable")
+            print("  template-preparation: not applicable")
+        else:
+            print("  template-query: no template files in this scan")
+            print("  template-preparation: no template files in this scan")
     else:
         print(f"  template-query: executed ({template_files} file(s))")
         print(f"  template-preparation: executed ({template_files} file(s))")
@@ -1479,15 +1375,28 @@ def print_coverage(
         print("  component-mvc: not applied (no component files in this scan)")
     print("")
     print("Coverage:")
-    if mode == "uncertain":
+    if "uncertain" in modes:
         print("  WordPress template tags: not failed, because the view convention is uncertain")
+    if "roots" in modes or "laravel+roots" in modes:
+        print("  Roots field reads: applied only in packages that declare Roots, Sage, or Acorn")
     if detection.unsupported_templates:
         suffixes = ", ".join(sorted(detection.unsupported_templates))
         print(f"  Unsupported template types present and not checked: {suffixes}")
     if css_skipped:
         unique = sorted(set(css_skipped))
         print(f"  Tailwind custom-CSS check skipped {len(css_skipped)} file(s): {'; '.join(unique)}")
-    if mode != "uncertain" and not detection.unsupported_templates and not css_skipped:
+    if tailwind_uncertain:
+        unique_uncertain = sorted(set(tailwind_uncertain))
+        print(
+            "  Tailwind scope uncertain; rules were not applied to "
+            f"{len(unique_uncertain)} file(s): {'; '.join(unique_uncertain)}"
+        )
+    if (
+        "uncertain" not in modes
+        and not detection.unsupported_templates
+        and not css_skipped
+        and not tailwind_uncertain
+    ):
         print("  No additional unsupported template or styling scope in this scan")
     print("")
 
@@ -1510,10 +1419,11 @@ def print_closer(failures: int, reviews: int) -> None:
 
 def run_check(root: str, rel_paths: list[str], scope: str) -> int:
     detection = detect(root)
-    mode = template_mode(detection)
-    print_header(root, detection, mode, scope, len(rel_paths))
+    profile_lines, modes = template_profile_lines(detection, rel_paths)
+    print_header(root, detection, profile_lines, scope, len(rel_paths))
     counts = {"template": 0, "component": 0, "css": 0}
     skipped: list[str] = []
+    tailwind_uncertain: list[str] = []
     baseline, invalid_baseline = load_baseline(root)
     baselined = 0
     kept: list[Finding] = []
@@ -1533,14 +1443,18 @@ def run_check(root: str, rel_paths: list[str], scope: str) -> int:
             counts["template"] += 1
         if is_component_file(rel):
             counts["component"] += 1
+        status, reason = tailwind_scope(detection, rel, text)
         if rel.lower().endswith((".css", ".scss")):
-            in_scope, reason = tailwind_scope(detection, rel, text)
-            if in_scope:
+            if status == "applicable":
                 counts["css"] += 1
+            elif status == "uncertain":
+                tailwind_uncertain.append(f"{rel}: {reason}")
             else:
                 skipped.append(f"{rel}: {reason}")
+        elif status == "uncertain":
+            tailwind_uncertain.append(f"{rel}: {reason}")
         lines = text.splitlines() or [""]
-        file_findings, _skip = scan_file(rel, text, detection, mode)
+        file_findings, _skip = scan_file(rel, text, detection)
         reviewed, used = apply_policy(file_findings, lines, baseline)
         baselined += used
         for finding in reviewed:
@@ -1554,7 +1468,15 @@ def run_check(root: str, rel_paths: list[str], scope: str) -> int:
                 )
             kept.append(finding)
     kept.extend(invalid_baseline)
-    print_coverage(detection, mode, counts["template"], counts["component"], counts["css"], skipped)
+    print_coverage(
+        detection,
+        modes,
+        counts["template"],
+        counts["component"],
+        counts["css"],
+        skipped,
+        tailwind_uncertain,
+    )
     if baselined:
         print(f"Baselined: {baselined} existing finding(s) matched an explicit baseline entry.")
     scanned_paths = set(rel_paths)
@@ -1582,8 +1504,8 @@ def run_check(root: str, rel_paths: list[str], scope: str) -> int:
     return 1 if failures else 0
 
 
-def findings_for_text(rel: str, text: str, detection: Detection, mode: str) -> list[Finding]:
-    file_findings, _skip = scan_file(rel, text, detection, mode)
+def findings_for_text(rel: str, text: str, detection: Detection) -> list[Finding]:
+    file_findings, _skip = scan_file(rel, text, detection)
     lines = text.splitlines() or [""]
     # Baseline generation records unsuppressed committed findings, including
     # ones a marker would hide, so a marker is not required in old code.
@@ -1610,7 +1532,6 @@ def write_baseline(root: str) -> int:
         )
         return 2
     detection = detect(root)
-    mode = template_mode(detection)
     tracked = git_stdout(root, ["ls-files"])
     if tracked is None:
         print("Error: git ls-files failed.", file=sys.stderr)
@@ -1626,7 +1547,7 @@ def write_baseline(root: str) -> int:
         if len(head) > MAX_FILE_CHARS:
             print(f"NOTE  {rel}: skipped (HEAD file exceeds {MAX_FILE_CHARS} characters)")
             continue
-        for finding in findings_for_text(rel, head, detection, mode):
+        for finding in findings_for_text(rel, head, detection):
             entries.append((rel, finding.line, finding.kind, finding.detail))
         full = os.path.join(root, rel)
         if not os.path.isfile(full):
@@ -1636,9 +1557,9 @@ def write_baseline(root: str) -> int:
             continue
         head_keys = {
             (item.line, item.kind, item.detail)
-            for item in findings_for_text(rel, head, detection, mode)
+            for item in findings_for_text(rel, head, detection)
         }
-        for finding in findings_for_text(rel, working, detection, mode):
+        for finding in findings_for_text(rel, working, detection):
             key = (finding.line, finding.kind, finding.detail)
             if key not in head_keys:
                 working_only.append(finding)

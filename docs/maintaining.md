@@ -139,8 +139,11 @@ Bootstrapped project:
 
 For copy, template, component, or styling work in a project, run
 `scripts/check-guardrails.sh` from that project before treating the
-task as done. Lint, tests, and build passing do not imply that check
-ran, and a passing check does not prove architecture compliance.
+task as done. CI runs the same checkers through `scripts/ci-guardrails.sh`
+on the pull request or push range, from a checkout of this harness, not
+from the project's absolute symlink. Lint, tests, and build passing do
+not imply that check ran, and a passing check does not prove architecture
+compliance.
 Historical architecture findings can be recorded with
 `scripts/check-guardrails.sh --write-architecture-baseline` after review.
 That file is project-owned. Do not write it just to make a current task

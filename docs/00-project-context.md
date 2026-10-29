@@ -94,9 +94,10 @@ ChatGPT via `scripts/export-chatgpt-context.sh`.
   clarification (ADR 0006).
 - For copy, template, component, or styling work, `scripts/check-guardrails.sh`
   is part of DONE validation. It also reports stack-native architecture
-  findings for the detected profile. Lint, tests, build, and a passing
-  check do not prove architecture compliance. Contract:
-  `contracts/features/stack-native-architecture.md` (ADR 0011).
+  findings for the file's detected package, including uncertain coverage.
+  New projects run the same checks in CI from a harness checkout. Lint,
+  tests, build, and a passing check do not prove architecture compliance.
+  Contract: `contracts/features/stack-native-architecture.md` (ADR 0011).
 - User-global Cursor MCP (Playwright MCP, BrowserMCP) is configured in
   Cursor, not by bootstrap. Additional MCPs are not bootstrap
   dependencies. See `mcp/README.md`.

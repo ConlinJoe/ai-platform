@@ -262,7 +262,8 @@ prompts for a target path.
 | `skills-lock.json` | Symlink to this clone |
 | Locked skills | Copied into `.agents/skills/` (`npx skills experimental_install`) when missing; requires network |
 | `docs/` | Copied from templates if `docs/README.md` is missing; existing docs are not overwritten |
-| `.github/` Issue/PR templates | Not copied; existing GitHub files are not overwritten |
+| `.github/` Issue/PR templates | Not copied; existing Issue and PR templates are not overwritten |
+| `.github/workflows/guardrails.yml` | Added for a new project when missing. Existing projects are not given the file; bootstrap prints the copy step and does not overwrite other workflows. CI checks out this harness and scans the revision range |
 | Existing projects | May add missing drafts: `working-mode.md`, `99-project-status.md`, `platform-reconciliation.md`, `public-submissions.md`, Laravel `browser-qa.md` |
 | `.cursor/rules/90-*.mdc` | Not created; project-owned if you add them later |
 | Application code, Composer, npm, WordPress plugins | Not modified / not installed, except optional Deployer may declare `deployer/deployer` in `require-dev` without running Composer |
@@ -272,7 +273,9 @@ prompts for a target path.
 
 Bootstrap does not write `docs/architecture-baseline.txt`. New projects
 run stack-native checks through the linked `scripts/check-guardrails.sh`
-with no baseline. See
+with no baseline, and they receive `.github/workflows/guardrails.yml`
+when that file is missing. That workflow checks out this harness. It does
+not call the project's absolute script symlink. See
 [stack-native architecture](contracts/features/stack-native-architecture.md).
 
 Bootstrap is safe to re-run. Shared Cursor rules update immediately

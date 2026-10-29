@@ -72,7 +72,15 @@ appear in newly written or modified application sources.
 Fails on bracket utilities in the typography, spacing, and sizing
 families, including `text-[…]`, `p-[…]` / `px-[…]` / `m-[…]` /
 `mt-[…]`, `gap-[…]`, `w-[…]` / `h-[…]`, and comparable `min-` /
-`max-` size utilities, including responsive/state variants.
+`max-` size utilities, including responsive/state variants, only when
+the file is inside a Tailwind scope. Scope detection is the same package
+boundary as `stack-native-architecture.md`. Bootstrap, plain CSS, CSS
+Modules, and a nested package that declares another styling system do
+not receive this check. A nested npm manifest with no styling system
+still inherits an ancestor Tailwind package. A file outside every
+Tailwind package, while another package in the repository uses Tailwind,
+is uncertain: the arbitrary-utility check does not run, and the report
+says so. Em dashes are still checked in every in-scope file.
 
 Does not ban all bracket syntax. Arbitrary properties, colors outside
 those prefixes, and theme tokens such as `@theme { --text-display:

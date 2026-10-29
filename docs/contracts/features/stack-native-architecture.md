@@ -38,7 +38,7 @@ Apply only the profiles that evidence supports.
 
 | Evidence | Profile |
 | --- | --- |
-| `laravel/framework`, `roots/acorn`, `roots/sage`, or `roots/radicle` in a Composer manifest, or Blade files | Template profile. WordPress template tags are failed only when a Roots/Sage/Acorn package is declared. Blade without one of those packages is uncertain: Eloquent and `DB::` checks still run, and the report says WordPress tags were not failed. |
+| `laravel/framework`, `roots/acorn`, `roots/sage`, or `roots/radicle` in the file's ancestor Composer manifest, or Blade / `resources/views` PHP | Template profile for that package. A sibling package does not change it. A nested `package.json` does not hide the ancestor Composer framework. WordPress template tags are failed only when that file's package declares Roots, Sage, or Acorn. A view with none of those packages is uncertain: Eloquent and `DB::` checks still run, and the report says WordPress tags were not failed. |
 | `react`, `vue`, `svelte`, `preact`, `solid-js`, or `@angular/core` | Component profile. MVC template restrictions are not applied to component files. |
 | JSX, TSX, Vue, or Svelte files without one of those dependencies | Component profile is uncertain. MVC restrictions are still not applied. |
 | `tailwindcss` in a package manifest, a Tailwind config file, or a Tailwind entry (`@import "tailwindcss"`, `@tailwind`, `@theme`) | Tailwind styling profile for that package scope. |
@@ -47,8 +47,10 @@ Apply only the profiles that evidence supports.
 
 A Tailwind dependency at the root does not cover a nested package that
 declares a different styling system. A directory with no styling package
-inherits an ancestor Tailwind package. The check reports the scope it
-used.
+inherits an ancestor Tailwind package. A nested npm manifest does not
+erase that ancestor. A file outside every Tailwind package is uncertain
+when Tailwind exists elsewhere: the Tailwind checks do not run, and the
+report says so. The check reports the scope it used.
 
 Other template languages (Twig, Nunjucks, ERB, Razor, Haml, Slim) are
 reported as unsupported. They are not failed by PHP or Blade rules.
@@ -107,8 +109,10 @@ scripts/check-guardrails.sh
 From the AI Platform clone, pass the project root. Default scope is
 git-changed and untracked files. `--all`, `--since`, and `--files` match
 the copy check. Doctor links the script and does not run the scan.
-Bootstrap does not add a CI workflow. A project that already runs this
-script locally or in CI runs the architecture check on that same path.
+Local DONE validation uses this command. CI uses
+`scripts/ci-guardrails.sh` with an explicit base revision so a clean
+checkout does not treat an empty `HEAD` diff as a scan of the pull
+request. See "New and existing projects" below.
 
 Every run reports applicable profiles, executed checks, and unsupported
 or uncertain coverage. It does not stay silent when a profile is skipped.
@@ -134,7 +138,8 @@ Inline template expressions may format prepared data. Those helper calls
 are not failed unless they match a query, persistence, or service-location
 pattern.
 
-In a Tailwind scope:
+In a Tailwind scope, including when the ruleset is nested in `@media`,
+`@supports`, or `@layer`:
 
 - `@apply` inside application CSS
 - A single-class ruleset whose declarations all map to standard utilities
@@ -232,15 +237,26 @@ Do not describe that review as proof that every architectural decision is correc
 
 ## New and existing projects
 
-New bootstraps link the rules and the check script. Fresh sessions read
-the always-on principle in `00-platform` and `core/agent-core.md`. No
-baseline file is created. Enforcement does not depend on the wording of
-an implementation prompt.
+New bootstraps link the rules and the check script, and they add
+`.github/workflows/guardrails.yml` when that file is missing. The
+workflow checks out `https://github.com/ConlinJoe/ai-platform` and runs
+`scripts/ci-guardrails.sh` with the pull request base SHA or the push
+`before` SHA. It does not call the project's `scripts/check-guardrails.sh`
+symlink. That symlink is an absolute path to a developer checkout and
+does not exist on a CI runner. A missing or all-zero base revision fails
+the job instead of scanning nothing. Fresh sessions read the always-on
+principle in `00-platform` and `core/agent-core.md`. No baseline file is
+created. Enforcement does not depend on the wording of an implementation
+prompt.
 
 Existing projects receive rule edits and the check script through
 symlinks already in the project. Re-run bootstrap once so doctor links
 `21-stack-architecture.mdc`. Re-bootstrap does not rewrite application
-code and does not write a baseline.
+code, does not write a baseline, and does not overwrite an existing
+workflow. If `.github/workflows/guardrails.yml` is missing, bootstrap and
+doctor print the copy command and leave every other workflow file alone.
+Commit that copied file to turn CI on. Until then, CI does not scan the
+repository.
 
 The explicit adoption step, when historical findings should remain while
 new ones fail, is to inventory with `--all`, then write and commit a
