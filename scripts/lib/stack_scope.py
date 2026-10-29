@@ -48,6 +48,7 @@ class Pkg:
     laravel: str | None = None
     roots: list[str] = field(default_factory=list)
     tailwind_config: bool = False
+    has_composer: bool = False
 
 
 @dataclass
@@ -149,10 +150,11 @@ def detect(root: str) -> Detection:
                     if version is not None:
                         pkg.components.setdefault(label, version)
             if filename == "composer.json":
+                pkg = pkg_for(rel_dir)
+                pkg.has_composer = True
                 data = load_json(os.path.join(dirpath, filename))
                 if data is None:
                     continue
-                pkg = pkg_for(rel_dir)
                 require: dict = {}
                 for key in ("require", "require-dev"):
                     section = data.get(key)

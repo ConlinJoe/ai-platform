@@ -303,40 +303,6 @@ install_guardrail_workflow() {
   echo "CI checks out the harness repository and scans the revision range. It does not use the local absolute symlink."
 }
 
-install_guardrail_workflow() {
-  echo ""
-  echo "--- Guardrail CI workflow ---"
-
-  local source="${AI_REPO}/templates/github/workflows/guardrails.yml"
-  local dest="${TARGET_PROJECT}/.github/workflows/guardrails.yml"
-  local mode="${BOOTSTRAP_MODE:-$(project_bootstrap_mode "${TARGET_PROJECT}")}"
-
-  if [[ ! -f "${source}" ]]; then
-    echo "Warning: guardrail workflow template missing: ${source}" >&2
-    return 0
-  fi
-
-  if [[ -e "${dest}" ]]; then
-    echo "Guardrail workflow already present: ${dest}"
-    echo "Not overwriting existing GitHub Actions files."
-    return 0
-  fi
-
-  if [[ "${mode}" == "existing" ]]; then
-    echo "Guardrail CI workflow is missing: ${dest}"
-    echo "Existing project: not writing it, and not changing other workflows."
-    echo "Integration step: copy ${source} to ${dest} and commit that file."
-    echo "The workflow checks out https://github.com/ConlinJoe/ai-platform and runs scripts/ci-guardrails.sh with the pull request base or push before revision."
-    echo "Do not invoke the project's scripts/check-guardrails.sh in CI. That symlink is an absolute path to a developer checkout."
-    return 0
-  fi
-
-  mkdir -p "$(dirname "${dest}")"
-  cp "${source}" "${dest}"
-  echo "Added guardrail workflow: ${dest}"
-  echo "CI checks out the harness repository and scans the revision range. It does not use the local absolute symlink."
-}
-
 # ---------------------------------------------------------------------------
 # Bootstrap documentation contract templates
 # ---------------------------------------------------------------------------
@@ -1241,7 +1207,6 @@ report_capabilities() {
   echo ""
   echo "GitHub CLI (gh) is optional. Bootstrap does not install or authenticate it."
   echo "Bootstrap does not copy or overwrite .github/ Issue or PR templates."
-  echo "New projects receive .github/workflows/guardrails.yml when that file is missing. Existing workflows are not overwritten."
   echo "New projects receive .github/workflows/guardrails.yml when that file is missing. Existing workflows are not overwritten."
   echo "Deployer is an optional capability. Installing it does not authorize deployment."
   if video_is_harness_managed "${TARGET_PROJECT}"; then

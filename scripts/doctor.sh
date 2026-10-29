@@ -311,16 +311,6 @@ check_project_links() {
     warn "CI checks out https://github.com/ConlinJoe/ai-platform and runs scripts/ci-guardrails.sh. Do not call the project's absolute check-guardrails.sh symlink."
   fi
 
-  local guardrail_workflow="${target}/.github/workflows/guardrails.yml"
-  local guardrail_template="${AI_REPO}/templates/github/workflows/guardrails.yml"
-  if [[ -f "${guardrail_workflow}" ]]; then
-    ok "Guardrail CI workflow present"
-  else
-    warn "Guardrail CI workflow is missing: ${guardrail_workflow}"
-    warn "Integration step: copy ${guardrail_template} to ${guardrail_workflow} and commit that file. Do not overwrite other workflow files."
-    warn "CI checks out https://github.com/ConlinJoe/ai-platform and runs scripts/ci-guardrails.sh. Do not call the project's absolute check-guardrails.sh symlink."
-  fi
-
   if [[ -e "${target}/AGENTS.md" || -L "${target}/AGENTS.md" ]]; then
     ok "AGENTS.md present"
   else

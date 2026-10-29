@@ -185,6 +185,24 @@ if python3 -m py_compile "${AI_REPO}/scripts/lib/stack_scope.py"; then
 else
   fail "python3 -m py_compile stack_scope.py"
 fi
+workflow_defs="$(grep -c '^install_guardrail_workflow()' "${AI_REPO}/scripts/bootstrap-project.sh" || true)"
+if [[ "${workflow_defs}" -eq 1 ]]; then
+  pass "bootstrap defines install_guardrail_workflow once"
+else
+  fail "bootstrap defines install_guardrail_workflow once (count=${workflow_defs})"
+fi
+workflow_messages="$(grep -c 'New projects receive \.github/workflows/guardrails.yml when that file is missing' "${AI_REPO}/scripts/bootstrap-project.sh" || true)"
+if [[ "${workflow_messages}" -eq 1 ]]; then
+  pass "bootstrap states the new-project guardrail workflow once"
+else
+  fail "bootstrap states the new-project guardrail workflow once (count=${workflow_messages})"
+fi
+doctor_workflow="$(grep -c 'Guardrail CI workflow present' "${AI_REPO}/scripts/doctor.sh" || true)"
+if [[ "${doctor_workflow}" -eq 1 ]]; then
+  pass "doctor checks the guardrail workflow once"
+else
+  fail "doctor checks the guardrail workflow once (count=${doctor_workflow})"
+fi
 if python3 -m py_compile "${AI_REPO}/scripts/video/validate.py"; then
   pass "python3 -m py_compile validate.py"
 else
@@ -2202,6 +2220,117 @@ then
   pass "previous repository-wide template mode leaks Roots checks and the current mode does not"
 else
   fail "previous repository-wide template mode leaks Roots checks and the current mode does not"
+fi
+
+mkdir -p \
+  "${ARCH}/composer-boundary/resources/views" \
+  "${ARCH}/composer-boundary/packages/standalone/resources/views" \
+  "${ARCH}/composer-boundary/packages/standalone/src" \
+  "${ARCH}/composer-boundary/packages/sibling/resources/views"
+cat > "${ARCH}/composer-boundary/composer.json" <<'EOF'
+{"require":{"roots/acorn":"^5.0"}}
+EOF
+cat > "${ARCH}/composer-boundary/resources/package.json" <<'EOF'
+{"private":true}
+EOF
+cat > "${ARCH}/composer-boundary/resources/views/hero.blade.php" <<'EOF'
+<h1>{{ get_field('title') }}</h1>
+EOF
+cat > "${ARCH}/composer-boundary/packages/standalone/composer.json" <<'EOF'
+{"require":{"illuminate/view":"^11.0"}}
+EOF
+cat > "${ARCH}/composer-boundary/packages/standalone/resources/views/example.blade.php" <<'EOF'
+<p>{{ get_field('title') }}</p>
+<p>{{ \App\Models\Post::where('status', 'published')->first() }}</p>
+EOF
+cat > "${ARCH}/composer-boundary/packages/standalone/src/Card.tsx" <<'EOF'
+import { useState } from "react";
+export function Card() {
+  const [open, setOpen] = useState(false);
+  return <button onClick={() => setOpen(!open)}>{open ? "open" : "closed"}</button>;
+}
+EOF
+cat > "${ARCH}/composer-boundary/packages/sibling/composer.json" <<'EOF'
+{"require":{"laravel/framework":"^11.0"}}
+EOF
+cat > "${ARCH}/composer-boundary/packages/sibling/resources/views/page.blade.php" <<'EOF'
+<p>{{ get_field('title') }}</p>
+<p>{{ \App\Models\Estate::where('published', true)->first() }}</p>
+EOF
+if "${AI_REPO}/scripts/check-guardrails.sh" "${ARCH}/composer-boundary" --files \
+  resources/views/hero.blade.php \
+  packages/standalone/resources/views/example.blade.php \
+  packages/standalone/src/Card.tsx \
+  packages/sibling/resources/views/page.blade.php \
+  >"${LOGDIR}/arch-composer-boundary.log" 2>&1; then
+  fail "independent Composer package still fails its own Eloquent query"
+else
+  pass "independent Composer package still fails its own Eloquent query"
+fi
+assert_grep 'resources/views/hero.blade.php:1: template-query: field read' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "a Roots view at the root still fails a field read"
+assert_grep 'at \.' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "the root Roots package is reported at the root boundary"
+assert_not_grep 'packages/standalone/resources/views/example.blade.php:1:' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "a nested Composer package without Roots does not inherit Roots field checks"
+assert_grep 'packages/standalone/resources/views/example.blade.php:2: template-query' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "a nested Composer package without Roots still fails an Eloquent query"
+assert_grep 'at packages/standalone' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "the independent Composer package is the reported template boundary"
+assert_grep 'template: uncertain' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "the independent Composer package is reported as uncertain"
+assert_not_grep 'packages/sibling/resources/views/page.blade.php:1:' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "a sibling Laravel package does not inherit the root Roots field check"
+assert_grep 'packages/sibling/resources/views/page.blade.php:2: template-query' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "a sibling Laravel package still fails its own Eloquent query"
+assert_grep 'at packages/sibling' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "the sibling Laravel package is reported at its own boundary"
+assert_grep 'MVC template restrictions were not used' \
+  "${LOGDIR}/arch-composer-boundary.log" \
+  "a React component inside the independent package stays exempt from MVC rules"
+assert_not_grep 'FAIL .*Card.tsx' "${LOGDIR}/arch-composer-boundary.log" \
+  "React component logic inside the independent package is not an MVC finding"
+if PYTHONPATH="${AI_REPO}/scripts/lib" python3 - "${ARCH}/composer-boundary" <<'PY'
+import sys
+from check_architecture import scan_template, template_mode_for
+from stack_scope import detect
+
+root = sys.argv[1]
+detection = detect(root)
+example = "packages/standalone/resources/views/example.blade.php"
+hero = "resources/views/hero.blade.php"
+sibling = "packages/sibling/resources/views/page.blade.php"
+mode, boundary = template_mode_for(detection, example)
+if (mode, boundary) != ("uncertain", "packages/standalone"):
+    raise SystemExit(f"standalone mode was {(mode, boundary)}")
+hero_mode, hero_boundary = template_mode_for(detection, hero)
+if (hero_mode, hero_boundary) != ("roots", "."):
+    raise SystemExit(f"root Roots view mode was {(hero_mode, hero_boundary)}")
+sibling_mode, sibling_boundary = template_mode_for(detection, sibling)
+if (sibling_mode, sibling_boundary) != ("laravel", "packages/sibling"):
+    raise SystemExit(f"sibling mode was {(sibling_mode, sibling_boundary)}")
+text = open(f"{root}/{example}", encoding="utf-8").read()
+inherited = scan_template(example, text, "roots")
+current = scan_template(example, text, mode)
+if not any("field read" in finding.detail for finding in inherited):
+    raise SystemExit("Roots mode did not flag get_field, so the regression no longer reproduces inheritance")
+if any("field read" in finding.detail for finding in current):
+    raise SystemExit("uncertain mode flagged get_field in the independent Composer package")
+print("composer boundary regression ok")
+PY
+then
+  pass "inheriting root Roots would flag the nested package, and the current boundary does not"
+else
+  fail "inheriting root Roots would flag the nested package, and the current boundary does not"
 fi
 
 cat > "${ARCH}/arbitrary/tailwind-app/package.json" <<'EOF'

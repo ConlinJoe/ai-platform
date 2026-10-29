@@ -38,7 +38,7 @@ Apply only the profiles that evidence supports.
 
 | Evidence | Profile |
 | --- | --- |
-| `laravel/framework`, `roots/acorn`, `roots/sage`, or `roots/radicle` in the file's ancestor Composer manifest, or Blade / `resources/views` PHP | Template profile for that package. A sibling package does not change it. A nested `package.json` does not hide the ancestor Composer framework. WordPress template tags are failed only when that file's package declares Roots, Sage, or Acorn. A view with none of those packages is uncertain: Eloquent and `DB::` checks still run, and the report says WordPress tags were not failed. |
+| Nearest `composer.json` for the file, or Blade / `resources/views` PHP with no Composer package | The nearest Composer manifest is the template boundary. `laravel/framework`, `roots/acorn`, `roots/sage`, or `roots/radicle` there selects that profile. A nested `package.json` does not hide that manifest. A nearer Composer package that does not declare one of those packages is uncertain and does not inherit an ancestor framework. A sibling package does not apply. WordPress template tags are failed only for a Roots, Sage, or Acorn package. Uncertain views still fail Eloquent and `DB::` checks, and the report says WordPress tags were not failed. |
 | `react`, `vue`, `svelte`, `preact`, `solid-js`, or `@angular/core` | Component profile. MVC template restrictions are not applied to component files. |
 | JSX, TSX, Vue, or Svelte files without one of those dependencies | Component profile is uncertain. MVC restrictions are still not applied. |
 | `tailwindcss` in a package manifest, a Tailwind config file, or a Tailwind entry (`@import "tailwindcss"`, `@tailwind`, `@theme`) | Tailwind styling profile for that package scope. |

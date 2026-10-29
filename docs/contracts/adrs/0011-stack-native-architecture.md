@@ -73,9 +73,10 @@ by exempting a whole file.
    files, or a whole modified file. New projects start with no baseline.
 9. The check uses the Python already required by the guardrail script. It
    does not install framework-specific tooling into unrelated projects.
-   Template mode is chosen per file from that file's ancestor Composer
-   package. A nested npm manifest does not hide that package, and a
-   sibling package does not leak into it.
+   Template mode is chosen per file from the nearest Composer manifest.
+   A nested npm manifest does not hide that manifest. A nearer Composer
+   package with no Laravel or Roots evidence is uncertain and does not
+   inherit an ancestor framework. A sibling package does not leak into it.
 10. Local verification stays `scripts/check-guardrails.sh`. New bootstraps
     add `.github/workflows/guardrails.yml` when it is missing. The workflow
     checks out this harness and runs `scripts/ci-guardrails.sh` on the pull

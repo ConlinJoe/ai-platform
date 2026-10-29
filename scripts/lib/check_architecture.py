@@ -291,11 +291,13 @@ def is_component_file(rel_path: str) -> bool:
 
 
 def template_mode_for(detection: Detection, rel_path: str) -> tuple[str, str]:
-    """Return the template mode and the package boundary that selected it.
+    """Return the template mode and the Composer package that selected it.
 
-    The walk uses Composer framework evidence only. A nested package.json
-    does not erase an ancestor laravel/framework or Roots package. A sibling
-    package is not an ancestor, so its framework does not apply here.
+    The nearest composer.json is the boundary. A package.json does not
+    count, so a nested npm manifest does not erase the enclosing Composer
+    framework. A Composer package with no Laravel or Roots evidence is
+    uncertain and does not inherit an ancestor framework. A sibling
+    package is not on the path, so its framework does not apply here.
     """
     rel_path = rel_path.replace("\\", "/")
     by_rel = {pkg.rel: pkg for pkg in detection.packages}
@@ -303,10 +305,14 @@ def template_mode_for(detection: Detection, rel_path: str) -> tuple[str, str]:
     while True:
         key = "" if current in ("", ".") else current
         pkg = by_rel.get(key)
-        if pkg is not None:
+        if pkg is not None and pkg.has_composer:
+            boundary = key or "."
             mode = composer_mode(pkg)
             if mode is not None:
-                return mode, (key or ".")
+                return mode, boundary
+            if is_template(rel_path):
+                return "uncertain", boundary
+            return "none", boundary
         if key == "":
             break
         parent = os.path.dirname(key)
@@ -1091,7 +1097,7 @@ def template_summary(mode: str, pkg: Pkg | None = None) -> str:
         return "applicable (Laravel and Roots/Sage packages declared)"
     if mode == "uncertain":
         return (
-            "uncertain (Blade or PHP view found, no Laravel or Roots package in this package or an ancestor); "
+            "uncertain (this view's package has no Laravel or Roots evidence); "
             "Eloquent and DB query checks still run; WordPress template tags were not failed"
         )
     return "not applicable"
