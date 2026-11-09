@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+Production deploys are operator-managed. The harness does not require
+a database or uploads backup check before an authorized deploy, and it
+does not add another approval or restore check. Git and Deployer keep
+the code history. Generated recipes set `keep_releases` to 3: the
+current release plus two previous releases. Server images, and
+recovery of databases or uploaded media, are the operator's
+responsibility. A Deployer rollback does not reverse database or
+upload changes. Releases already on a server are removed only when
+Deployer next runs its own cleanup. Decision: ADR 0012.
+
+Bootstrap ignore defaults stay project-specific. WordPress projects
+gain runtime upload and cache rules (`wp-content` or Bedrock/Radicle
+`web/app`) only when those paths are not already listed. An installed
+video workspace ignores raw photos, video binaries, renders, drafts,
+and temporary output under `video/`. Campaign source, specs, scripts,
+notes, and the ignore file stay eligible. Other projects do not gain a
+blanket `uploads/` or `outputs/` rule, and existing lines are not
+rewritten.
+
 Stack-native checks follow each file's package. Nested `@media`,
 `@supports`, and `@layer` rules are scanned. Arbitrary Tailwind utilities
 use that same scope, and em dashes stay universal. New projects receive

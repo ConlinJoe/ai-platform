@@ -59,23 +59,89 @@ with open(path, "w", encoding="utf-8") as handle:
 PY
 }
 
+video_ignore_rules() {
+  cat <<'EOF'
+/video/.runtime/
+/video/tmp/
+/video/campaigns/*/tmp/
+/video/campaigns/*/drafts/
+/video/campaigns/*/renders/
+/video/**/*.jpg
+/video/**/*.jpeg
+/video/**/*.heic
+/video/**/*.heif
+/video/**/*.tif
+/video/**/*.tiff
+/video/**/*.raw
+/video/**/*.cr2
+/video/**/*.cr3
+/video/**/*.nef
+/video/**/*.arw
+/video/**/*.dng
+/video/**/*.mp4
+/video/**/*.mov
+/video/**/*.m4v
+/video/**/*.mxf
+/video/**/*.avi
+/video/**/*.mkv
+/video/**/*.webm
+/video/**/*.mpg
+/video/**/*.mpeg
+/video/**/*.wmv
+/video/**/*.mts
+/video/**/*.tmp
+EOF
+}
+
 video_ensure_gitignore() {
   local gitignore="${1}/.gitignore"
   if [[ ! -f "${gitignore}" ]]; then
     touch "${gitignore}"
   fi
-  if grep -q 'video-production-ignore-start' "${gitignore}"; then
-    echo "Video render gitignore already present"
+
+  local missing=""
+  local rule token
+  while IFS= read -r rule; do
+    [[ -z "${rule}" ]] && continue
+    token="${rule#/}"
+    token="${token%/}"
+    if grep -qF "${token}" "${gitignore}"; then
+      continue
+    fi
+    missing+="${rule}"$'\n'
+  done < <(video_ignore_rules)
+
+  if [[ -z "${missing}" ]]; then
+    echo "Video production gitignore already present"
     return 0
   fi
-  cat >> "${gitignore}" <<'EOF'
 
-# video-production-ignore-start
-/video/.runtime/
-/video/campaigns/*/renders/
-# video-production-ignore-end
-EOF
-  echo "Added video render paths to ${gitignore}"
+  MISSING_RULES="${missing}" python3 - "${gitignore}" <<'PY'
+import os, pathlib, sys
+path = pathlib.Path(sys.argv[1])
+missing = os.environ["MISSING_RULES"].strip("\n")
+text = path.read_text(encoding="utf-8") if path.exists() else ""
+start = "# video-production-ignore-start"
+end = "# video-production-ignore-end"
+if end in text:
+    text = text.replace(end, missing + "\n" + end, 1)
+else:
+    if text and not text.endswith("\n"):
+        text += "\n"
+    block = (
+        "\n"
+        + start
+        + "\n"
+        + "# Generated media under video/. Campaign source, specs, scripts, and notes stay tracked.\n"
+        + missing
+        + "\n"
+        + end
+        + "\n"
+    )
+    text += block
+path.write_text(text, encoding="utf-8")
+PY
+  echo "Added video production paths to ${gitignore}"
 }
 
 video_link_into() {

@@ -14,7 +14,8 @@ video/bin/render video/campaigns/<slug>
 `video/bin/render` is a local render. It does not spend Scenario credits.
 It does not publish the file.
 
-Rendered masters, review copies, and the Playwright runtime are gitignored.
-Scene source, briefs, and brand files stay in the campaign directory.
+Raw photos, video binaries, drafts, renders, and temporary output under
+this workspace are gitignored. Scene source, specs, scripts, briefs, and
+brand notes stay in Git.
 
 One campaign must not reuse another campaign's `brand.md` or `assets/`.

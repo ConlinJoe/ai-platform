@@ -114,7 +114,7 @@ def detect(root: str) -> Detection:
             "storage",
         }]
         rel_dir = os.path.relpath(dirpath, root)
-        if rel_dir != "." and path_is_skipped(rel_dir):
+        if rel_dir != "." and path_is_skipped(rel_dir, root):
             dirnames[:] = []
             continue
         for filename in filenames:

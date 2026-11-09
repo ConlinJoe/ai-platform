@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-09
 source_of_truth_for:
   - Mechanical em-dash and Tailwind arbitrary-value guardrail check
   - Exception markers and invocation for consuming projects and agents
@@ -56,7 +56,30 @@ Blade, HTML, Vue, JSX/TSX, PHP, CSS, JS/TS, Twig, and translation JSON
 under `lang/` paths.
 
 Skipped path parts include `vendor/`, `node_modules/`, `.agents/`,
-`.cursor/`, `storage/`, and similar non-application trees.
+`.cursor/`, `storage/`, `design-reviews/` (temporary review comps), and
+similar non-application trees. These boundaries apply to full scans,
+explicit file lists, architecture checks, and stack detection alike.
+
+Composer-installed dependencies outside `vendor/` are excluded using
+each package's `install-path` in `vendor/composer/installed.json` (both
+Composer metadata formats are supported). Paths are resolved relative
+to the metadata directory. `config.vendor-dir` is respected, including
+in nested Composer packages. `extra.wordpress-install-dir` in a package
+manifest identifies the installed WordPress core tree even when its
+location is not `public/wp`.
+
+Exclusions match the exact installed path and its descendants, not
+similarly named siblings. A metadata path cannot exclude the project
+root or a location outside it. Missing or malformed metadata leaves
+unidentified files in scope. The check reads metadata only; it does not
+execute Composer. In a clean CI checkout without installed metadata,
+the manifest's WordPress directory still applies, while other
+unidentified plugin sources stay in scope.
+
+Do not exclude `public/`, plugin directories, or theme directories as a
+whole. First-party plugins, themes, and must-use files remain checked
+unless Composer identifies their installed copy as a dependency. A
+local package's source outside that installed copy remains in scope.
 
 ### Em dashes
 

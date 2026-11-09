@@ -39,10 +39,11 @@ model and templates from `templates/docs/`.
 | `contracts/adrs/0009-roots-upgrade-procedure.md` | adr | accepted | Decision to keep Roots upgrades in one procedure without changing an existing project's generation |
 | `contracts/adrs/0010-optional-video-production.md` | adr | accepted | Decision that video production is one optional capability with an original local renderer |
 | `contracts/adrs/0011-stack-native-architecture.md` | adr | accepted | Decision that architecture and styling checks follow the detected stack and run on the guardrail path |
+| `contracts/adrs/0012-operator-managed-production-recovery.md` | adr | accepted | Decision that production recovery of databases, media, and server images is operator-owned, and that code rollback is Git plus three Deployer releases |
 | `contracts/features/browser-qa.md` | feature | active | Browser QA policy, invocation, capability-aware visual verification, Playwright vs interactive distinction, applicability, isolation |
 | `contracts/features/copy-and-tailwind-guardrails.md` | feature | active | Mechanical em-dash and Tailwind arbitrary-value check, exceptions, DONE gating |
 | `contracts/features/stack-native-architecture.md` | feature | active | Stack detection, architecture and styling profiles, mechanical check, baseline, completion review |
-| `contracts/features/deployer.md` | feature | active | Optional Deployer capability, installer, server configuration, deploy authorization |
+| `contracts/features/deployer.md` | feature | active | Optional Deployer capability, installer, server configuration, deploy authorization, three-release code retention |
 | `contracts/features/laravel-boost.md` | feature | active | Boost capability, detection, bootstrap/doctor |
 | `contracts/features/work-item-lifecycle.md` | feature | active | Capture-don't-expand, Issues/PRs, approval boundaries, optional gh |
 | `contracts/features/spam-and-abuse-protection.md` | feature | active | Public submission spam and abuse protection, not-applicable recording, adoption inventory, safe rollout |
@@ -74,6 +75,7 @@ flowchart TD
   rootsUpgradeAdr[contracts/adrs/0009-roots-upgrade-procedure.md]
   videoAdr[contracts/adrs/0010-optional-video-production.md]
   stackAdr[contracts/adrs/0011-stack-native-architecture.md]
+  recoveryAdr[contracts/adrs/0012-operator-managed-production-recovery.md]
   browserQa[contracts/features/browser-qa.md]
   boost[contracts/features/laravel-boost.md]
   workItems[contracts/features/work-item-lifecycle.md]
@@ -120,6 +122,9 @@ flowchart TD
   stackAdr --> guardrailAdr
   stackArch --> guardrails
   deployer --> deployerAdr
+  recoveryAdr --> deployer
+  recoveryAdr --> deployerAdr
+  deployer --> recoveryAdr
   rootsUpgrade --> rootsUpgradeAdr
 ```
 
@@ -143,7 +148,7 @@ flowchart TD
 | Stack-native architecture | `contracts/features/stack-native-architecture.md`, `.cursor/rules/21-stack-architecture.mdc`, ADR 0011 |
 | Multi-agent adapters | `core/adapters/README.md` |
 | Bootstrap behavior (agent) | `scripts/bootstrap-project.sh`, `.cursor/rules/50-workflows.mdc` |
-| Optional Deployer | `contracts/features/deployer.md`, ADR 0007 |
+| Optional Deployer | `contracts/features/deployer.md`, ADR 0007, ADR 0012 |
 | Browser QA / Playwright | `contracts/features/browser-qa.md` |
 | Laravel Boost / MCP | `contracts/features/laravel-boost.md`, `mcp/README.md` |
 | Issues, PRs, discovered work | `contracts/features/work-item-lifecycle.md` |

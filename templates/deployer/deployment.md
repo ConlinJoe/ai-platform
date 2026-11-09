@@ -54,9 +54,11 @@ That checks inventory parsing. It is not a deployment.
 
 ## First deployment
 
-Deployment requires a **separate explicit instruction**. After that
-authorization, and after a restorable production backup is verified
-when the target is production:
+Deployment requires a **separate explicit instruction**. Git and
+Deployer keep the code history. This recipe sets `keep_releases` to
+3, which counts the current release and keeps the two previous
+releases. Server images, and recovery of databases or uploaded media,
+are the operator's responsibility.
 
 ```bash
 vendor/bin/dep deploy production
@@ -68,8 +70,10 @@ vendor/bin/dep deploy production
 vendor/bin/dep rollback production
 ```
 
-Rollback stays inside Deployer's release history. It is not
-authorization to destroy servers, DNS, or databases.
+Rollback switches to the previous code release. It does not reverse
+database or upload changes. It is not authorization to destroy
+servers, DNS, or databases, or to delete releases outside Deployer's
+normal cleanup.
 
 ## Register this contract
 

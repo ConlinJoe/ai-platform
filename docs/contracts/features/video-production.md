@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-07
 source_of_truth_for:
   - Optional video-production capability, both project modes, and the local renderer
   - Separation of local rendering from paid generation and from publication
@@ -55,9 +55,13 @@ The skill and render command are symlinks into the harness clone.
 Campaign source stays in the project. Customer photography, logos, and
 finished masters do not belong in the harness repository.
 
-`video/.runtime/` and `video/campaigns/*/renders/` are gitignored.
-The installer does not delete an existing `video/` directory that
-lacks the harness marker.
+Bootstrap and the installer ignore generated media under `video/`:
+the Playwright runtime, renders, drafts, temporary output, raw photos,
+and video binaries. Campaign source, specs, scripts, notes, and the
+project `.gitignore` stay eligible for Git. An existing ignore line is
+left in place, including a rule that tracks a path on purpose. The
+installer does not delete an existing `video/` directory that lacks
+the harness marker.
 
 ## Campaigns
 

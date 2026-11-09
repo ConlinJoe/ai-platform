@@ -50,7 +50,8 @@ Re-run bootstrap in the project to reconcile managed files:
 - refresh Claude/Grok skill adapter links
 - apply current bootstrap-managed project configuration
 - add current ignore entries for Hallmark, Impeccable ephemeral
-  artifacts, `.DS_Store`, and `.ai/`
+  artifacts, `.DS_Store`, `.ai/`, WordPress runtime uploads and cache,
+  and video-workspace media when that workspace is installed
 - link current platform scripts such as `scripts/check-guardrails.sh`
 
 ```bash
@@ -191,7 +192,8 @@ Typical leftovers to remove if you no longer want the harness:
   no longer want them (do not delete Boost-owned files without a plan)
 
 Ignore entries (`.build/`, `.hallmark/`, Impeccable ephemeral-artifact
-paths, `.DS_Store`, `.ai/`, Playwright artifact paths)
+paths, `.DS_Store`, `.ai/`, Playwright artifact paths, WordPress runtime
+uploads and cache, and video-workspace media)
 are ordinary `.gitignore` lines; remove them only if you want that.
 
 After removal, coding agents in that project no longer load harness

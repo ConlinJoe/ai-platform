@@ -284,6 +284,9 @@ bootstrap. A re-run also prunes retired managed skills,
 refreshes Claude/Grok skill adapter links, applies current
 bootstrap-managed project configuration, and adds current ignore entries
 for Hallmark, Impeccable ephemeral artifacts, `.DS_Store`, and `.ai/`.
+WordPress projects also gain runtime upload and cache rules when those
+paths are not already listed. An installed video workspace ignores
+generated media under `video/` and leaves campaign source eligible.
 A later re-run of a newly bootstrapped project is
 classified as existing because `docs/README.md` is now present; that is
 a known limitation, not an overwrite of project docs. Details:

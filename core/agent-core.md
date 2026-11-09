@@ -92,9 +92,13 @@ servers, modifying DNS, destroying or resetting databases, wiping
 application data, or removing previous releases beyond established
 safe Deployer `keep_releases` cleanup) unless explicitly instructed.
 
-Before an authorized production deployment, verify a restorable production backup
-exists. If it cannot be verified, stop. Deployer availability is
-not a substitute for that backup. Generic
+Git and Deployer keep the code history used for rollback.
+`keep_releases` is 3, counting the current release and the two
+previous releases. Server images, and recovery of databases or
+uploaded media, are the operator's responsibility. A Deployer
+rollback does not reverse database or upload changes. Do not delete
+existing releases outside Deployer's normal safe `keep_releases`
+cleanup. Generic
 instructions such as "set up Deployer", "bootstrap this project",
 "install the deployment stack", or "configure deployment" do not
 authorize production or staging deployment, infrastructure changes,

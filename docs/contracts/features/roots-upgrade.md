@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-15
+last_reviewed: 2026-11-07
 source_of_truth_for:
   - Roots upgrade procedure for Bedrock, Sage, Radicle, Acorn, and Bud
   - When the full procedure runs and when a routine dependency update does not
@@ -373,7 +373,7 @@ After the user approves specific stages, and not before:
    deploy. Do not deploy to production as part of verification.
 6. Validate the approved result in staging before any production
    deploy. Production deploy remains a separate explicit
-   authorization, with a restorable backup, under
+   authorization under
    `docs/contracts/features/deployer.md` when that stack is what the
    project uses. Projects with other deploy tooling use that tooling's
    own staging path.

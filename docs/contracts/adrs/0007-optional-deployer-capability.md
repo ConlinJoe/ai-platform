@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-09-01
+last_reviewed: 2026-11-07
 source_of_truth_for:
   - Decision to offer Deployer as the standardized optional deployment foundation
   - Decision that Deployer remains capability-on-demand
@@ -9,6 +9,7 @@ depends_on:
   - ../features/deployer.md
 referenced_by:
   - ../features/deployer.md
+  - 0012-operator-managed-production-recovery.md
 type: adr
 ---
 
@@ -16,7 +17,10 @@ type: adr
 
 ## Status
 
-Accepted
+Accepted. [ADR 0012](0012-operator-managed-production-recovery.md)
+supersedes the original requirement that a restorable production
+backup exist before an authorized production deploy. The rest of
+this decision remains in force.
 
 ## Context
 
@@ -62,9 +66,9 @@ unchanged.
 - Current-First: existing Deployer configuration is preserved. Conflicts
   stop that installation path. Incomplete existing recipes are not
   rewritten.
-- Actual deployment remains a separate, explicit authorization. A
-  restorable production backup is required before an authorized
-  production deploy. Catastrophic operations remain forbidden.
+- Actual deployment remains a separate, explicit authorization.
+  Catastrophic operations remain forbidden. Code retention and
+  data-recovery responsibility are ADR 0012.
 
 ## Consequences
 

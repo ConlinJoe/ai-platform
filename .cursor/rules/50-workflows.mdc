@@ -84,6 +84,13 @@ Running bootstrap on a target project:
     rule ignores that file in every directory. An existing global rule
     (`.DS_Store`, `**/.DS_Store`, or `*.DS_Store`) is not duplicated or
     replaced
+-   For WordPress: adds `/wp-content/uploads/` and `/wp-content/cache/`,
+    or `/web/app/uploads/` and `/web/app/cache/` for Bedrock and Radicle,
+    when those paths are not already mentioned. Other projects do not
+    gain an `uploads/` or `outputs/` rule. Existing lines are not rewritten
+-   When the video workspace is already installed: ignores runtime,
+    renders, drafts, temporary output, raw photos, and video binaries
+    under `video/`. Specs, scripts, notes, and `.gitignore` stay eligible
 -   For Laravel web apps: ensures Playwright artifact gitignore entries;
     diagnoses Laravel Boost and Playwright without installing packages
 -   For new Roots/Radicle/Sage projects: ensures `resources/images/`
@@ -104,7 +111,8 @@ Shared Cursor rules update immediately through those symlinks. A re-run
 also prunes retired managed skills, refreshes Claude/Grok skill adapter
 links, applies current bootstrap-managed project configuration, and adds
 current ignore entries for Hallmark, Impeccable ephemeral artifacts,
-`.DS_Store`, and `.ai/`.
+`.DS_Store`, `.ai/`, WordPress runtime paths, and video-workspace media
+when that workspace is installed.
 Developers do not need to edit those managed files by hand.
 
 It does not run Composer, `boost:install`, add Playwright, or install

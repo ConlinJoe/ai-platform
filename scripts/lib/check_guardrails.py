@@ -4,11 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import sys
 from collections.abc import Iterable
 from dataclasses import dataclass
+from functools import lru_cache
 
 SKIP_DIR_NAMES = {
     ".git",
@@ -22,6 +24,7 @@ SKIP_DIR_NAMES = {
     "node_modules",
     "vendor",
     "dist",
+    "design-reviews",
     "storage",
 }
 
@@ -145,16 +148,79 @@ class Finding:
     detail: str
 
 
-def path_is_skipped(rel_path: str) -> bool:
+@lru_cache(maxsize=None)
+def installed_dependency_paths(package_root: str, project_root: str) -> tuple[str, ...]:
+    """Read ownership metadata without executing Composer or assuming WP paths.
+
+    Invalid metadata leaves sources in scope. Install paths in installed.json
+    are relative to vendor/composer, not to the package manifest.
+    """
+    paths: set[str] = set()
+
+    def add(raw: object, relative_to: str) -> None:
+        if not isinstance(raw, str) or not raw.strip():
+            return
+        absolute = os.path.abspath(os.path.join(relative_to, raw))
+        try:
+            if os.path.commonpath((absolute, project_root)) != project_root:
+                return
+        except ValueError:
+            return
+        if absolute != project_root:
+            paths.add(absolute)
+
+    def load(path: str) -> object:
+        try:
+            with open(path, encoding="utf-8") as handle:
+                return json.load(handle)
+        except (OSError, ValueError, UnicodeDecodeError):
+            return None
+
+    manifest = load(os.path.join(package_root, "composer.json"))
+    if isinstance(manifest, dict):
+        extra = manifest.get("extra")
+        if isinstance(extra, dict):
+            add(extra.get("wordpress-install-dir"), package_root)
+
+    config = manifest.get("config", {}) if isinstance(manifest, dict) else {}
+    vendor_dir = config.get("vendor-dir", "vendor") if isinstance(config, dict) else "vendor"
+    if not isinstance(vendor_dir, str) or not vendor_dir.strip():
+        vendor_dir = "vendor"
+    metadata_dir = os.path.join(package_root, vendor_dir, "composer")
+    installed = load(os.path.join(metadata_dir, "installed.json"))
+    packages = installed.get("packages", []) if isinstance(installed, dict) else installed
+    if isinstance(packages, list):
+        for package in packages:
+            if isinstance(package, dict):
+                add(package.get("install-path"), metadata_dir)
+    return tuple(sorted(paths))
+
+
+def path_is_skipped(rel_path: str, root: str | None = None) -> bool:
     parts = rel_path.replace("\\", "/").split("/")
     if any(part in SKIP_DIR_NAMES for part in parts):
         return True
     normalized = "/".join(parts)
-    return any(token in normalized for token in SKIP_PATH_PARTS)
+    if any(normalized == token or normalized.startswith(token + "/") for token in SKIP_PATH_PARTS):
+        return True
+    if root is not None:
+        project_root = os.path.abspath(root)
+        full = os.path.abspath(os.path.join(project_root, normalized))
+        if os.path.commonpath((full, project_root)) != project_root:
+            return True
+        # Also support independent Composer packages inside a monorepo.
+        current = project_root
+        directories = normalized.split("/")[:-1]
+        for part in ["", *directories]:
+            current = os.path.join(current, part)
+            for dependency in installed_dependency_paths(current, project_root):
+                if full == dependency or full.startswith(dependency + os.sep):
+                    return True
+    return False
 
 
-def path_is_in_scope(rel_path: str) -> bool:
-    if path_is_skipped(rel_path):
+def path_is_in_scope(rel_path: str, root: str | None = None) -> bool:
+    if path_is_skipped(rel_path, root):
         return False
     lowered = rel_path.replace("\\", "/").lower()
     if lowered.endswith(".json") and any(hint in f"/{lowered}" for hint in LANG_JSON_HINTS):
@@ -227,13 +293,13 @@ def iter_all_files(root: str) -> Iterable[str]:
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [name for name in dirnames if name not in SKIP_DIR_NAMES]
         rel_dir = os.path.relpath(dirpath, root)
-        if rel_dir != "." and path_is_skipped(rel_dir):
+        if rel_dir != "." and path_is_skipped(rel_dir, root):
             dirnames[:] = []
             continue
         for filename in filenames:
             full = os.path.join(dirpath, filename)
             rel = os.path.relpath(full, root)
-            if path_is_in_scope(rel):
+            if path_is_in_scope(rel, root):
                 yield rel.replace("\\", "/")
 
 
@@ -292,7 +358,7 @@ def main(argv: list[str] | None = None) -> int:
         rel_paths = []
         for raw in args.files:
             rel = resolve_rel_path(root, raw).replace("\\", "/")
-            if path_is_in_scope(rel):
+            if path_is_in_scope(rel, root):
                 rel_paths.append(rel)
         scope = "explicit files"
     else:

@@ -76,6 +76,28 @@ assert_not_grep() {
   fi
 }
 
+assert_git_ignored() {
+  local repo="$1"
+  local path="$2"
+  local label="$3"
+  if git -C "${repo}" check-ignore -q -- "${path}"; then
+    pass "${label}"
+  else
+    fail "${label}"
+  fi
+}
+
+assert_git_eligible() {
+  local repo="$1"
+  local path="$2"
+  local label="$3"
+  if git -C "${repo}" check-ignore -q -- "${path}"; then
+    fail "${label}"
+  else
+    pass "${label}"
+  fi
+}
+
 write_laravel_composer() {
   local dir="$1"
   local with_boost="${2:-0}"
@@ -324,12 +346,30 @@ assert_grep 'Installing or configuring deployment tooling does not authorize' \
 assert_grep 'Installing or configuring deployment tooling does not authorize' \
   "${AI_REPO}/core/agent-core.md" \
   "portable core states installing Deployer does not authorize deployment"
-assert_grep 'restorable production backup' \
+assert_grep 'keep_releases` is 3, counting the current release and the two' \
   "${AI_REPO}/.cursor/rules/00-platform.mdc" \
-  "00-platform keeps the production backup requirement"
-assert_grep 'restorable production backup' \
+  "00-platform keeps three Deployer releases"
+assert_grep 'keep_releases` is 3, counting the current release and the two' \
   "${AI_REPO}/core/agent-core.md" \
-  "portable core keeps the production backup requirement"
+  "portable core keeps three Deployer releases"
+assert_grep 'uploaded media, are the operator'"'"'s responsibility' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform assigns database and media recovery to the operator"
+assert_grep 'uploaded media, are the operator'"'"'s responsibility' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core assigns database and media recovery to the operator"
+assert_grep 'does not reverse database or upload changes' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform states rollback does not reverse database or uploads"
+assert_grep 'does not reverse database or upload changes' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core states rollback does not reverse database or uploads"
+assert_not_grep 'restorable production backup' \
+  "${AI_REPO}/.cursor/rules/00-platform.mdc" \
+  "00-platform does not require a production backup gate"
+assert_not_grep 'restorable production backup' \
+  "${AI_REPO}/core/agent-core.md" \
+  "portable core does not require a production backup gate"
 assert_grep 'catastrophic operations' \
   "${AI_REPO}/.cursor/rules/00-platform.mdc" \
   "00-platform keeps the catastrophic-operation guardrail"
@@ -2793,6 +2833,16 @@ assert_grep '^# macOS$' "${GENERIC}/.gitignore" \
   "generic gitignore labels macOS ignore entries"
 assert_grep '^# AI Development Harness$' "${GENERIC}/.gitignore" \
   "generic gitignore labels harness local ignore entries"
+assert_not_grep 'wp-content/uploads' "${GENERIC}/.gitignore" \
+  "generic gitignore does not gain WordPress uploads"
+assert_not_grep 'web/app/uploads' "${GENERIC}/.gitignore" \
+  "generic gitignore does not gain Bedrock uploads"
+assert_not_grep '^/?uploads/?$' "${GENERIC}/.gitignore" \
+  "generic gitignore does not blanket-ignore uploads"
+assert_not_grep '^/?outputs/?$' "${GENERIC}/.gitignore" \
+  "generic gitignore does not blanket-ignore outputs"
+assert_not_grep 'video-production-ignore-start' "${GENERIC}/.gitignore" \
+  "generic gitignore does not gain video media rules"
 
 mkdir -p \
   "${GENERIC}/.agents/skills/frontend-design" \
@@ -2939,6 +2989,14 @@ assert_not_grep '^\*\*/\.DS_Store$' "${RADICLE_NEW}/.gitignore" \
   "Radicle gitignore does not add redundant nested .DS_Store"
 assert_grep '^\.ai/?$' "${RADICLE_NEW}/.gitignore" \
   "Radicle gitignore ignores .ai/"
+assert_grep '^/web/app/uploads/$' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore ignores Bedrock uploads"
+assert_grep '^/web/app/cache/$' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore ignores Bedrock cache"
+assert_not_grep 'wp-content/uploads' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore does not use conventional WordPress upload paths"
+assert_not_grep '^/?uploads/?$' "${RADICLE_NEW}/.gitignore" \
+  "Radicle gitignore does not blanket-ignore uploads"
 assert_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-radicle-new.log \
   "bootstrap detects roots-radicle profile"
 assert_not_grep "Detected profile: laravel-webapp" ${LOGDIR}/boot-radicle-new.log \
@@ -3016,6 +3074,14 @@ assert_not_grep "Detected profile: roots-radicle" ${LOGDIR}/boot-bedrock.log \
   "Navi/Radicle profile is not imposed on plain Roots WordPress"
 assert_missing "${BEDROCK}/resources/images" \
   "plain Bedrock did not receive Roots resources/images"
+assert_grep '^/web/app/uploads/$' "${BEDROCK}/.gitignore" \
+  "Bedrock gitignore ignores runtime uploads"
+assert_grep '^/web/app/cache/$' "${BEDROCK}/.gitignore" \
+  "Bedrock gitignore ignores runtime cache"
+assert_not_grep 'wp-content/uploads' "${BEDROCK}/.gitignore" \
+  "Bedrock gitignore does not use conventional WordPress upload paths"
+assert_not_grep '^/?outputs/?$' "${BEDROCK}/.gitignore" \
+  "Bedrock gitignore does not blanket-ignore outputs"
 
 echo ""
 echo "--- New Laravel project without Boost ---"
@@ -3039,6 +3105,14 @@ assert_not_grep '^\*\*/\.DS_Store$' "${LARAVEL_NEW}/.gitignore" \
   "new Laravel gitignore does not add redundant nested .DS_Store"
 assert_grep '^\.ai/?$' "${LARAVEL_NEW}/.gitignore" \
   "new Laravel gitignore ignores .ai/"
+assert_not_grep 'wp-content/uploads' "${LARAVEL_NEW}/.gitignore" \
+  "Laravel gitignore does not gain WordPress uploads"
+assert_not_grep 'web/app/uploads' "${LARAVEL_NEW}/.gitignore" \
+  "Laravel gitignore does not gain Bedrock uploads"
+assert_not_grep '^/?uploads/?$' "${LARAVEL_NEW}/.gitignore" \
+  "Laravel gitignore does not blanket-ignore uploads"
+assert_not_grep 'video-production-ignore-start' "${LARAVEL_NEW}/.gitignore" \
+  "Laravel gitignore does not gain video media rules"
 assert_grep "Detected profile: laravel-webapp" ${LOGDIR}/boot-laravel-new.log \
   "bootstrap detects laravel-webapp profile"
 assert_missing "${LARAVEL_NEW}/deploy.php" \
@@ -3297,6 +3371,76 @@ if [[ "${ai_count}" -eq 1 ]]; then
 else
   fail "re-run does not duplicate .ai/ gitignore (count=${ai_count})"
 fi
+
+echo ""
+echo "--- WordPress runtime gitignore ---"
+WP_NEW="${WORKDIR}/wp-runtime"
+write_wordpress_root "${WP_NEW}"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${WP_NEW}" >"${LOGDIR}/boot-wp-runtime.log" 2>&1
+"${AI_REPO}/scripts/bootstrap-project.sh" "${WP_NEW}" >"${LOGDIR}/boot-wp-runtime-again.log" 2>&1
+assert_grep '^/wp-content/uploads/$' "${WP_NEW}/.gitignore" \
+  "conventional WordPress gitignore ignores runtime uploads"
+assert_grep '^/wp-content/cache/$' "${WP_NEW}/.gitignore" \
+  "conventional WordPress gitignore ignores runtime cache"
+assert_not_grep 'web/app/uploads' "${WP_NEW}/.gitignore" \
+  "conventional WordPress gitignore does not use Bedrock upload paths"
+assert_not_grep '^/?uploads/?$' "${WP_NEW}/.gitignore" \
+  "conventional WordPress gitignore does not blanket-ignore uploads"
+assert_not_grep '^/?outputs/?$' "${WP_NEW}/.gitignore" \
+  "conventional WordPress gitignore does not blanket-ignore outputs"
+wp_uploads_count="$(grep -cE '^/wp-content/uploads/$' "${WP_NEW}/.gitignore" || true)"
+if [[ "${wp_uploads_count}" -eq 1 ]]; then
+  pass "re-run does not duplicate WordPress uploads gitignore"
+else
+  fail "re-run does not duplicate WordPress uploads gitignore (count=${wp_uploads_count})"
+fi
+wp_cache_count="$(grep -cE '^/wp-content/cache/$' "${WP_NEW}/.gitignore" || true)"
+if [[ "${wp_cache_count}" -eq 1 ]]; then
+  pass "re-run does not duplicate WordPress cache gitignore"
+else
+  fail "re-run does not duplicate WordPress cache gitignore (count=${wp_cache_count})"
+fi
+wp_header_count="$(grep -cF 'WordPress runtime uploads and cache' "${WP_NEW}/.gitignore" || true)"
+if [[ "${wp_header_count}" -eq 1 ]]; then
+  pass "re-run does not duplicate the WordPress runtime gitignore header"
+else
+  fail "re-run does not duplicate the WordPress runtime gitignore header (count=${wp_header_count})"
+fi
+
+WP_KEEP="${WORKDIR}/wp-keep-uploads"
+mkdir -p "${WP_KEEP}/wp-content"
+printf '<?php\n' > "${WP_KEEP}/wp-config-sample.php"
+printf 'keep-uploads\n# wp-content/uploads stays tracked\n' > "${WP_KEEP}/.gitignore"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${WP_KEEP}" >"${LOGDIR}/boot-wp-keep.log" 2>&1
+"${AI_REPO}/scripts/bootstrap-project.sh" "${WP_KEEP}" >"${LOGDIR}/boot-wp-keep-again.log" 2>&1
+assert_grep '^keep-uploads$' "${WP_KEEP}/.gitignore" \
+  "an intentional WordPress gitignore keeps its existing lines"
+assert_grep '^# wp-content/uploads stays tracked$' "${WP_KEEP}/.gitignore" \
+  "a project note about uploads is not rewritten"
+assert_not_grep '^/wp-content/uploads/$' "${WP_KEEP}/.gitignore" \
+  "bootstrap does not add an uploads rule the project already mentioned"
+assert_grep '^/wp-content/cache/$' "${WP_KEEP}/.gitignore" \
+  "bootstrap still adds a WordPress cache rule that was not mentioned"
+wp_keep_cache="$(grep -cE '^/wp-content/cache/$' "${WP_KEEP}/.gitignore" || true)"
+if [[ "${wp_keep_cache}" -eq 1 ]]; then
+  pass "re-run does not duplicate a newly added WordPress cache rule"
+else
+  fail "re-run does not duplicate a newly added WordPress cache rule (count=${wp_keep_cache})"
+fi
+
+WP_HAS="${WORKDIR}/wp-has-uploads"
+mkdir -p "${WP_HAS}/wp-content"
+printf '<?php\n' > "${WP_HAS}/wp-config-sample.php"
+printf 'wp-content/uploads/*\n!wp-content/uploads/.gitkeep\nwp-content/cache\n' > "${WP_HAS}/.gitignore"
+"${AI_REPO}/scripts/bootstrap-project.sh" "${WP_HAS}" >"${LOGDIR}/boot-wp-has.log" 2>&1
+assert_grep '^wp-content/uploads/\*$' "${WP_HAS}/.gitignore" \
+  "an existing WordPress uploads rule stays as written"
+assert_grep '^!wp-content/uploads/.gitkeep$' "${WP_HAS}/.gitignore" \
+  "an existing WordPress uploads exception stays as written"
+assert_not_grep '^/wp-content/uploads/$' "${WP_HAS}/.gitignore" \
+  "bootstrap does not replace an existing WordPress uploads rule"
+assert_not_grep '^/wp-content/cache/$' "${WP_HAS}/.gitignore" \
+  "bootstrap does not replace an existing WordPress cache rule"
 assert_file "${GENERIC}/docs/contracts/foundational/platform-reconciliation.md" \
   "re-bootstrap of a new project adds reconciliation (known limitation: docs index present)"
 assert_grep "Existing project" ${LOGDIR}/boot-generic-2.log \
@@ -3333,12 +3477,43 @@ assert_grep 'capability-on-demand' \
 assert_grep 'does not authorize deployment' \
   "${AI_REPO}/docs/contracts/features/deployer.md" \
   "Deployer contract repeats the authorization boundary"
-assert_grep 'restorable production backup' \
+assert_grep 'keep_releases` is \*\*3\*\*' \
   "${AI_REPO}/docs/contracts/features/deployer.md" \
-  "Deployer contract preserves the production backup requirement"
-assert_grep 'keep_releases' \
+  "Deployer contract sets retention to three releases"
+assert_grep 'reverse database or upload changes' \
   "${AI_REPO}/docs/contracts/features/deployer.md" \
-  "Deployer contract documents release retention"
+  "Deployer contract states rollback does not reverse database or uploads"
+assert_grep 'are the operator'"'"'s responsibility' \
+  "${AI_REPO}/docs/contracts/features/deployer.md" \
+  "Deployer contract assigns data recovery to the operator"
+assert_not_grep 'restorable production backup' \
+  "${AI_REPO}/docs/contracts/features/deployer.md" \
+  "Deployer contract does not require a production backup gate"
+assert_not_grep 'restorable production backup' \
+  "${AI_REPO}/templates/deployer/deployment.md" \
+  "deployment notes template does not require a production backup gate"
+assert_grep 'database or upload changes' \
+  "${AI_REPO}/templates/deployer/deployment.md" \
+  "deployment notes template states rollback limits"
+assert_file "${AI_REPO}/docs/contracts/adrs/0012-operator-managed-production-recovery.md" \
+  "operator-managed recovery ADR exists"
+assert_grep 'ADR 0012' \
+  "${AI_REPO}/docs/contracts/adrs/0007-optional-deployer-capability.md" \
+  "Deployer ADR points at the recovery decision"
+assert_grep '0012-operator-managed-production-recovery.md' \
+  "${AI_REPO}/docs/README.md" \
+  "documentation index registers the recovery ADR"
+for deployer_recipe in laravel roots bedrock wordpress; do
+  assert_grep "set\\('keep_releases', 3\\)" \
+    "${AI_REPO}/templates/deployer/${deployer_recipe}/deploy.php" \
+    "${deployer_recipe} recipe keeps three releases"
+  assert_not_grep "set\\('keep_releases', 5\\)" \
+    "${AI_REPO}/templates/deployer/${deployer_recipe}/deploy.php" \
+    "${deployer_recipe} recipe no longer keeps five releases"
+done
+assert_not_grep 'restorable backup' \
+  "${AI_REPO}/docs/contracts/features/roots-upgrade.md" \
+  "Roots upgrade procedure does not keep a production backup gate"
 
 DEP_PROMPT="${WORKDIR}/deployer-prompt"
 mkdir -p "${DEP_PROMPT}"
@@ -3394,6 +3569,14 @@ assert_grep 'deploy/hosts\.yaml' "${DEP_WITH}/.gitignore" \
   "--with-deployer gitignores deploy/hosts.yaml"
 assert_grep 'CHANGE_ME' "${DEP_WITH}/deploy/hosts.yaml" \
   "generated hosts file uses placeholders"
+assert_grep "set\\('keep_releases', 3\\)" "${DEP_WITH}/deploy.php" \
+  "generated Laravel recipe keeps three releases"
+assert_not_grep 'restorable production backup' \
+  "${DEP_WITH}/docs/contracts/features/deployment.md" \
+  "generated deployment notes do not require a production backup gate"
+assert_grep 'database or upload changes' \
+  "${DEP_WITH}/docs/contracts/features/deployment.md" \
+  "generated deployment notes state rollback limits"
 assert_not_grep 'password' "${DEP_WITH}/deploy.php" \
   "generated recipe contains no password"
 assert_not_grep 'password' "${DEP_WITH}/deploy/hosts.yaml" \
@@ -3777,6 +3960,32 @@ fi
   >"${LOGDIR}/install-video-app-again.log" 2>&1
 assert_grep 'already present' "${LOGDIR}/install-video-app-again.log" \
   "video install is idempotent"
+assert_grep 'video-production-ignore-start' "${VIDEO_APP}/.gitignore" \
+  "video install records a video gitignore block"
+assert_grep '^/video/\.runtime/$' "${VIDEO_APP}/.gitignore" \
+  "video gitignore ignores the Playwright runtime"
+assert_grep '^/video/campaigns/\*/renders/$' "${VIDEO_APP}/.gitignore" \
+  "video gitignore ignores campaign renders"
+assert_grep '^/video/campaigns/\*/drafts/$' "${VIDEO_APP}/.gitignore" \
+  "video gitignore ignores campaign drafts"
+assert_grep '^/video/\*\*/\*\.jpg$' "${VIDEO_APP}/.gitignore" \
+  "video gitignore ignores raw JPEG photos under video/"
+assert_grep '^/video/\*\*/\*\.mp4$' "${VIDEO_APP}/.gitignore" \
+  "video gitignore ignores mp4 binaries under video/"
+assert_not_grep 'wp-content/uploads' "${VIDEO_APP}/.gitignore" \
+  "a video workspace does not add WordPress upload rules"
+video_runtime_count="$(grep -cF '/video/.runtime/' "${VIDEO_APP}/.gitignore" || true)"
+if [[ "${video_runtime_count}" -eq 1 ]]; then
+  pass "re-running the video installer does not duplicate the runtime ignore"
+else
+  fail "re-running the video installer does not duplicate the runtime ignore (count=${video_runtime_count})"
+fi
+video_drafts_count="$(grep -cF '/video/campaigns/*/drafts/' "${VIDEO_APP}/.gitignore" || true)"
+if [[ "${video_drafts_count}" -eq 1 ]]; then
+  pass "re-running the video installer does not duplicate the drafts ignore"
+else
+  fail "re-running the video installer does not duplicate the drafts ignore (count=${video_drafts_count})"
+fi
 
 "${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" brand-a ad-15 \
   >"${LOGDIR}/video-campaign-a.log" 2>&1
@@ -3784,6 +3993,37 @@ assert_grep 'already present' "${LOGDIR}/install-video-app-again.log" \
   >"${LOGDIR}/video-campaign-b.log" 2>&1
 printf '\nname: UNIQUE_BRAND_ALPHA\n' >> "${VIDEO_APP}/video/campaigns/brand-a/brand.md"
 printf 'secret\n' > "${VIDEO_APP}/video/campaigns/brand-a/assets/secret.txt"
+git init -q -b main "${VIDEO_APP}"
+assert_git_ignored "${VIDEO_APP}" "video/campaigns/brand-a/assets/photo.jpg" \
+  "a raw photo under video/ is ignored"
+assert_git_ignored "${VIDEO_APP}" "video/campaigns/brand-a/assets/clip.mp4" \
+  "a video binary under video/ is ignored"
+assert_git_ignored "${VIDEO_APP}" "video/campaigns/brand-a/renders/masters/out.mp4" \
+  "a campaign render is ignored"
+assert_git_ignored "${VIDEO_APP}" "video/campaigns/brand-a/drafts/note.md" \
+  "a draft under video/ is ignored"
+assert_git_ignored "${VIDEO_APP}" "video/campaigns/brand-a/tmp/frame.tmp" \
+  "temporary campaign output is ignored"
+assert_git_ignored "${VIDEO_APP}" "video/.runtime/package.json" \
+  "the video runtime directory is ignored"
+assert_git_eligible "${VIDEO_APP}" "video/campaigns/brand-a/film/spec.js" \
+  "a campaign spec stays eligible for Git"
+assert_git_eligible "${VIDEO_APP}" "video/campaigns/brand-a/film/film.js" \
+  "campaign source stays eligible for Git"
+assert_git_eligible "${VIDEO_APP}" "video/campaigns/brand-a/brief.md" \
+  "a campaign brief stays eligible for Git"
+assert_git_eligible "${VIDEO_APP}" "video/campaigns/brand-a/brand.md" \
+  "a campaign brand note stays eligible for Git"
+assert_git_eligible "${VIDEO_APP}" "video/campaigns/brand-a/assets/logo.png" \
+  "a reusable graphic under assets stays eligible for Git"
+assert_git_eligible "${VIDEO_APP}" "video/campaigns/brand-a/assets/secret.txt" \
+  "a non-media asset note stays eligible for Git"
+assert_git_eligible "${VIDEO_APP}" "video/README.md" \
+  "the video workspace readme stays eligible for Git"
+assert_git_eligible "${VIDEO_APP}" "video/bin/render" \
+  "the video render script stays eligible for Git"
+assert_git_eligible "${VIDEO_APP}" ".gitignore" \
+  "the project gitignore stays eligible for Git"
 assert_not_grep 'UNIQUE_BRAND_ALPHA' "${VIDEO_APP}/video/campaigns/brand-b/brand.md" \
   "a second campaign does not inherit the first campaign brand"
 "${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" brand-c announcement \
@@ -3846,6 +4086,49 @@ assert_grep 'Video production installed \(integrated\)' "${LOGDIR}/boot-video-fl
   "--with-video installs the workspace during bootstrap"
 assert_grep '"mode": "integrated"' "${VIDEO_FLAG}/video/studio.json" \
   "--with-video records integrated mode"
+assert_grep '^/video/campaigns/\*/drafts/$' "${VIDEO_FLAG}/.gitignore" \
+  "--with-video writes the video media gitignore"
+
+VIDEO_OLD="${WORKDIR}/video-old-ignore"
+mkdir -p "${VIDEO_OLD}"
+cat > "${VIDEO_OLD}/.gitignore" <<'EOF'
+keep-video-ignore
+# video-production-ignore-start
+/video/.runtime/
+/video/campaigns/*/renders/
+# video-production-ignore-end
+!/video/**/*.jpg
+EOF
+"${AI_REPO}/scripts/install-video-production.sh" "${VIDEO_OLD}" \
+  >"${LOGDIR}/install-video-old-ignore.log" 2>&1
+"${AI_REPO}/scripts/install-video-production.sh" "${VIDEO_OLD}" \
+  >"${LOGDIR}/install-video-old-ignore-again.log" 2>&1
+assert_grep '^keep-video-ignore$' "${VIDEO_OLD}/.gitignore" \
+  "an existing video gitignore keeps its own lines"
+assert_grep '^!/video/\*\*/\*\.jpg$' "${VIDEO_OLD}/.gitignore" \
+  "an intentional exception for video photos stays in place"
+assert_not_grep '^/video/\*\*/\*\.jpg$' "${VIDEO_OLD}/.gitignore" \
+  "bootstrap does not override an intentional video photo exception"
+assert_grep '^/video/campaigns/\*/drafts/$' "${VIDEO_OLD}/.gitignore" \
+  "a missing video drafts rule is added beside the existing block"
+old_runtime_count="$(grep -cF '/video/.runtime/' "${VIDEO_OLD}/.gitignore" || true)"
+if [[ "${old_runtime_count}" -eq 1 ]]; then
+  pass "an existing video runtime rule is not duplicated"
+else
+  fail "an existing video runtime rule is not duplicated (count=${old_runtime_count})"
+fi
+old_drafts_count="$(grep -cF '/video/campaigns/*/drafts/' "${VIDEO_OLD}/.gitignore" || true)"
+if [[ "${old_drafts_count}" -eq 1 ]]; then
+  pass "a second video install does not duplicate the added drafts rule"
+else
+  fail "a second video install does not duplicate the added drafts rule (count=${old_drafts_count})"
+fi
+old_end_count="$(grep -cF 'video-production-ignore-end' "${VIDEO_OLD}/.gitignore" || true)"
+if [[ "${old_end_count}" -eq 1 ]]; then
+  pass "adding video ignore rules keeps a single end marker"
+else
+  fail "adding video ignore rules keeps a single end marker (count=${old_end_count})"
+fi
 
 "${AI_REPO}/scripts/init-video-studio.sh" "${VIDEO_STUDIO}" \
   >"${LOGDIR}/init-video-studio.log" 2>&1
@@ -3857,12 +4140,24 @@ assert_missing "${VIDEO_STUDIO}/package.json" \
   "studio init does not create an application package.json"
 assert_missing "${VIDEO_STUDIO}/composer.json" \
   "studio init does not create Composer metadata"
+assert_not_grep 'wp-content/uploads' "${VIDEO_STUDIO}/.gitignore" \
+  "a video studio does not gain WordPress upload rules"
+grep -vF '/video/campaigns/*/drafts/' "${VIDEO_STUDIO}/.gitignore" > "${VIDEO_STUDIO}/.gitignore.without-drafts"
+mv "${VIDEO_STUDIO}/.gitignore.without-drafts" "${VIDEO_STUDIO}/.gitignore"
 "${AI_REPO}/scripts/bootstrap-project.sh" --without-deployer "${VIDEO_STUDIO}" \
   >"${LOGDIR}/boot-video-studio-again.log" 2>&1
 assert_grep 'Detected profile: video-studio' "${LOGDIR}/boot-video-studio-again.log" \
   "a later bootstrap still detects the video studio"
 assert_grep 'Video production: installed \(studio\)' "${LOGDIR}/boot-video-studio-again.log" \
   "a later bootstrap leaves the studio installed"
+assert_grep '^/video/campaigns/\*/drafts/$' "${VIDEO_STUDIO}/.gitignore" \
+  "a later bootstrap restores a missing video drafts rule"
+studio_drafts_count="$(grep -cF '/video/campaigns/*/drafts/' "${VIDEO_STUDIO}/.gitignore" || true)"
+if [[ "${studio_drafts_count}" -eq 1 ]]; then
+  pass "restoring a video drafts rule does not duplicate it"
+else
+  fail "restoring a video drafts rule does not duplicate it (count=${studio_drafts_count})"
+fi
 
 VIDEO_LARAVEL="${WORKDIR}/video-laravel"
 mkdir -p "${VIDEO_LARAVEL}"
@@ -3950,6 +4245,15 @@ else
 fi
 
 echo ""
+echo "--- Source ownership ---"
+if PYTHONDONTWRITEBYTECODE=1 python3 "${AI_REPO}/scripts/lib/test_source_ownership.py" \
+  >"${LOGDIR}/source-ownership.log" 2>&1; then
+  pass "source ownership excludes installed dependencies and review comps, preserving first-party checks"
+else
+  fail "source ownership excludes installed dependencies and review comps, preserving first-party checks"
+  cat "${LOGDIR}/source-ownership.log"
+fi
+
 echo "--- Summary ---"
 echo "Passed: ${PASSES}"
 echo "Failed: ${FAILURES}"

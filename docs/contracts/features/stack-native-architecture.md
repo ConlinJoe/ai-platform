@@ -100,6 +100,12 @@ and do not forbid their stylesheets.
 
 ## Mechanical check
 
+Source ownership exclusions are shared with the copy scanner and stack
+detection. Installed dependencies and temporary `design-reviews/` comps
+are outside application checks; first-party plugins and themes remain
+in scope. The metadata and path rules are defined in
+`copy-and-tailwind-guardrails.md`.
+
 The same command as the copy and Tailwind guardrails:
 
 ```bash

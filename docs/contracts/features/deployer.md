@@ -1,15 +1,17 @@
 ---
 status: active
-last_reviewed: 2026-09-01
+last_reviewed: 2026-11-07
 source_of_truth_for:
   - Optional Deployer capability behavior
   - Bootstrap and standalone installer contract
   - How to configure an installed Deployer stack for a server
-  - Deployment authorization, backup, and catastrophic-operation boundaries
+  - Deployment authorization, release retention, and catastrophic-operation boundaries
 depends_on:
   - ../adrs/0007-optional-deployer-capability.md
+  - ../adrs/0012-operator-managed-production-recovery.md
 referenced_by:
   - ../adrs/0007-optional-deployer-capability.md
+  - ../adrs/0012-operator-managed-production-recovery.md
   - ../../../README.md
   - ../../getting-started.md
   - ../../how-it-works.md
@@ -156,20 +158,25 @@ create releases, and (for Laravel/Bedrock) write the documented
 writable directories. This harness does not provision users, firewalls,
 or DNS.
 
-`keep_releases` is **5**. Deployer's own cleanup of older releases
-inside that release path is the established safe cleanup. Do not add
-scripts that delete other absolute paths.
+`keep_releases` is **3**. Deployer counts the current release, so
+this keeps that release and the two previous releases for an instant
+code rollback. Git history is the longer code record. Deployer's own
+cleanup of older releases inside that release path is the established
+safe cleanup. Do not delete existing releases by any other means, and
+do not add scripts that delete other absolute paths. This default
+applies to recipes generated from these templates. The installer does
+not rewrite an existing `deploy.php`, and it does not delete releases
+already on a server.
 
 ## First deployment procedure
 
 1. Confirm the developer **explicitly authorized this deployment**
    (environment named). Installing or configuring Deployer is not that
    authorization.
-2. If the target is **production**, verify a restorable production backup exists. If it cannot be verified, **stop**.
-3. `composer install` in the project (local), so `vendor/bin/dep` exists.
-4. Confirm `deploy/hosts.yaml` has no `CHANGE_ME` values.
-5. `vendor/bin/dep config:hosts` (inventory check, not a deploy).
-6. `vendor/bin/dep deploy <host>` only after the authorization in step 1.
+2. `composer install` in the project (local), so `vendor/bin/dep` exists.
+3. Confirm `deploy/hosts.yaml` has no `CHANGE_ME` values.
+4. `vendor/bin/dep config:hosts` (inventory check, not a deploy).
+5. `vendor/bin/dep deploy <host>` only after the authorization in step 1.
 
 Health/verification after an authorized deploy is project-specific:
 HTTP 200 on a known URL, application logs, and (Laravel) that `current`
@@ -184,9 +191,13 @@ After explicit authorization to roll back that environment:
 vendor/bin/dep rollback production
 ```
 
-Rollback uses Deployer's previous release. It is not authorization to
-destroy the server, modify DNS, drop databases, or delete files outside
-the release path.
+Rollback switches `current` to the previous code release. It does not
+reverse database or upload changes. Shared uploads and the database
+live outside the release directory. Git history and the retained
+releases are the code record. Server images, and any database or
+media recovery, are the operator's responsibility. Rollback is not
+authorization to destroy the server, modify DNS, drop databases, or
+delete files outside the release path.
 
 ## Profile details
 
@@ -268,8 +279,13 @@ These rules are portable (always-on core and `00-platform`):
   specifically requested, infrastructure changes, DNS changes, database
   destruction/reset, server destruction, or removal of previous
   releases beyond Deployer's `keep_releases` cleanup.
-- Before an authorized **production** deployment, verify a restorable production backup. If it cannot be verified, stop. Deployer
-  availability is not sufficient authorization.
+- Git and Deployer keep code history. `keep_releases` is 3, counting
+  the current release and two previous releases. Server images, and
+  recovery of databases or uploaded media, are the operator's
+  responsibility. A Deployer rollback does not reverse database or
+  upload changes. There is no pre-deploy backup or restore-check
+  gate. Do not delete existing releases outside Deployer's normal
+  `keep_releases` cleanup.
 - Generated recipes must not embed secrets, use unchecked absolute
   cleanup paths, hook destructive database operations, or provision
   infrastructure/DNS.

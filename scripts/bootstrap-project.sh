@@ -574,6 +574,51 @@ ensure_local_artifact_gitignore() {
   fi
 }
 
+ensure_wordpress_runtime_gitignore() {
+  local gitignore="${TARGET_PROJECT}/.gitignore"
+  local label=""
+  local rule_a=""
+  local rule_b=""
+
+  if project_is_roots_radicle "${TARGET_PROJECT}" || project_is_bedrock "${TARGET_PROJECT}"; then
+    label="Bedrock and Radicle runtime uploads and cache"
+    rule_a="/web/app/uploads/"
+    rule_b="/web/app/cache/"
+  elif project_is_conventional_wordpress "${TARGET_PROJECT}"; then
+    label="WordPress runtime uploads and cache"
+    rule_a="/wp-content/uploads/"
+    rule_b="/wp-content/cache/"
+  else
+    return 0
+  fi
+
+  if [[ ! -f "${gitignore}" ]]; then
+    touch "${gitignore}"
+  fi
+
+  local missing=""
+  local rule token
+  for rule in "${rule_a}" "${rule_b}"; do
+    token="${rule#/}"
+    token="${token%/}"
+    if grep -qF "${token}" "${gitignore}"; then
+      continue
+    fi
+    missing+="${rule}"$'\n'
+  done
+
+  if [[ -z "${missing}" ]]; then
+    echo "WordPress runtime paths already listed in .gitignore"
+    return 0
+  fi
+
+  {
+    printf '\n# %s\n' "${label}"
+    printf '%s' "${missing}"
+  } >> "${gitignore}"
+  echo "Added WordPress runtime paths to ${gitignore}"
+}
+
 RETIRED_DESIGN_SKILLS=(
   frontend-design
   ui-ux-pro-max
@@ -1242,6 +1287,10 @@ ensure_playwright_gitignore
 ensure_hallmark_gitignore
 ensure_impeccable_gitignore
 ensure_local_artifact_gitignore
+ensure_wordpress_runtime_gitignore
+if video_is_harness_managed "${TARGET_PROJECT}"; then
+  video_ensure_gitignore "${TARGET_PROJECT}"
+fi
 ensure_roots_resources_images
 restore_skills
 provision_agent_adapters

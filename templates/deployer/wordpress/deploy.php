@@ -25,7 +25,8 @@ if (!is_file($hosts)) {
 
 import($hosts);
 
-set('keep_releases', 5);
+// Counts the current release, so two previous releases stay for rollback.
+set('keep_releases', 3);
 set('git_tty', false);
 
 // Native WordPress recipe shared/writable defaults:

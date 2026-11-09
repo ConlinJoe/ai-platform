@@ -56,7 +56,8 @@ It does:
 - add missing draft files on existing projects (working mode, status,
   reconciliation, public-submissions record, Laravel browser QA)
 - ensure ignore entries such as `.build/`, `.hallmark/`, `.DS_Store`,
-  and `.ai/`
+  `.ai/`, WordPress runtime uploads and cache, and video-workspace
+  media when that workspace is installed
 - optionally offer the Deployer stack (`Install Deployer deployment
   stack? [y/N]`, `--with-deployer`, `--without-deployer`). That is not
   adoption and does not deploy. Canonical:

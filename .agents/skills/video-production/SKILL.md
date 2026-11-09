@@ -77,7 +77,9 @@ campaign at another campaign's logo, type, colors, or photographs.
 
 The editable film is `film/spec.js` (words, timing, palette, format)
 and, when the shared stage is not enough, `film/motion.js` or
-`film/film.js`. A finished MP4 is not the source.
+`film/film.js`. A finished MP4 is not the source. Raw photos, video
+binaries, drafts, renders, and temporary files under `video/` are
+gitignored. Specs, scripts, notes, and `.gitignore` stay eligible.
 
 Preview in a browser:
 

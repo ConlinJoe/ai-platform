@@ -15,7 +15,7 @@ import sys
 from collections import Counter
 from dataclasses import dataclass
 
-from check_guardrails import iter_all_files, path_is_in_scope, read_text
+from check_guardrails import iter_all_files, path_is_in_scope, path_is_skipped, read_text
 from stack_scope import (
     Detection,
     Pkg,
@@ -1328,7 +1328,7 @@ def collect_paths(root: str, explicit: list[str] | None, scan_all: bool) -> tupl
     paths: list[str] = []
     for raw in explicit or []:
         rel = rel_from_root(root, raw)
-        if path_is_in_scope(rel) or is_template(rel) or is_component_file(rel):
+        if not path_is_skipped(rel, root) and (path_is_in_scope(rel, root) or is_template(rel) or is_component_file(rel)):
             paths.append(rel)
     return paths, "explicit files"
 
