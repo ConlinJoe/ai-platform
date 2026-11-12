@@ -81,14 +81,16 @@ and, when the shared stage is not enough, `film/motion.js` or
 binaries, drafts, renders, and temporary files under `video/` are
 gitignored. Specs, scripts, notes, and `.gitignore` stay eligible.
 
-Preview in a browser:
+Preview one campaign:
 
 ```bash
-python3 -m http.server --directory video/campaigns/<slug> 5671
+"$AI_PLATFORM/scripts/video-preview.sh" video/campaigns/<slug>
 ```
 
+After install, the same command is `video/bin/preview` in the project.
+It binds to `127.0.0.1` and serves only that campaign directory.
 Open `http://127.0.0.1:5671/film/`. Space plays. Arrow keys step one
-frame. That preview is local. It is not publication.
+frame. The preview is local. It is not publication.
 
 Render:
 
@@ -117,6 +119,13 @@ expressive treatments are both valid. The shared stage provides masked
 type, word stagger, a side wipe, a slat-edged wipe, a slow hero scale,
 and an identity rule. Prefer those, or campaign-specific code, over a
 generic effect preset.
+
+`spec.motionSamples` may be an integer from 1 to 6. The default is 1.
+A higher value seeks several times inside the same frame and averages
+those pictures. The average stops before the next frame. It does not
+add frames, and it is not a 180-degree shutter from another package.
+Leave it at 1 unless the motion needs the extra samples. One Chrome
+worker still does the work.
 
 Do not import the aggressive motion of the Kinetic Film demonstration
 as a house style. Do not add particles, flashes, or camera shake unless

@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-12
 source_of_truth_for:
   - Current AI Platform implementation status and validation
 depends_on:
@@ -125,7 +125,10 @@ Unreleased and is not a version bump.
   project. Mode B initializes a video-only studio. Both use the
   harness renderer. The Scenario Kinetic Film engine is not vendored.
   Local rendering does not spend Scenario credits and does not
-  authorize publication or paid generation. Canonical:
+  authorize publication or paid generation. Preview binds to 127.0.0.1
+  and serves one campaign. Master encodes convert full-range frames to
+  BT.709 TV range. Optional in-frame sample averaging stays in this
+  renderer, with one worker. Canonical:
   `docs/contracts/features/video-production.md`, ADR 0010.
 - Laravel Boost: diagnosed by bootstrap/doctor; not installed by the platform
 - `doctor.sh`: implemented

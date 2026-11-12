@@ -168,6 +168,7 @@ PY
   check_file "${AI_REPO}/scripts/install-video-production.sh" "Video production installer"
   check_file "${AI_REPO}/scripts/init-video-studio.sh" "Video studio initializer"
   check_file "${AI_REPO}/scripts/video-render.sh" "Video render command"
+  check_file "${AI_REPO}/scripts/video-preview.sh" "Video preview command"
   check_file "${AI_REPO}/scripts/video-new-campaign.sh" "Video campaign command"
   check_file "${AI_REPO}/scripts/video/render.mjs" "Video frame renderer"
   check_file "${AI_REPO}/scripts/video/validate.py" "Video technical validator"
@@ -227,6 +228,7 @@ PY
     "${AI_REPO}/scripts/install-video-production.sh" \
     "${AI_REPO}/scripts/init-video-studio.sh" \
     "${AI_REPO}/scripts/video-render.sh" \
+    "${AI_REPO}/scripts/video-preview.sh" \
     "${AI_REPO}/scripts/video-new-campaign.sh"
   do
     check_file "${script}" "Script $(basename "${script}")"

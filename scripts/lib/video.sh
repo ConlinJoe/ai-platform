@@ -182,6 +182,10 @@ video_link_capability() {
     "${dir}/video/bin/render" \
     "video render command"
   video_link_into \
+    "${AI_REPO}/scripts/video-preview.sh" \
+    "${dir}/video/bin/preview" \
+    "video preview command"
+  video_link_into \
     "${AI_REPO}/scripts/video-new-campaign.sh" \
     "${dir}/video/bin/new-campaign" \
     "video new-campaign command"

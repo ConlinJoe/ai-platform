@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-10-29
+last_reviewed: 2026-11-12
 source_of_truth_for:
   - First-time clone and harness setup
   - Prerequisites, doctor, bootstrap, and bootstrap verification
@@ -242,6 +242,8 @@ A video-only studio, with no application framework:
 ```
 
 Neither command renders a film or spends generation credits.
+Preview one campaign with `scripts/video-preview.sh`. It binds to
+127.0.0.1 and serves only that campaign. It does not render.
 Canonical reference:
 [Video production](contracts/features/video-production.md).
 

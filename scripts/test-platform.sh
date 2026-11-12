@@ -183,6 +183,7 @@ for script in \
   "${AI_REPO}/scripts/install-video-production.sh" \
   "${AI_REPO}/scripts/init-video-studio.sh" \
   "${AI_REPO}/scripts/video-render.sh" \
+  "${AI_REPO}/scripts/video-preview.sh" \
   "${AI_REPO}/scripts/video-new-campaign.sh" \
   "${AI_REPO}/scripts/test-platform.sh"
 do
@@ -3893,6 +3894,18 @@ assert_grep 'No Scenario credits' "${AI_REPO}/.agents/skills/video-production/SK
   "video skill states local rendering spends no Scenario credits"
 assert_grep 'not permission to publish' "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
   "video skill separates rendering from publication"
+assert_grep 'scripts/video-preview.sh' "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
+  "video skill previews through the localhost campaign server"
+assert_not_grep 'python3 -m http\.server --directory' "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
+  "video skill does not start an unbound preview server"
+assert_grep 'motionSamples' "${AI_REPO}/.agents/skills/video-production/SKILL.md" \
+  "video skill documents optional in-frame samples"
+assert_grep 'scripts/video-preview.sh' "${AI_REPO}/docs/getting-started.md" \
+  "setup guide points at the localhost preview command"
+assert_grep 'video/bin/preview' "${AI_REPO}/templates/video/workspace-readme.md" \
+  "workspace readme includes the preview command"
+assert_grep 'scripts/video-preview.sh' "${AI_REPO}/core/project-profiles/video-studio.md" \
+  "studio profile uses the same preview command"
 assert_not_grep '"video-production"' "${AI_REPO}/skills-lock.json" \
   "skills-lock does not pin video-production"
 assert_not_grep 'scenario-kinetic-film' "${AI_REPO}/skills-lock.json" \
@@ -3955,6 +3968,11 @@ if [[ -L "${VIDEO_APP}/.claude/skills/video-production" && -L "${VIDEO_APP}/.gro
 else
   fail "Claude and Grok link the video skill"
 fi
+if [[ -L "${VIDEO_APP}/video/bin/preview" && -x "${VIDEO_APP}/video/bin/preview" ]]; then
+  pass "integrated install links the preview command"
+else
+  fail "integrated install links the preview command"
+fi
 
 "${AI_REPO}/scripts/install-video-production.sh" "${VIDEO_APP}" \
   >"${LOGDIR}/install-video-app-again.log" 2>&1
@@ -3989,6 +4007,8 @@ fi
 
 "${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" brand-a ad-15 \
   >"${LOGDIR}/video-campaign-a.log" 2>&1
+assert_grep '127\.0\.0\.1' "${LOGDIR}/video-campaign-a.log" \
+  "a new campaign tells the developer to preview on localhost"
 "${AI_REPO}/scripts/video-new-campaign.sh" "${VIDEO_APP}" brand-b ad-15 \
   >"${LOGDIR}/video-campaign-b.log" 2>&1
 printf '\nname: UNIQUE_BRAND_ALPHA\n' >> "${VIDEO_APP}/video/campaigns/brand-a/brand.md"
@@ -4046,6 +4066,56 @@ assert_grep 'width: 1080' "${VIDEO_APP}/video/campaigns/tall/film/spec.js" \
   "vertical format is 1080 wide"
 assert_grep 'height: 1920' "${VIDEO_APP}/video/campaigns/tall/film/spec.js" \
   "vertical format is 1920 tall and native"
+
+if "${AI_REPO}/scripts/video-preview.sh" "${VIDEO_APP}" 5671 \
+  >"${LOGDIR}/video-preview-refuse.log" 2>&1; then
+  fail "preview refuses a path that is not one campaign"
+else
+  if grep -q 'not a campaign' "${LOGDIR}/video-preview-refuse.log"; then
+    pass "preview refuses a path that is not one campaign"
+  else
+    fail "preview refuses a path that is not one campaign"
+  fi
+fi
+if "${AI_REPO}/scripts/video-preview.sh" "${VIDEO_APP}/video/campaigns/brand-a" 70000 \
+  >"${LOGDIR}/video-preview-port.log" 2>&1; then
+  fail "preview refuses a port outside 1 to 65535"
+else
+  if grep -q 'port must be an integer' "${LOGDIR}/video-preview-port.log"; then
+    pass "preview refuses a port outside 1 to 65535"
+  else
+    fail "preview refuses a port outside 1 to 65535"
+  fi
+fi
+
+PREVIEW_PORT="$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1]); s.close()')"
+"${AI_REPO}/scripts/video-preview.sh" "${VIDEO_APP}/video/campaigns/brand-a" "${PREVIEW_PORT}" \
+  >"${LOGDIR}/video-preview.log" 2>&1 &
+PREVIEW_PID=$!
+preview_ready=0
+for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+  if curl -fsS "http://127.0.0.1:${PREVIEW_PORT}/film/index.html" -o /dev/null 2>/dev/null; then
+    preview_ready=1
+    break
+  fi
+  sleep 0.2
+done
+if [[ "${preview_ready}" -eq 1 ]] \
+  && grep -q 'Bound to 127.0.0.1' "${LOGDIR}/video-preview.log" \
+  && lsof -nP -iTCP:"${PREVIEW_PORT}" -sTCP:LISTEN 2>/dev/null | grep -q "127.0.0.1:${PREVIEW_PORT}"; then
+  pass "preview listens on 127.0.0.1 for one campaign"
+else
+  fail "preview listens on 127.0.0.1 for one campaign"
+fi
+escape_code="$(curl --path-as-is -s -o /dev/null -w '%{http_code}' \
+  "http://127.0.0.1:${PREVIEW_PORT}/../brand-b/brand.md" || true)"
+if [[ "${escape_code}" != "200" ]]; then
+  pass "preview does not serve a neighboring campaign"
+else
+  fail "preview does not serve a neighboring campaign"
+fi
+kill "${PREVIEW_PID}" >/dev/null 2>&1 || true
+wait "${PREVIEW_PID}" >/dev/null 2>&1 || true
 
 if "${AI_REPO}/scripts/video-render.sh" "${VIDEO_APP}/video/campaigns/brand-a" --scenario \
   >"${LOGDIR}/video-paid.log" 2>&1; then
@@ -4136,6 +4206,11 @@ assert_grep 'Detected profile: video-studio' "${LOGDIR}/init-video-studio.log" \
   "studio init reports the video-studio profile"
 assert_grep '"mode": "studio"' "${VIDEO_STUDIO}/video/studio.json" \
   "studio init records studio mode"
+if [[ -L "${VIDEO_STUDIO}/video/bin/preview" && -x "${VIDEO_STUDIO}/video/bin/preview" ]]; then
+  pass "studio init links the same preview command"
+else
+  fail "studio init links the same preview command"
+fi
 assert_missing "${VIDEO_STUDIO}/package.json" \
   "studio init does not create an application package.json"
 assert_missing "${VIDEO_STUDIO}/composer.json" \
@@ -4192,6 +4267,59 @@ ffmpeg -y -v error -f lavfi -i "color=c=0x1e4d3a:s=1920x1080:r=30" -frames:v 30 
   -x264-params colorprim=bt709:transfer=bt709:colormatrix=bt709 \
   -color_primaries bt709 -color_trc bt709 -colorspace bt709 -color_range tv \
   -movflags +faststart -an "${VIDEO_MEDIA}/calm.mp4"
+if node --input-type=module - "${AI_REPO}/scripts/video/render.mjs" \
+  >"${LOGDIR}/video-sample-times.log" 2>&1 <<'EOF'
+import { pathToFileURL } from "node:url";
+const { frameSampleTimes } = await import(pathToFileURL(process.argv[2]).href);
+const near = (left, right) => Math.abs(left - right) < 1e-9;
+const one = frameSampleTimes(1, 1 / 30, 1);
+const invalid = frameSampleTimes(3, 1 / 30, "nope");
+const two = frameSampleTimes(2, 0.1, 2);
+const six = frameSampleTimes(0, 1, 99);
+const last = six[six.length - 1];
+if (one.length === 1 && one[0] === 1
+  && invalid.length === 1 && invalid[0] === 3
+  && two.length === 2 && near(two[1], 2.05)
+  && six.length === 6 && six[0] === 0 && last < 1) {
+  process.exit(0);
+}
+console.log(JSON.stringify({ one, invalid, two, six }));
+process.exit(1);
+EOF
+then
+  pass "in-frame sample times stay inside the current frame"
+else
+  fail "in-frame sample times stay inside the current frame"
+fi
+
+FULL_TO_TV="$(python3 -c 'import re, pathlib, sys; source = pathlib.Path(sys.argv[1]).read_text(); match = re.search(r"const FULL_TO_TV = '"'"'([^'"'"']+)'"'"'", source); sys.exit(1) if match is None else sys.stdout.write(match.group(1))' "${AI_REPO}/scripts/video/render.mjs")"
+ffmpeg -y -v error -f lavfi -i "color=c=white:s=64x36:d=0.1" -frames:v 1 \
+  -pix_fmt rgb24 "${VIDEO_MEDIA}/full-white.png"
+ffmpeg -y -v error -i "${VIDEO_MEDIA}/full-white.png" -vf "${FULL_TO_TV}" \
+  -frames:v 1 -c:v libx264 -pix_fmt yuv420p \
+  "${VIDEO_MEDIA}/tv-white.mp4"
+tv_range="$(ffprobe -v error -select_streams v:0 \
+  -show_entries stream=color_range,color_space,pix_fmt -of csv=p=0 \
+  "${VIDEO_MEDIA}/tv-white.mp4")"
+if [[ "${tv_range}" == "yuv420p,tv,bt709" ]]; then
+  pass "full-range frames convert to BT.709 TV range"
+else
+  fail "full-range frames convert to BT.709 TV range (${tv_range})"
+fi
+ffmpeg -y -v error -f lavfi -i "color=c=red:s=16x16:d=0.1" -frames:v 1 \
+  "${VIDEO_MEDIA}/mix-red.png"
+ffmpeg -y -v error -f lavfi -i "color=c=blue:s=16x16:d=0.1" -frames:v 1 \
+  "${VIDEO_MEDIA}/mix-blue.png"
+if ffmpeg -y -v error \
+  -i "${VIDEO_MEDIA}/mix-red.png" -i "${VIDEO_MEDIA}/mix-blue.png" \
+  -filter_complex "[0:v][1:v]mix=inputs=2:weights='1 1':scale=0:duration=first" \
+  -frames:v 1 "${VIDEO_MEDIA}/mix.png" \
+  >"${LOGDIR}/video-mix.log" 2>&1; then
+  pass "in-frame sample averaging accepts quoted mix weights"
+else
+  fail "in-frame sample averaging accepts quoted mix weights"
+fi
+
 if python3 "${AI_REPO}/scripts/video/validate.py" \
   --video "${VIDEO_MEDIA}/calm.mp4" \
   --expect-width 1920 --expect-height 1080 --expect-fps 30 --expect-frames 30 \
@@ -4228,6 +4356,7 @@ if [[ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]]; then
     >"${LOGDIR}/video-smoke-render.log" 2>&1; then
     if grep -q 'No Scenario credits' "${LOGDIR}/video-smoke-render.log" \
       && grep -q 'TECHNICAL PASS' "${LOGDIR}/video-smoke-render.log" \
+      && grep -q 'Motion samples per frame: 1.' "${LOGDIR}/video-smoke-render.log" \
       && [[ -f "${VIDEO_STUDIO}/video/campaigns/smoke/renders/masters/smoke-640x360-10.mp4" ]]; then
       pass "synthetic local render passed without Scenario"
     else

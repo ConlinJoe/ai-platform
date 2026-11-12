@@ -117,5 +117,8 @@ PY
 fi
 
 echo "Campaign ready: ${DEST}"
-echo "Edit brief.md, brand.md, and film/spec.js. Render with:"
+echo "Edit brief.md, brand.md, and film/spec.js."
+echo "Preview on 127.0.0.1, this campaign only:"
+echo "  ${AI_REPO}/scripts/video-preview.sh ${DEST}"
+echo "Render with:"
 echo "  ${AI_REPO}/scripts/video-render.sh ${DEST}"

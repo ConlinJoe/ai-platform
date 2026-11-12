@@ -8,9 +8,11 @@ campaigns under `campaigns/`.
 
 ```bash
 scripts/video-new-campaign.sh . <slug> ad-15
+video/bin/preview video/campaigns/<slug>
 video/bin/render video/campaigns/<slug>
 ```
 
+`video/bin/preview` binds to 127.0.0.1 and serves that campaign only.
 `video/bin/render` is a local render. It does not spend Scenario credits.
 It does not publish the file.
 

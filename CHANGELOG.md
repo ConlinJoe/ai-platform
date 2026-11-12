@@ -35,8 +35,13 @@ Kinetic Film package is not redistributed: the tested zip has no
 license, and it is not the MIT kinetic music-video skill. Local
 renders do not spend Scenario credits. Paid generation stays behind a
 provider, a dry-run price, and explicit authorization. Ordinary
-bootstrap does not install the workspace. Decision: ADR 0010.
-Procedure: `.agents/skills/video-production/SKILL.md`.
+bootstrap does not install the workspace. Local preview binds to
+127.0.0.1 and serves one campaign. Master encodes convert full-range
+frames with the BT.709 matrix into TV range. A campaign may set
+`motionSamples` from 1 to 6 to average seeks inside one frame. The
+default remains one sample, and the worker count remains one. That
+average is harness code. It is not the Kinetic Film shutter. Decision:
+ADR 0010. Procedure: `.agents/skills/video-production/SKILL.md`.
 
 Substantial redesigns and authorized new expressive directions resolve
 creative direction, including motion, before the review comp. The agent

@@ -73,6 +73,24 @@ function workerChoice(memoryGb, cpus, fourK) {
   return { available, used: 1 };
 }
 
+// Full-range screenshots become BT.709 TV-range pixels, so the tags match the picture.
+const FULL_TO_TV = 'scale=in_range=full:out_range=tv:out_color_matrix=bt709:flags=accurate_rnd+full_chroma_int,format=yuv420p';
+const TV_TO_TV = 'scale=in_color_matrix=bt709:in_range=tv:out_color_matrix=bt709:out_range=tv:flags=accurate_rnd+full_chroma_int,format=yuv420p';
+const TV_TO_FULL = 'scale=in_color_matrix=bt709:in_range=tv:out_range=full:flags=accurate_rnd+full_chroma_int,format=rgb24';
+
+// Seeks inside one frame and stops before the next frame. This is not a
+// 180-degree shutter and it does not read another renderer.
+export function frameSampleTimes(time, frameDuration, samples) {
+  const count = Math.max(1, Math.min(6, Math.round(Number(samples) || 1)));
+  if (count === 1 || !(frameDuration > 0)) return [time];
+  const span = frameDuration * ((count - 1) / count);
+  const times = [];
+  for (let index = 0; index < count; index += 1) {
+    times.push(time + (span * index) / (count - 1));
+  }
+  return times;
+}
+
 function ffmpeg(args) {
   return new Promise((resolve, reject) => {
     const child = spawn('ffmpeg', args, { stdio: ['ignore', 'inherit', 'pipe'] });
@@ -86,6 +104,47 @@ function ffmpeg(args) {
       else reject(new Error(errorText.trim() || `ffmpeg exited ${code}`));
     });
   });
+}
+
+function ffmpegBuffer(args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    const chunks = [];
+    let errorText = '';
+    child.stdout.on('data', (chunk) => chunks.push(chunk));
+    child.stderr.on('data', (chunk) => {
+      errorText += chunk.toString();
+    });
+    child.on('error', reject);
+    child.on('close', (code) => {
+      if (code === 0) resolve(Buffer.concat(chunks));
+      else reject(new Error(errorText.trim() || `ffmpeg exited ${code}`));
+    });
+  });
+}
+
+async function averagePngs(buffers, directory) {
+  if (buffers.length === 1) return buffers[0];
+  fs.mkdirSync(directory, { recursive: true });
+  const names = buffers.map((buffer, index) => {
+    const name = path.join(directory, `sample-${index}.png`);
+    fs.writeFileSync(name, buffer);
+    return name;
+  });
+  try {
+    const weights = buffers.map(() => '1').join(' ');
+    const labels = buffers.map((_, index) => `[${index}:v]`).join('');
+    return await ffmpegBuffer([
+      '-y', '-v', 'error',
+      ...names.flatMap((name) => ['-i', name]),
+      '-filter_complex', `${labels}mix=inputs=${buffers.length}:weights='${weights}':scale=0:duration=first`,
+      '-frames:v', '1',
+      '-f', 'image2pipe', '-c:v', 'png',
+      'pipe:1',
+    ]);
+  } finally {
+    for (const name of names) fs.rmSync(name, { force: true });
+  }
 }
 
 async function main() {
@@ -112,7 +171,9 @@ async function main() {
 
   const specUrl = pathToFileURL(path.join(campaign, 'film', 'spec.js')).href;
   const spec = (await import(specUrl)).default;
+  const motionSamples = Math.max(1, Math.min(6, Math.round(Number(spec.motionSamples) || 1)));
   const frames = Math.round(spec.duration * spec.fps);
+  console.log(`Motion samples per frame: ${motionSamples}.`);
   const cssWidth = spec.width;
   const cssHeight = spec.height;
   const outWidth = cssWidth * dsf;
@@ -138,6 +199,7 @@ async function main() {
   const port = server.address().port;
   const pageUrl = `http://127.0.0.1:${port}/film/index.html?render=1`;
   const partial = master + '.partial.mp4';
+  const sampleDir = path.join(campaign, 'tmp', 'motion');
   const allowBrowserDownload = process.env.VIDEO_ALLOW_PLAYWRIGHT_BROWSER === '1';
   let browser;
   try {
@@ -164,6 +226,7 @@ async function main() {
     '-f', 'image2pipe', '-vcodec', 'png', '-framerate', String(spec.fps),
     '-i', 'pipe:0',
     '-an',
+    '-vf', FULL_TO_TV,
     '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-profile:v', 'high',
     '-crf', process.env.VIDEO_X264_CRF || '16',
     '-preset', process.env.VIDEO_X264_PRESET || 'medium',
@@ -186,10 +249,17 @@ async function main() {
     if (info.width !== cssWidth || info.height !== cssHeight) {
       throw new Error(`Film reported ${info.width}x${info.height}, spec says ${cssWidth}x${cssHeight}.`);
     }
+    const lastTime = Math.max(0, spec.duration - 1 / spec.fps);
     for (let frame = 0; frame < frames; frame += 1) {
       const time = frame / spec.fps;
-      await page.evaluate((value) => window.__videoSeek(value), time);
-      const buffer = await page.screenshot({ type: 'png' });
+      const times = frameSampleTimes(time, 1 / spec.fps, motionSamples)
+        .map((value) => Math.min(value, lastTime));
+      const shots = [];
+      for (const sampleTime of times) {
+        await page.evaluate((value) => window.__videoSeek(value), sampleTime);
+        shots.push(await page.screenshot({ type: 'png' }));
+      }
+      const buffer = await averagePngs(shots, sampleDir);
       if (frame === 0) {
         const size = pngSize(buffer);
         if (!size || size.width !== outWidth || size.height !== outHeight) {
@@ -219,6 +289,7 @@ async function main() {
     const reviewAudio = spec.audio ? ['-c:a', 'aac', '-b:a', '160k'] : ['-an'];
     await ffmpeg([
       '-y', '-v', 'error', '-i', master,
+      '-vf', TV_TO_TV,
       ...reviewAudio, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-profile:v', 'high',
       '-crf', '28', '-preset', 'veryfast', '-level', level,
       '-x264-params', 'colorprim=bt709:transfer=bt709:colormatrix=bt709',
@@ -233,7 +304,10 @@ async function main() {
     const stillPaths = [];
     for (const stamp of stamps) {
       const still = path.join(stills, `frame-${String(stamp.index + 1).padStart(2, '0')}.png`);
-      await ffmpeg(['-y', '-v', 'error', '-ss', stamp.time.toFixed(3), '-i', master, '-frames:v', '1', still]);
+      await ffmpeg([
+        '-y', '-v', 'error', '-ss', stamp.time.toFixed(3), '-i', master,
+        '-frames:v', '1', '-vf', TV_TO_FULL, still,
+      ]);
       stillPaths.push(still);
     }
     const tileInputs = stillPaths.flatMap((still) => ['-i', still]);
@@ -267,7 +341,11 @@ async function main() {
   } finally {
     await browser.close();
     server.close();
+    fs.rmSync(sampleDir, { recursive: true, force: true });
   }
 }
 
-main().catch((error) => fail(error.message || String(error)));
+const entry = process.argv[1] ? path.resolve(process.argv[1]) : '';
+if (entry && entry === fileURLToPath(import.meta.url)) {
+  main().catch((error) => fail(error.message || String(error)));
+}

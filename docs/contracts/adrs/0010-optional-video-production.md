@@ -1,6 +1,6 @@
 ---
 status: accepted
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-12
 source_of_truth_for:
   - Decision to offer one optional video-production capability for existing projects and standalone studios
   - Decision to keep an original local renderer and not redistribute the Scenario Kinetic Film package
@@ -77,6 +77,15 @@ tooling into every application during bootstrap.
   media.
 - Projects that never make video do not gain a video runtime.
 - A calm film can pass technical checks.
+
+A later pass kept this same renderer. It did not copy the Evolution
+Fence film or the Kinetic Film package. Preview listens on 127.0.0.1
+for one campaign. The encoder converts full-range frames with the
+BT.709 matrix into TV range so the tags match the pixels. A campaign
+may average up to six seeks inside one frame. That average stops before
+the next frame. It is not the Kinetic Film shutter. The worker cap
+remains one. The Evolution Fence slat choreography, logo match cut,
+photography, and copy stay in that campaign.
 
 ### Negative
 

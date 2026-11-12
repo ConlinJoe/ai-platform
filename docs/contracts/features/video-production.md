@@ -1,6 +1,6 @@
 ---
 status: active
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-12
 source_of_truth_for:
   - Optional video-production capability, both project modes, and the local renderer
   - Separation of local rendering from paid generation and from publication
@@ -96,6 +96,16 @@ A new campaign copies the named template and a blank brand file. It
 does not copy another campaign. Placeholder words say "Brand" until
 the project replaces them with approved copy.
 
+## Local preview
+
+`scripts/video-preview.sh <campaign> [port]`
+
+The server binds to `127.0.0.1`. The default port is 5671. It serves
+that campaign directory and no other campaign. Installed projects also
+have the same script at `video/bin/preview`. Rendering uses its own
+`127.0.0.1` listener on an ephemeral port and does not reuse the
+preview port.
+
 ## Local renderer
 
 `scripts/video-render.sh <campaign>`:
@@ -106,8 +116,13 @@ the project replaces them with approved copy.
 3. Launches the system Google Chrome, one worker, against the local
    film page only.
 4. Seeks `window.__videoSeek(time)` and writes PNG frames to FFmpeg.
-5. Writes an H.264 High master (yuv420p, BT.709, TV range, `+faststart`),
-   a smaller review file, stills, and a contact sheet.
+   `spec.motionSamples` may be an integer from 1 to 6. The default is 1.
+   A higher value seeks several times inside that same frame and averages
+   the pictures before they are encoded. The samples stay inside the
+   frame. They do not add frames, and they are not another package's shutter.
+5. Converts those full-range frames to BT.709 TV-range yuv420p, then
+   writes an H.264 High master (`+faststart`), a smaller review file,
+   stills, and a contact sheet. The color tags match that conversion.
 6. Runs `scripts/video/validate.py`.
 
 Default master quality is CRF 16 and preset `medium`. Override with

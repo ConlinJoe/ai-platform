@@ -41,7 +41,8 @@ change how they bootstrap.
 
 ## Renderer
 
-The studio uses the same renderer as an integrated project:
-`scripts/video-render.sh`. Canonical procedure:
+The studio uses the same preview and renderer as an integrated project:
+`scripts/video-preview.sh` and `scripts/video-render.sh`. Preview binds
+to 127.0.0.1 and serves one campaign. Canonical procedure:
 `.agents/skills/video-production/SKILL.md`.
 Contract: `docs/contracts/features/video-production.md`.
